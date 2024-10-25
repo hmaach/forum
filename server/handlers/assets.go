@@ -4,35 +4,25 @@ package handlers
 import (
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"forum/server/utils"
 )
 
 // ServeStaticFiles returns a handler function for serving static files
 func ServeStaticFiles() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Block direct access to the /assets/ directory
-		if r.URL.Path == "/assets/" || strings.HasSuffix(r.URL.Path, "/") {
-		    RenderError(w, http.StatusForbidden, "403 | Access to this resource is forbidden!")
-		    return
-		}
+		// Get clean file path and prevent directory traversal
+		filePath := filepath.Clean("../web/assets" + strings.TrimPrefix(r.URL.Path, "/assets"))
 
-		// Clean the file path
-		filePath := "../web/assets" + strings.TrimPrefix(r.URL.Path, "/assets")
-
-		// Check if file exists
-		_, err := os.Stat(filePath)
-		if os.IsNotExist(err) {
-			RenderError(w, http.StatusNotFound, "404 | Page Not Found")
+		// block access to dirictories
+		if info, err := os.Stat(filePath); err != nil || info.IsDir() {
+			utils.RenderError(w, http.StatusNotFound)
 			return
 		}
 
 		// Serve the file
 		http.ServeFile(w, r, filePath)
 	}
-}
-
-// RenderError handles error responses
-func RenderError(w http.ResponseWriter, status int, message string) {
-	w.WriteHeader(status)
-	w.Write([]byte(message))
 }
