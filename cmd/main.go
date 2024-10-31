@@ -3,13 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
-	// _sqlite "github.com/mattn/go-sqlite3"
+
+	"forum/server/database"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
+	db, dbErr := database.Connect()
+	if dbErr != nil {
+		log.Fatal(dbErr)
+	}
+	defer db.Close()
+
 	srv := http.Server{
 		Addr:    ":8080",
-		Handler: routes(),
+		Handler: routes(db),
 	}
 
 	log.Println("Server starting on http://localhost:8080")

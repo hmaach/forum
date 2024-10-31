@@ -1,12 +1,13 @@
 package main
 
 import (
-	"forum/server/handlers"
+	"database/sql"
 	"net/http"
+
+	"forum/server/handlers"
 )
 
-func routes() http.Handler {
-	
+func routes(db *sql.DB) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/assets/", handlers.ServeStaticFiles)
