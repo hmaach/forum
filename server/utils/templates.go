@@ -16,17 +16,32 @@ func RenderError(w http.ResponseWriter, statusCode int) {
 		Message: http.StatusText(statusCode),
 	}
 	if err := RenderTemplate(w, "error", statusCode, typeError); err != nil {
+		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
 		log.Println(err)
 	}
 }
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any) error {
-	tmpl = "../web/templates/" + tmpl + ".html"
-	t, err := template.ParseFiles(tmpl)
+	// Set the status code before writing the response
+	w.WriteHeader(statusCode)
+
+	// Parse the template files
+	t, err := template.ParseFiles(
+		"../web/templates/partials/header.html",
+		"../web/templates/partials/footer.html",
+		"../web/templates/"+tmpl+".html",
+	)
+	if err != nil {
+		RenderError(w, http.StatusInternalServerError)
+		return fmt.Errorf("error parsing template files: %w", err)
+	}
+
+	// Execute the template with the provided data
+	err = t.ExecuteTemplate(w, tmpl+".html", data)
 	if err != nil {
 		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
-		return fmt.Errorf("template '%s' not found", tmpl)
+		return fmt.Errorf("error executing template: %w", err)
 	}
-	w.WriteHeader(statusCode)
-	return t.Execute(w, data)
+
+	return nil
 }
