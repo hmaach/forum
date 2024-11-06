@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Global style */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,4 +9,52 @@
 
 body {
     background-color: rgb(255, 204, 204);
+}
+
+/* Header style */
+header {
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    justify-content: space-between;
+    padding: 0 1rem;
+    border-bottom: orange 1px solid;
+
+}
+
+header span {
+    font-family: "Playwrite GB S", cursive;
+    /* color: #2761f0; */
+    font-size: 1.3rem;
+    /* font-weight: 800; */
+}
+
+.img-01 {
+    width: 50px;
+}
+
+.login-link a {
+    text-decoration: none !important;
+}
+
+/* Nav style */
+nav {
+    background-color: white
+}
+
+.nav-list>li {
+    border: rgb(0, 255, 0) solid 1px;
+
+}
+
+.topics-list li {
+    /* border: red solid 1px; */
+    margin-left: 1rem;
+    font-weight: 800;
+    list-style: none;
+}
+
+.topics-list li a {
+    text-decoration: none;
 }
