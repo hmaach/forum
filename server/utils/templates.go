@@ -29,6 +29,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any
 	t, err := template.ParseFiles(
 		"../web/templates/partials/header.html",
 		"../web/templates/partials/footer.html",
+		"../web/templates/partials/navbar.html",
 		"../web/templates/"+tmpl+".html",
 	)
 	if err != nil {
