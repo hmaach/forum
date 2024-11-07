@@ -1,0 +1,21 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<div class="posts">
+    {{range .}}
+    <div class="post">
+        <div class="post-header">
+            <h3 class="post-user">{{.UserName}}</h3>
+            <p class="post-time">{{.Time}} </p>
+        </div>
+        <div class="post-body">
+            <p class="post-content">{{.Content}} </p>
+        </div>
+        <div class="post-footer">
+            <span class="post-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
+            <span class="post-dislike"><i class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+            <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Comments}}</span>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{template "footer.html"}}
