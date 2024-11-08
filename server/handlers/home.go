@@ -32,7 +32,15 @@ func GetHome(w http.ResponseWriter, r *http.Request) {
 		utils.RenderError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	err := utils.RenderTemplate(w, "home", http.StatusOK, Posts)
+
+	Data := struct {
+		IsAuthenticated bool
+		Posts           []models.Post
+	}{
+		IsAuthenticated: IsAuthenticated,
+		Posts:           Posts,
+	}
+	err := utils.RenderTemplate(w, "home", http.StatusOK, Data)
 	if err != nil {
 		log.Println(err)
 		utils.RenderError(w, http.StatusInternalServerError)

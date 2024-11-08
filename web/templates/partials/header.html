@@ -17,10 +17,15 @@
                 <span class="forum-title">forum</span>
             </p>
         </a>
+        {{ if .IsAuthenticated}}
         <div class="login-link">
-            <a href="/login">Log in
-                <i class="fa-solid fa-right-to-bracket"></i>
+            <a href="/login">Hamza Maach
+                <i class="fa-solid fa-user"></i>
             </a>
         </div>
+        {{else}}
+        <a href="/login" class="login-link">Log in
+            <i class="fa-solid fa-right-to-bracket"></i>
+        </a>
+        {{end}}
     </header>
-    <div class="container">
