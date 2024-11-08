@@ -172,6 +172,7 @@ nav i {
     text-decoration: underline;
     color: var(--color-text);
     transition: var(--transition);
+    text-transform: capitalize;
 }
 
 /* .topics-list li a:hover {
