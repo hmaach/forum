@@ -6,11 +6,15 @@
                 <span class="topics-title"><i class="fa-solid fa-list"></i>Topics</span>
             </a>
             <ul class="topics-list">
-                <li><a href="/topics?topic=politics">#Politics</a></li>
-                <li><a href="/topics?topic=sports">#Sports</a></li>
-                <li><a href="/topics?topic=fashion">#Fashion</a></li>
-                <li><a href="/topics?topic=technologies">#Technologies</a></li>
+                {{range .Categories}}
+                <li><a href="/topics?topic_id={{.ID}}">#{{.Category}}</a></li>
+                {{end}}
+                <!-- <li><a href="/topics?topic=politics">#politics</a></li>
+                <li><a href="/topics?topic=sports">#sports</a></li>
+                <li><a href="/topics?topic=fashion">#sashion</a></li>
+                <li><a href="/topics?topic=technologies">#technologies</a></li> -->
                 <li><a href="/topics">More...</a></li>
+
             </ul>
         </li>
         <li><a href="/about"><i class="fa-solid fa-circle-info"></i>About</a></li>
