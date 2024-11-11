@@ -1,3 +1,8 @@
 {{template "header.html" .}}
-<h1>{{.Code}} | {{.Message}}</h1>
+<div class="error-page">
+    <div class="error-card">
+        <h1>{{.Data.Code}}</h1>
+        <p>{{.Data.Message}}</p>
+    </div>
+</div>
 {{template "footer.html"}}

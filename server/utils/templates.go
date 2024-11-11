@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"forum/server/common"
 	"forum/server/models"
 )
 
@@ -21,10 +22,7 @@ func RenderError(w http.ResponseWriter, statusCode int) {
 	}
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any) error {
-	// Set the status code before writing the response
-	w.WriteHeader(statusCode)
-
+func ParseTemplates(tmpl string) (*template.Template, error) {
 	// Parse the template files
 	t, err := template.ParseFiles(
 		"../web/templates/partials/header.html",
@@ -33,14 +31,33 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any
 		"../web/templates/"+tmpl+".html",
 	)
 	if err != nil {
-		RenderError(w, http.StatusInternalServerError)
-		return fmt.Errorf("error parsing template files: %w", err)
+		return nil, fmt.Errorf("error parsing template files: %w", err)
+	}
+	return t, nil
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any) error {
+	t, err := ParseTemplates(tmpl)
+	if err != nil {
+		return err
 	}
 
+	// Limit categories to the first 6
+	Categories := common.Categories
+	limitedCategories := Categories
+	if len(Categories) > 6 {
+		limitedCategories = Categories[:6]
+	}
+
+	globalData := models.GlobalData{
+		IsAuthenticated: common.IsAuthenticated,
+		Data:            data,
+		Categories:      limitedCategories,
+	}
+	w.WriteHeader(statusCode)
 	// Execute the template with the provided data
-	err = t.ExecuteTemplate(w, tmpl+".html", data)
+	err = t.ExecuteTemplate(w, tmpl+".html", globalData)
 	if err != nil {
-		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
 		return fmt.Errorf("error executing template: %w", err)
 	}
 

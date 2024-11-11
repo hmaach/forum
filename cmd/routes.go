@@ -19,6 +19,7 @@ func routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/about", handlers.GetAbout)
 	mux.HandleFunc("/topics", handlers.GetTopics)
 	mux.HandleFunc("/register", handlers.GetRegister)
+	mux.HandleFunc("/500", handlers.InternalServerError)
 
 	return mux
 }

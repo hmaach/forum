@@ -15,6 +15,6 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	err := utils.RenderTemplate(w, "login", http.StatusOK, nil)
 	if err != nil {
 		log.Println(err)
-		utils.RenderError(w, http.StatusInternalServerError)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }

@@ -395,3 +395,26 @@ nav i {
     display: inline-block;
     margin: 0 auto;
 }
+
+/* error page style */
+
+.error-page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-card {
+    text-align: center;
+    color: var(--color-primary);
+}
+
+.error-card h1 {
+    font-size: 6rem;
+}
+
+.error-card p {
+    font-size: 2rem;
+}
