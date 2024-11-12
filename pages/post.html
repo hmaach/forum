@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Page</title>
+    <style>
+        /* Reset some basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Header with buttons */
+        .header {
+            background-color: #333;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Specific button styles */
+        .login-btn {
+            background-color: #007BFF;
+        }
+
+        .signup-btn {
+            background-color: #28a745;
+        }
+
+        .createpost-btn {
+            background-color: #ffc107;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+        }
+
+        /* Main Container for the Post Page */
+        .post-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        .post-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #007BFF;
+        }
+
+        .post-details {
+            font-size: 1em;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .post-details span {
+            margin-right: 15px;
+        }
+
+        .post-content {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .post-interactions {
+            margin-left: 50%;
+            margin-top: 20px;
+            transform: translate(-50%, 0);
+            font-size: 1em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .interaction-item {
+            margin-right: 15px;
+        }
+
+        .comments-section {
+            margin-top: 30px;
+        }
+
+        .addcomment-section {
+            text-align: center;
+        }
+
+        #addcomment {
+            padding: 10px;
+            width: 80%;
+            height: 100px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .comments-section h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .comment {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+        }
+
+        .comment-text {
+            margin-top: 5px;
+        }
+
+        /* Forum Layout for Buttons at the Top */
+        .forum-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .posts-section {
+            flex: 2;
+            margin-right: 20px;
+        }
+
+        /* Right Column (Categories) */
+        .categories-section {
+            flex: 1;
+        }
+
+        .categories-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .category-list {
+            list-style-type: none;
+        }
+
+        .category-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .category-link {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .category-link:hover {
+            text-decoration: underline;
+        }
+
+        pre {
+            width: 100%;
+            white-space: pre-wrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .forum-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .posts-section {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .categories-section {
+                margin-top: 20px;
+            }
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .like-button {
+            background-color: #4CAF50;
+            /* Green */
+            color: white;
+        }
+
+        .like-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .dislike-button {
+            background-color: #f44336;
+            /* Red */
+            color: white;
+        }
+
+        .dislike-button:hover {
+            background-color: #e53935;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header with buttons -->
+    <div class="header">
+        <div class="button-container">
+            <a href="/login" class="btn login-btn">Login</a>
+            <a href="/signup" class="btn signup-btn">SignUp</a>
+            <a href="/createpost" class="btn createpost-btn">Create Post</a>
+            <a href="/logout" class="btn logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="forum-container">
+
+        <!-- Left Column (Post) -->
+        <div class="posts-section">
+            <div class="post-container">
+                <!-- Post Title -->
+                <div class="post-title">{{.Post.Title}}</div>
+
+                <!-- Post Details (Author, Date, Category) -->
+                <div class="post-details">
+                    <span><strong>Author:</strong> {{.Post.User_Name}}</span>
+                    <span><strong>Date:</strong> {{.Post.Created_at}} </span>
+                    <span><strong>Category:</strong>{{.Post.Category}}</span>
+                </div>
+
+                <!-- Post Content -->
+                <div class="post-content">
+                    <pre>{{.Post.Content}}</pre>
+                </div>
+
+                <!-- likes and dislikes section -->
+                <div class="button-container">
+                    <form action="like-dislike" method="POST">
+                        <input type="hidden" name="post_id" value="{{.Post.Id}}">
+                        <button type="submit" name="reaction" value="like" class="like-button">
+                            👍 Like
+                        </button>
+                        <button type="submit" name="reaction" value="dislike" class="dislike-button">
+                            👎 Dislike
+                        </button>
+                    </form>
+                </div>
+
+
+                <!-- Post Interactions (Likes, Dislikes, Comments) -->
+                <div class="post-interactions">
+                    <span class="interaction-item"><strong>Likes:</strong> {{.Post.LikesCount}}</span>
+                    <span class="interaction-item"><strong>Dislikes:</strong> {{.Post.DislikesCount}}</span>
+                    <span class="interaction-item"><strong>Comments:</strong> {{.Post.CommentsCount}}</span>
+                </div>
+
+                <div class="addcomment-section">
+                    <form action="addcomment" method="POST">
+                        <textarea name="post_id" hidden>{{.Post.Id}}</textarea>
+                        <textarea name="comment" id="addcomment" required></textarea>
+                        <div class="buttons">
+                            <button type="submit">Add comment</button>
+                            <button type="reset">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h3>Comments</h3>
+                {{range .Post.Comments}}
+                <!-- Comment 1 -->
+                <div class="comment">
+                    <div class="comment-author">By {{.Username}}</div>
+                    <div class="comment-text">{{.Content}}</div>
+                    <div class="comment-date">{{.Created_at}}</div>
+                </div>
+                {{end}}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column (Categories) -->
+
+    <div class="categories-section">
+        <h2>Categories</h2>
+        <div class="category-list">
+            <!-- Example Category -->
+            {{range .Categories}}
+            <div class="category-item">
+                <a href="/category?id={{.Id}}" class="category-link">{{.Name}} ({{.PostsCount}} Posts)</a>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    </div>
+</body>
+
+</html>

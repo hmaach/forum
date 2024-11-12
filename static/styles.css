@@ -1,0 +1,160 @@
+/* Reset some basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* Header with buttons */
+.header {
+  background-color: #333;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+/* Specific button styles */
+.login-btn {
+  background-color: #007BFF;
+}
+
+.signup-btn {
+  background-color: #28a745;
+}
+
+.createpost-btn {
+  background-color: #ffc107;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+}
+
+/* Container for the whole forum */
+.forum-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* Left Column (Posts) */
+.posts-section {
+  flex: 2;
+  margin-right: 20px;
+}
+
+.posts-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.post-list {
+  margin-top: 10px;
+}
+
+.post-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.post-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.post-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.post-author {
+  margin-right: 20px;
+}
+
+.post-stats {
+  font-style: italic;
+}
+
+/* Right Column (Categories) */
+.categories-section {
+  flex: 1;
+}
+
+.categories-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.category-list {
+  list-style-type: none;
+}
+
+.category-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.category-link {
+  color: #007BFF;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.category-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .forum-container {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .posts-section {
+      margin-right: 0;
+      margin-bottom: 20px;
+  }
+
+  .categories-section {
+      margin-top: 20px;
+  }
+}
