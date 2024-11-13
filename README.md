@@ -70,14 +70,15 @@ cd forum
 go mod download
 ```
 
-3. Set up the database:
+<!-- 3. Set up the database:
 ```bash
 make migrate
-```
+``` -->
 
-4. Run the application:
+3. Run the application:
 ```bash
-make run
+cd cmd/
+go run main.go
 ```
 
 The application will be available at `http://localhost:8080`
