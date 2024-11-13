@@ -1,28 +1,62 @@
-CREATE TABLE IF NOT EXISTS 'users' (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+CREATE TABLE sessions (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
-CREATE TABLE IF NOT EXISTS 'categories' (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(255) UNIQUE NOT NULL
+
+CREATE TABLE users (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  username TEXT,
+  email TEXT,
+  password TEXT
 );
-CREATE TABLE IF NOT EXISTS 'posts' (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    category_id INTEGER,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE
-    SET NULL
+
+CREATE TABLE post_category (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  post_id BIGINT,
+  category_id BIGINT,
+  FOREIGN KEY (post_id) REFERENCES posts(id),
+  FOREIGN KEY (category_id) REFERENCES categories(id)
 );
-CREATE TABLE IF NOT EXISTS 'comments' (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    post_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+
+CREATE TABLE categories (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  label TEXT
+);
+
+CREATE TABLE comments_reactions (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  comment_id BIGINT,
+  type TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (comment_id) REFERENCES comments(id)
+);
+
+CREATE TABLE posts_reactions (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  post_id BIGINT,
+  type TEXT,
+  created_at TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+CREATE TABLE posts (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  content TEXT,
+  created_at DATETIME,
+  title TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE comments (
+  id BIGINT AUTOINCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  post_id BIGINT,
+  content TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
 );
