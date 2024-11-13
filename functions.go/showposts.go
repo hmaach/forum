@@ -9,6 +9,7 @@ import (
 )
 
 type Comment struct {
+	Id         int
 	Username   string
 	Content    string
 	Created_at time.Time
@@ -40,7 +41,7 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 
 	var Comments []Comment
 
-	rows, err := Db.Query("SELECT user_id,content,created_at FROM comments WHERE post_id=?", post_id)
+	rows, err := Db.Query("SELECT id,user_id,content,created_at FROM comments WHERE post_id=?", post_id)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Internal server error1!", http.StatusInternalServerError)
@@ -49,7 +50,7 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var comment Comment
 		var userid int
-		err = rows.Scan(&userid, &comment.Content, &comment.Created_at)
+		err = rows.Scan(&comment.Id, &userid, &comment.Content, &comment.Created_at)
 		if err != nil {
 			http.Error(w, "Internal server error2!", http.StatusInternalServerError)
 			return
@@ -68,13 +69,13 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 	postData.Comments = Comments
 	postData.CommentsCount = len(Comments)
 
-	err = Db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE post_id=? AND reaction=?",post_id,"like").Scan(&postData.LikesCount)
+	err = Db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE post_id=? AND reaction=?", post_id, "like").Scan(&postData.LikesCount)
 	if err != nil {
 		http.Error(w, "Internal server error3!", http.StatusInternalServerError)
 		return
 	}
 
-	err = Db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE post_id=? AND reaction=?",post_id,"dislike").Scan(&postData.DislikesCount)
+	err = Db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE post_id=? AND reaction=?", post_id, "dislike").Scan(&postData.DislikesCount)
 	if err != nil {
 		http.Error(w, "Internal server error3!", http.StatusInternalServerError)
 		return

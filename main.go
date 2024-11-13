@@ -27,7 +27,7 @@ func main() {
 	http.Handle("/addcomment", forum.Auth(http.HandlerFunc(forum.AddCommentREQ)))
 	http.HandleFunc("/post", forum.ShowPost)
 	http.HandleFunc("/category", forum.ShowCategory)
-	http.HandleFunc("/like-dislike", forum.LikeDislike)
+	http.HandleFunc("/post-likedislike", forum.PostLikeDislike)
 	
 
 

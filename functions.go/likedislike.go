@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func LikeDislike(w http.ResponseWriter, r *http.Request) {
+func PostLikeDislike(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(r.Method)
 	// if r.Method != http.MethodPost {
 	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
