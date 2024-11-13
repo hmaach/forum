@@ -1,72 +1,120 @@
-```
 # Forum Application
 
-This is a simple web forum application built using Go. It allows users to communicate with each other, create posts, and like/dislike posts and comments.
+A comprehensive web forum application built using Go that enables user communication through posts, comments, and reactions.
 
 ## Features
 
-- User authentication (registration and login)
-- Creating and viewing posts
-- Associating categories with posts
-- Liking and disliking posts and comments
-- Filtering posts by category, user's created posts, and user's liked posts
+- User Authentication
+  - Email-based registration and login
+  - Session management using secure cookies
+
+- Content Management
+  - Create, read.
+  - Comment on posts.
+  - Multiple category associations for posts
+
+- Interaction System
+  - Like/dislike posts and comments
+
+- Content Discovery
+  - Filter posts by categories
+  - Filter posts by created date
+
+## Database Schema
+
+The application uses SQLite with the following structure:
+
+[![Database Schema](https://drawsql.app/teams/zone-01/diagrams/forum-db)](https://drawsql.app/teams/zone-01/diagrams/forum-db)
+
+Key tables include:
+- Users: Stores user authentication and profile data
+- Posts: Contains main forum posts
+- Comments: Manages post responses
+- Categories: Organizes posts by topics
+- Categories_Posts: Associates posts with categories
+- Posts_Reactions: Tracks likes/dislikes for posts
+- Comments_Reactions: Tracks likes/dislikes for comments
+- Sessions: Handles user authentication states
 
 ## Technologies Used
 
-- Go programming language
-- SQLite database
-- Cookies for user session management
+- Backend
+  - Go 1.22+
+  - SQLite3 database
+
+- Frontend
+  - HTML5 & CSS3
+  - JavaScript
+
+- Development & Deployment
+  - Docker
 
 ## Getting Started
 
+### Prerequisites
+
+- Go 1.22 or higher
+- SQLite3
+- Docker (optional)
+
+### Local Development
+
 1. Clone the repository:
-   ```
-   git clone https://github.com/hamzamaach/forum.git
-   ```
+```bash
+git clone https://github.com/hamzamaach/forum.git
+cd forum
+```
 
-2. Change into the project directory:
-   ```
-   cd forum
-   ```
+2. Install dependencies:
+```bash
+go mod download
+```
 
-3. Build and run the application:
-   ```
-   go build -o forum cmd/main.go
-   ./forum
-   ```
+3. Set up the database:
+```bash
+make migrate
+```
 
-4. Open your web browser and navigate to `http://localhost:8080` to access the forum.
+4. Run the application:
+```bash
+make run
+```
+
+The application will be available at `http://localhost:8080`
+
+<!-- ### Docker Deployment
+
+1. Build the image:
+```bash
+docker build -t forum:latest .
+```
+
+2. Run the container:
+```bash
+docker run -d -p 8080:8080 --name forum forum:latest
+```
+
+3. Access the forum at `http://localhost:8080` -->
 
 ## Project Structure
 
-The project follows a modular structure with the following directories:
-
-- `cmd/`: Contains the main entry point of the application.
-- `internal/`: Holds the core logic of the application, including models, handlers, services, and database interactions.
-- `web/`: Contains the static assets (CSS, JavaScript) and HTML templates.
-- `tests/`: Holds the unit tests for the application.
-
-## Deployment with Docker
-
-To run the application using Docker, follow these steps:
-
-1. Build the Docker image:
-   ```
-   docker build -t forum .
-   ```
-
-2. Run the Docker container:
-   ```
-   docker run -p 8080:8080 forum
-   ```
-
-3. Access the forum at `http://localhost:8080`.
-
-## Contributing
-
-If you'd like to contribute to this project, please follow the standard Git workflow:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push the branch.
-4. Submit a pull request.
+```
+forum/
+├── cmd/
+│   ├── main.go           # Application entry point
+│   └── routes.go         # Application endpoints
+├── server/
+│   ├── common/           # Common utilities
+│   ├── config/           # Configuration files
+│   ├── database/         # Database configuration
+│   ├── handlers/         # HTTP handlers
+│   ├── models/           # Data models
+│   └── utils/            # Business logic
+├── web/ 
+│   ├── assets/           # CSS, JS, and images
+│   └── templates/        # HTML templates
+├── Dockerfile     # Docker configuration
+├── go.mod         # Go module file
+├── go.sum         # Go module checksum
+└── README.md      # This file
+```
