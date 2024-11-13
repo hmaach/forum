@@ -24,7 +24,7 @@ A comprehensive web forum application built using Go that enables user communica
 
 The application uses SQLite with the following structure:
 
-[Database Schema](https://drawsql.app/teams/zone-01/diagrams/forum-db)
+[Database Schema](https://drawsql.app/teams/zone-01/diagrams/forum-db){:target="_blank" rel="noopener"}
 
 Key tables include:
 - Users: Stores user authentication and profile data
