@@ -11,12 +11,12 @@ import (
 )
 
 // RenderError handles error responses
-func RenderError(w http.ResponseWriter, statusCode int) {
+func RenderError(w http.ResponseWriter, r *http.Request, statusCode int) {
 	typeError := models.Error{
 		Code:    statusCode,
 		Message: http.StatusText(statusCode),
 	}
-	if err := RenderTemplate(w, "error", statusCode, typeError); err != nil {
+	if err := RenderTemplate(w, r, "error", statusCode, typeError); err != nil {
 		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
 		log.Println(err)
 	}
@@ -36,9 +36,10 @@ func ParseTemplates(tmpl string) (*template.Template, error) {
 	return t, nil
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any) error {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, statusCode int, data any) error {
 	t, err := ParseTemplates(tmpl)
 	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return err
 	}
 
@@ -58,6 +59,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, statusCode int, data any
 	// Execute the template with the provided data
 	err = t.ExecuteTemplate(w, tmpl+".html", globalData)
 	if err != nil {
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return fmt.Errorf("error executing template: %w", err)
 	}
 

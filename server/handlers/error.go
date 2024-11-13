@@ -8,8 +8,8 @@ import (
 
 func InternalServerError(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		utils.RenderError(w, http.StatusMethodNotAllowed)
+		utils.RenderError(w,r, http.StatusMethodNotAllowed)
 		return
 	}
-	utils.RenderError(w, http.StatusInternalServerError)
+	utils.RenderError(w,r, http.StatusInternalServerError)
 }

@@ -30,16 +30,16 @@ var (
 
 func GetHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		utils.RenderError(w, http.StatusNotFound)
+		utils.RenderError(w,r, http.StatusNotFound)
 		return
 	}
 
 	if r.Method != http.MethodGet {
-		utils.RenderError(w, http.StatusMethodNotAllowed)
+		utils.RenderError(w,r, http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := utils.RenderTemplate(w, "home", http.StatusOK, posts)
+	err := utils.RenderTemplate(w,r, "home", http.StatusOK, posts)
 	if err != nil {
 		log.Println(err)
 		http.Redirect(w, r, "/500", http.StatusSeeOther)

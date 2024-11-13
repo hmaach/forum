@@ -16,7 +16,7 @@ func ServeStaticFiles(w http.ResponseWriter, r *http.Request) {
 
 	// block access to dirictories
 	if info, err := os.Stat(filePath); err != nil || info.IsDir() {
-		utils.RenderError(w, http.StatusNotFound)
+		utils.RenderError(w, r, http.StatusNotFound)
 		return
 	}
 
