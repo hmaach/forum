@@ -2,6 +2,13 @@
 
 A comprehensive web forum application built using Go that enables user communication through posts, comments, and reactions.
 
+## Authors
+
+- Abdelhamid Bouziani
+- Hamza Maach
+- Omar Ait Benhammou
+- ...
+
 ## Features
 
 - User Authentication
@@ -19,6 +26,29 @@ A comprehensive web forum application built using Go that enables user communica
 - Content Discovery
   - Filter posts by categories
   - Filter posts by created date
+
+## Project Structure
+
+```
+forum/
+├── cmd/
+│   ├── main.go           # Application entry point
+│   └── routes.go         # Application endpoints
+├── server/
+│   ├── common/           # Common utilities
+│   ├── config/           # Configuration files
+│   ├── database/         # Database configuration
+│   ├── handlers/         # HTTP handlers
+│   ├── models/           # Data models
+│   └── utils/            # Functions can be used anywhere
+├── web/ 
+│   ├── assets/           # CSS, JS, and images
+│   └── templates/        # HTML templates
+├── Dockerfile     # Docker configuration
+├── go.mod         # Go module file
+├── go.sum         # Go module checksum
+└── README.md      # This file
+```
 
 ## Database Schema
 
@@ -59,27 +89,48 @@ Key tables include:
 
 ### Local Development
 
-1. Clone the repository:
-```bash
-git clone https://github.com/hamzamaach/forum.git
-cd forum
-```
+Follow these steps to set up the project on your local machine:
 
-2. Install dependencies:
-```bash
-go mod download
-```
+1. **Clone the Repository**  
+   Clone the repository and navigate to the project directory:
+   ```bash
+   git clone https://github.com/hamzamaach/forum.git
+   cd forum
+   ```
 
-<!-- 3. Set up the database:
-```bash
-make migrate
-``` -->
+2. **Install Dependencies**  
+   Download and install the necessary Go modules:
+   ```bash
+   go mod download
+   ```
 
-3. Run the application:
-```bash
-cd cmd/
-go run main.go
-```
+3. **Database Setup**  
+   Use the following commands to manage the database schema:
+
+   - **Create the Database Schema**  
+     This command initializes the database schema:
+     ```bash
+     go run . --migrate
+     ```
+
+   - **Create the Database Schema with Demo Data**  
+     This command initializes the schema and populates it with sample data:
+     ```bash
+     go run . --seed
+     ```
+
+   - **Drop the Database Schema**  
+     This command drops all tables from the database:
+     ```bash
+     go run . --drop
+     ```
+
+4. **Run the Application**  
+   Start the application from the `cmd` directory:
+   ```bash
+   cd cmd
+   go run .
+   ```
 
 The application will be available at `http://localhost:8080`
 
@@ -96,26 +147,3 @@ docker run -d -p 8080:8080 --name forum forum:latest
 ```
 
 3. Access the forum at `http://localhost:8080` -->
-
-## Project Structure
-
-```
-forum/
-├── cmd/
-│   ├── main.go           # Application entry point
-│   └── routes.go         # Application endpoints
-├── server/
-│   ├── common/           # Common utilities
-│   ├── config/           # Configuration files
-│   ├── database/         # Database configuration
-│   ├── handlers/         # HTTP handlers
-│   ├── models/           # Data models
-│   └── utils/            # Business logic
-├── web/ 
-│   ├── assets/           # CSS, JS, and images
-│   └── templates/        # HTML templates
-├── Dockerfile     # Docker configuration
-├── go.mod         # Go module file
-├── go.sum         # Go module checksum
-└── README.md      # This file
-```

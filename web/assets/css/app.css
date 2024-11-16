@@ -259,6 +259,30 @@ nav i {
     line-height: 1.7;
 }
 
+.post-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.post-content {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.post-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.post-category {
+    font-size: 0.8rem;
+    padding: 5px 15px;
+    border: var(--color-border) solid 1px;
+    border-radius: 30px;
+}
+
 .post-footer {
     display: flex;
     flex-direction: row;

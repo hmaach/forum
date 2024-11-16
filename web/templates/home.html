@@ -7,10 +7,16 @@
             <div class="post-header">
                 <p class="post-user">{{.UserName}}</p>
                 <span></span>
-                <p class="post-time">{{.Time}} </p>
+                <p class="post-time">{{.CreatedAt}} </p>
             </div>
             <div class="post-body">
+                <p class="post-title">{{.Title}} </p>
                 <p class="post-content">{{.Content}} </p>
+                <div class="post-categories">
+                    {{range .Categories}}
+                    <span class="post-category">#{{.}}</span>
+                    {{end}}
+                </div>
             </div>
             <div class="post-footer">
                 <span class="post-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
