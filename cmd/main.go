@@ -30,9 +30,14 @@ func main() {
 		return
 	}
 
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: routes(db),
+	}
+
 	// Start the HTTP server
 	log.Println("Server starting on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", routes(db)); err != nil {
+	if err := server.ListenAndServe(); err != nil {
 		log.Fatal("Server error:", err)
 	}
 }
