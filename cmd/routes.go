@@ -14,7 +14,9 @@ func routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/assets/", handlers.ServeStaticFiles)
 
 	// routes to get pages
-	mux.HandleFunc("/", handlers.GetHome)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetHome(w, r, db)
+	})
 	mux.HandleFunc("/login", handlers.GetLogin)
 	mux.HandleFunc("/about", handlers.GetAbout)
 	mux.HandleFunc("/topics", handlers.GetTopics)
