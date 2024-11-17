@@ -94,7 +94,7 @@ Follow these steps to set up the project on your local machine:
 1. **Clone the Repository**  
    Clone the repository and navigate to the project directory:
    ```bash
-   git clone https://github.com/hamzamaach/forum.git
+   git clone https://github.com/hmaach/forum.git
    cd forum
    ```
 
