@@ -433,6 +433,9 @@ nav i {
 .error-card {
     text-align: center;
     color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
 .error-card h1 {
@@ -441,4 +444,9 @@ nav i {
 
 .error-card p {
     font-size: 2rem;
+}
+
+.error-card a {
+    font-size: 1.2rem;
+    color: var(--color-primary);
 }
