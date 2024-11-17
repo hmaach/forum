@@ -1,6 +1,7 @@
 package models
 
 type Category struct {
-	ID       int
-	Category string
+	ID         int
+	Label      string
+	PostsCount int
 }

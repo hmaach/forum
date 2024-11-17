@@ -60,7 +60,7 @@ Key tables include:
 - Users: Stores user authentication and profile data
 - Posts: Contains main forum posts
 - Comments: Manages post responses
-- Categories: Organizes posts by topics
+- Categories: Organizes posts by categories
 - Categories_Posts: Associates posts with categories
 - Posts_Reactions: Tracks likes/dislikes for posts
 - Comments_Reactions: Tracks likes/dislikes for comments
@@ -94,7 +94,7 @@ Follow these steps to set up the project on your local machine:
 1. **Clone the Repository**  
    Clone the repository and navigate to the project directory:
    ```bash
-   git clone https://github.com/hamzamaach/forum.git
+   git clone https://github.com/hmaach/forum.git
    cd forum
    ```
 

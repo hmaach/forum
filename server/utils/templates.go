@@ -44,16 +44,16 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, statusC
 	}
 
 	// Limit categories to the first 6
-	Categories := common.Categories
-	limitedCategories := Categories
-	if len(Categories) > 6 {
-		limitedCategories = Categories[:6]
-	}
+	// Categories := common.Categories
+	// limitedCategories := Categories
+	// if len(Categories) > 6 {
+	// 	limitedCategories = Categories[:6]
+	// }
 
 	globalData := models.GlobalData{
 		IsAuthenticated: common.IsAuthenticated,
 		Data:            data,
-		Categories:      limitedCategories,
+		Categories:      common.Categories,
 	}
 	w.WriteHeader(statusCode)
 	// Execute the template with the provided data

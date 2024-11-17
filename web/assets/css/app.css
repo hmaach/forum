@@ -170,7 +170,7 @@ nav i {
 }
 
 .nav-list>li>a,
-.topics-title {
+.categories-title {
     text-decoration: none;
     color: var(--color-text);
     font-weight: 400;
@@ -180,32 +180,36 @@ nav i {
     transition: var(--transition);
 }
 
+.categories-title{
+    padding: 10px;
+}
+
 /* .nav-list>li>a:hover,
-.topics-title:hover {
+.categories-title:hover {
     color: var(--color-primary-hover);
 } */
 
-.topics-list {
+.categories-list {
     display: flex;
     flex-direction: column;
     margin-left: 3rem;
 }
 
-.topics-list li {
+.categories-list li {
     /* border: red solid 1px; */
     font-weight: 400;
     font-size: 1rem;
     list-style: none;
 }
 
-.topics-list li a {
+.categories-list li a {
     text-decoration: underline;
     color: var(--color-text);
     transition: var(--transition);
     text-transform: capitalize;
 }
 
-/* .topics-list li a:hover {
+/* .categories-list li a:hover {
     color: var(--color-primary-hover);
 } */
 
@@ -433,6 +437,9 @@ nav i {
 .error-card {
     text-align: center;
     color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
 .error-card h1 {
@@ -441,4 +448,9 @@ nav i {
 
 .error-card p {
     font-size: 2rem;
+}
+
+.error-card a {
+    font-size: 1.2rem;
+    color: var(--color-primary);
 }
