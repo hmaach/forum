@@ -60,7 +60,7 @@ Key tables include:
 - Users: Stores user authentication and profile data
 - Posts: Contains main forum posts
 - Comments: Manages post responses
-- Categories: Organizes posts by topics
+- Categories: Organizes posts by categories
 - Categories_Posts: Associates posts with categories
 - Posts_Reactions: Tracks likes/dislikes for posts
 - Comments_Reactions: Tracks likes/dislikes for comments

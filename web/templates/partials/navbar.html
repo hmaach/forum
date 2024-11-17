@@ -2,18 +2,18 @@
     <ul class="nav-list">
         <li><a href="/"><i class="fa-solid fa-house"></i>Home</a></li>
         <li>
-            <a href="/topics">
-                <span class="topics-title"><i class="fa-solid fa-list"></i>Topics</span>
+            <a href="/categories">
+                <span class="categories-title"><i class="fa-solid fa-list"></i>categories</span>
             </a>
-            <ul class="topics-list">
+            <ul class="categories-list">
                 {{range .Categories}}
-                <li><a href="/topics?topic_id={{.ID}}">#{{.Category}}</a></li>
+                <li><a href="/categories?category_id={{.ID}}">#{{.Category}}</a></li>
                 {{end}}
-                <!-- <li><a href="/topics?topic=politics">#politics</a></li>
-                <li><a href="/topics?topic=sports">#sports</a></li>
-                <li><a href="/topics?topic=fashion">#sashion</a></li>
-                <li><a href="/topics?topic=technologies">#technologies</a></li> -->
-                <li><a href="/topics">More...</a></li>
+                <!-- <li><a href="/categories?category=politics">#politics</a></li>
+                <li><a href="/categories?category=sports">#sports</a></li>
+                <li><a href="/categories?category=fashion">#sashion</a></li>
+                <li><a href="/categories?category=technologies">#technologies</a></li> -->
+                <li><a href="/categories">More...</a></li>
 
             </ul>
         </li>
