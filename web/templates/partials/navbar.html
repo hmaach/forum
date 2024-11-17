@@ -7,14 +7,9 @@
             </a>
             <ul class="categories-list">
                 {{range .Categories}}
-                <li><a href="/categories?category_id={{.ID}}">#{{.Category}}</a></li>
+                <li><a href="/categories?category_id={{.ID}}">#{{.Label}}</a></li>
                 {{end}}
-                <!-- <li><a href="/categories?category=politics">#politics</a></li>
-                <li><a href="/categories?category=sports">#sports</a></li>
-                <li><a href="/categories?category=fashion">#sashion</a></li>
-                <li><a href="/categories?category=technologies">#technologies</a></li> -->
                 <li><a href="/categories">More...</a></li>
-
             </ul>
         </li>
         <li><a href="/about"><i class="fa-solid fa-circle-info"></i>About</a></li>

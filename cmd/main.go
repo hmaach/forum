@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"forum/server/common"
 	"forum/server/database"
+	"forum/server/database/queries"
 	"forum/server/utils"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -28,6 +30,12 @@ func main() {
 			os.Exit(1)
 		}
 		return
+	}
+
+	// Fetch categories from the database to display in the navbar
+	common.Categories, err = queries.GetCategories(db)
+	if err != nil {
+		log.Println("Error fetching categories from the database:", err)
 	}
 
 	server := http.Server{
