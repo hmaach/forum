@@ -18,9 +18,6 @@ func routes(db *sql.DB) http.Handler {
 		handlers.GetHome(w, r, db)
 	})
 	mux.HandleFunc("/login", handlers.GetLogin)
-	mux.HandleFunc("/categories", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetCategories(w, r, db)
-	})
 	mux.HandleFunc("/register", handlers.GetRegister)
 	mux.HandleFunc("/500", handlers.InternalServerError)
 	mux.HandleFunc("/about", handlers.GetAbout)

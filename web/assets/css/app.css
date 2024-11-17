@@ -180,6 +180,10 @@ nav i {
     transition: var(--transition);
 }
 
+.categories-title{
+    padding: 10px;
+}
+
 /* .nav-list>li>a:hover,
 .categories-title:hover {
     color: var(--color-primary-hover);

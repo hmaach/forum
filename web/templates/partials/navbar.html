@@ -2,14 +2,11 @@
     <ul class="nav-list">
         <li><a href="/"><i class="fa-solid fa-house"></i>Home</a></li>
         <li>
-            <a href="/categories">
-                <span class="categories-title"><i class="fa-solid fa-list"></i>categories</span>
-            </a>
+            <span class="categories-title"><i class="fa-solid fa-list"></i>Categories</span>
             <ul class="categories-list">
                 {{range .Categories}}
-                <li><a href="/categories?category_id={{.ID}}">#{{.Label}}</a></li>
+                <li><a href="/?category_id={{.ID}}">#{{.Label}} ({{.PostsCount}})</a></li>
                 {{end}}
-                <li><a href="/categories">More...</a></li>
             </ul>
         </li>
         <li><a href="/about"><i class="fa-solid fa-circle-info"></i>About</a></li>
