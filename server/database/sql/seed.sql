@@ -1,45 +1,46 @@
 -- Fake Data for Users (25 users)
-INSERT INTO users (username, email, password) VALUES
-('john_doe', 'john@example.com', 'password123'),
-('jane_smith', 'jane@example.com', 'password456'),
-('admin_user', 'admin@example.com', 'adminpass'),
-('alice_wonder', 'alice@example.com', 'alicepass'),
-('bob_builder', 'bob@example.com', 'bobpass'),
-('sarah_connor', 'sarah@example.com', 'sarahpass'),
-('mike_jones', 'mike@example.com', 'mikepass'),
-('emma_watson', 'emma@example.com', 'emmapass'),
-('david_miller', 'david@example.com', 'davidpass'),
-('lisa_brown', 'lisa@example.com', 'lisapass'),
-('tech_guru', 'guru@example.com', 'gurupass'),
-('travel_lover', 'travel@example.com', 'travelpass'),
-('health_expert', 'health@example.com', 'healthpass'),
-('art_critic', 'art@example.com', 'artpass'),
-('science_nerd', 'science@example.com', 'sciencepass'),
-('fitness_freak', 'fitness@example.com', 'fitnesspass'),
-('food_lover', 'food@example.com', 'foodpass'),
-('book_worm', 'books@example.com', 'bookpass'),
-('music_fan', 'music@example.com', 'musicpass'),
-('movie_buff', 'movies@example.com', 'moviepass'),
-('nature_explorer', 'nature@example.com', 'naturepass'),
-('tech_reviewer', 'reviewer@example.com', 'reviewpass'),
-('daily_blogger', 'blogger@example.com', 'blogpass'),
-('photo_pro', 'photo@example.com', 'photopass'),
-('gaming_master', 'gaming@example.com', 'gamepass');
+INSERT INTO users (username, email, password, created_at) VALUES
+('john_doe', 'john@example.com', 'password123', '2023-12-01 10:00:00'),
+('jane_smith', 'jane@example.com', 'password456', '2023-12-01 10:05:00'),
+('admin_user', 'admin@example.com', 'adminpass', '2023-12-01 10:10:00'),
+('alice_wonder', 'alice@example.com', 'alicepass', '2023-12-01 10:15:00'),
+('bob_builder', 'bob@example.com', 'bobpass', '2023-12-01 10:20:00'),
+('sarah_connor', 'sarah@example.com', 'sarahpass', '2023-12-01 10:25:00'),
+('mike_jones', 'mike@example.com', 'mikepass', '2023-12-01 10:30:00'),
+('emma_watson', 'emma@example.com', 'emmapass', '2023-12-01 10:35:00'),
+('david_miller', 'david@example.com', 'davidpass', '2023-12-01 10:40:00'),
+('lisa_brown', 'lisa@example.com', 'lisapass', '2023-12-01 10:45:00'),
+('tech_guru', 'guru@example.com', 'gurupass', '2023-12-01 10:50:00'),
+('travel_lover', 'travel@example.com', 'travelpass', '2023-12-01 10:55:00'),
+('health_expert', 'health@example.com', 'healthpass', '2023-12-01 11:00:00'),
+('art_critic', 'art@example.com', 'artpass', '2023-12-01 11:05:00'),
+('science_nerd', 'science@example.com', 'sciencepass', '2023-12-01 11:10:00'),
+('fitness_freak', 'fitness@example.com', 'fitnesspass', '2023-12-01 11:15:00'),
+('food_lover', 'food@example.com', 'foodpass', '2023-12-01 11:20:00'),
+('book_worm', 'books@example.com', 'bookpass', '2023-12-01 11:25:00'),
+('music_fan', 'music@example.com', 'musicpass', '2023-12-01 11:30:00'),
+('movie_buff', 'movies@example.com', 'moviepass', '2023-12-01 11:35:00'),
+('nature_explorer', 'nature@example.com', 'naturepass', '2023-12-01 11:40:00'),
+('tech_reviewer', 'reviewer@example.com', 'reviewpass', '2023-12-01 11:45:00'),
+('daily_blogger', 'blogger@example.com', 'blogpass', '2023-12-01 11:50:00'),
+('photo_pro', 'photo@example.com', 'photopass', '2023-12-01 11:55:00'),
+('gaming_master', 'gaming@example.com', 'gamepass', '2023-12-01 12:00:00');
+
 
 -- Expanded Categories (12 categories)
-INSERT INTO categories (label) VALUES
-('Technology'),
-('Science'),
-('Art'),
-('Travel'),
-('Health'),
-('Education'),
-('Food'),
-('Sports'),
-('Entertainment'),
-('Business'),
-('Lifestyle'),
-('Gaming');
+INSERT INTO categories (label, created_at) VALUES
+('Technology', '2024-01-01 10:00:00'),
+('Science', '2024-01-01 10:05:00'),
+('Art', '2024-01-01 10:10:00'),
+('Travel', '2024-01-01 10:15:00'),
+('Health', '2024-01-01 10:20:00'),
+('Education', '2024-01-01 10:25:00'),
+('Food', '2024-01-01 10:30:00'),
+('Sports', '2024-01-01 10:35:00'),
+('Entertainment', '2024-01-01 10:40:00'),
+('Business', '2024-01-01 10:45:00'),
+('Lifestyle', '2024-01-01 10:50:00'),
+('Gaming', '2024-01-01 10:55:00');
 
 -- Fake Data for Posts (20 posts)
 INSERT INTO posts (user_id, content, created_at, title) VALUES
@@ -89,16 +90,16 @@ INSERT INTO post_category (post_id, category_id) VALUES
 (20, 1), (20, 11);
 
 -- Comments
-INSERT INTO comments (user_id, post_id, content) VALUES
-(2, 1, 'Fascinating insights into AI development. The potential applications in healthcare are particularly promising.'),
-(5, 1, 'Great article! Would love to see more specific examples of AI implementation in different industries.'),
-(8, 1, 'The ethical implications of AI advancement need more discussion. How do we ensure responsible development?'),
-(3, 2, 'These new smartphones are incredible. The camera capabilities are mind-blowing.'),
-(6, 2, 'Interesting comparison of different models. Very helpful for making a purchase decision.'),
-(9, 3, 'Cloud computing has revolutionized how we do business. Great analysis!'),
-(4, 4, 'Quantum computing is the future. Can''t wait to see what developments come next.'),
-(7, 5, 'Climate change is such a critical issue. We need more awareness like this.'),
-(10, 6, 'Space exploration continues to amaze me. Excellent coverage of recent missions.');
+INSERT INTO comments (user_id, post_id, content, created_at) VALUES
+(2, 1, 'Fascinating insights into AI development.', '2024-01-15 10:30:00'),
+(5, 1, 'Great article! Would love to see more.', '2024-01-15 11:00:00'),
+(8, 1, 'The ethical implications of AI advancement.', '2024-01-15 11:30:00'),
+(3, 2, 'These new smartphones are incredible.', '2024-02-01 15:15:00'),
+(6, 2, 'Interesting comparison of different models.', '2024-02-01 16:00:00'),
+(9, 3, 'Cloud computing has revolutionized business.', '2024-02-15 10:15:00'),
+(4, 4, 'Quantum computing is the future.', '2024-02-20 11:45:00'),
+(7, 5, 'Climate change is such a critical issue.', '2024-03-01 14:00:00'),
+(10, 6, 'Space exploration continues to amaze me.', '2024-03-10 16:45:00');
 
 -- Posts Reactions
 INSERT INTO posts_reactions (user_id, post_id, type, created_at) VALUES
@@ -125,5 +126,5 @@ INSERT INTO comments_reactions (user_id, comment_id, type) VALUES
 (8, 4, 'like');
 
 -- Active Sessions
-INSERT INTO sessions (user_id)
-SELECT id FROM users WHERE id <= 15;
+INSERT INTO sessions (user_id, created_at)
+SELECT id, '2024-01-01 09:00:00' FROM users WHERE id <= 15;

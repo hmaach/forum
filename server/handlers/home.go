@@ -9,7 +9,7 @@ import (
 	"forum/server/utils"
 )
 
-func GetHome(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func HandleHome(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.URL.Path != "/" {
 		utils.RenderError(w, r, http.StatusNotFound)
 		return
@@ -20,16 +20,16 @@ func GetHome(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	posts, err := queries.GetPosts(db)
+	posts, statusCode, err := queries.FetchPosts(db)
 	if err != nil {
 		log.Println("Error fetching posts from the database:", err)
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		utils.RenderError(w, r, statusCode)
 		return
 	}
 
-	err = utils.RenderTemplate(w, r, "home", http.StatusOK, posts)
+	err = utils.RenderTemplate(w, r, "home", statusCode, posts)
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		utils.RenderError(w, r, http.StatusInternalServerError)
 	}
 }

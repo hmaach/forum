@@ -15,7 +15,10 @@ func routes(db *sql.DB) http.Handler {
 
 	// routes to get pages
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetHome(w, r, db)
+		handlers.HandleHome(w, r, db)
+	})
+	mux.HandleFunc("/post/{id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.HandlePost(w, r, db)
 	})
 	mux.HandleFunc("/login", handlers.GetLogin)
 	mux.HandleFunc("/register", handlers.GetRegister)
