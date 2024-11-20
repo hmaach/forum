@@ -13,3 +13,8 @@ type Post struct {
 	CategoriesStr string
 	Categories    []string
 }
+
+type PostDetail struct {
+	Post     Post
+	Comments []Comment
+}
