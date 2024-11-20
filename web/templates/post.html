@@ -1,0 +1,49 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="post">
+        <div class="post-header">
+            <p class="post-user">{{.Data.Post.UserName}}</p>
+            <span></span>
+            <p class="post-time">{{.Data.Post.CreatedAt}} </p>
+        </div>
+        <div class="post-body">
+            <p class="post-title">{{.Data.Post.Title}} </p>
+            <p class="post-content">{{.Data.Post.Content}} </p>
+            <div class="post-categories">
+                {{range .Data.Post.Categories}}
+                <span class="post-category">#{{.}}</span>
+                {{end}}
+            </div>
+        </div>
+        <div class="post-footer">
+            <span class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Data.Post.Likes}}</span>
+            <span class="post-dislike post-footer-hover"><i
+                    class="fa-regular fa-thumbs-down"></i>{{.Data.Post.Dislikes}}</span>
+            <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Data.Post.Comments}}</span>
+        </div>
+    </div>
+    <div class="comments">
+        <form action="#" method="post" class="comment-add">
+            <textarea type="text" name="comment" placeholder="Add a comment..."></textarea>
+            <button>Comment</button>
+        </form>
+        {{range .Data.Comments}}
+        <div class="comment">
+            <div class="comment-header">
+                <p class="comment-user">{{.UserName}}</p>
+                <span></span>
+                <p class="comment-time">{{.CreatedAt}} </p>
+            </div>
+            <div class="comment-body">
+                <p class="comment-content">{{.Content}} </p>
+            </div>
+            <div class="comment-footer">
+                <span class="comment-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
+                <span class="comment-dislike"><i class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{template "footer.html"}}
