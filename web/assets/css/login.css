@@ -1,0 +1,107 @@
+/* style of login and register pages */
+.login-page,
+.register-page {
+    background-image: url(https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card,
+.register-card {
+    /* border: solid 1px var(--color-primary); */
+    background-color: var(--color-bg);
+    width: 400px;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.login-form,
+.register-form {
+    /* border: blue solid 1px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.login-card h1,
+.register-card h1 {
+    /* border: blue solid 1px; */
+    text-align: center;
+    color: var(--color-primary);
+}
+
+.login-input,
+.register-input {
+    width: 90%;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-variant);
+    border-radius: 10px;
+    padding: 15px 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.login-input:hover,
+.register-input:hover {
+    background-color: var(--color-bg-variant-hover);
+}
+
+.login-input:focus,
+.register-input:focus {
+    /* border: none; */
+    outline: none;
+}
+
+.login-submit,
+.register-submit {
+    width: fit-content;
+    border: none;
+    margin: 0 auto;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    padding: 8px 20px;
+    border-radius: 20px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.login-submit:hover,
+.register-submit:hover {
+    background-color: var(--color-primary-hover);
+}
+
+
+.login-submit i,
+.register-submit i {
+    margin-left: 10px;
+}
+
+.form-line {
+    border-top: 1px solid var(--color-border);
+    width: 80%;
+    margin: 0 auto;
+}
+
+.form-second-option {
+    display: inline-block;
+    margin: 0 auto;
+}
