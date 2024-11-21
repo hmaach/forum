@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// Fetch categories from the database to display in the navbar
-	common.Categories, err = queries.GetCategories(db)
+	common.Categories, err = queries.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}
