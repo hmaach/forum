@@ -6,7 +6,7 @@ import (
 	"forum/server/models"
 )
 
-func GetCategories(db *sql.DB) ([]models.Category, error) {
+func FetchCategories(db *sql.DB) ([]models.Category, error) {
 	var categories []models.Category
 	query := `
 		SELECT
