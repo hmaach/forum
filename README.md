@@ -32,18 +32,18 @@ A comprehensive web forum application built using Go that enables user communica
 ```
 forum/
 ├── cmd/
-│   ├── main.go           # Application entry point
-│   └── routes.go         # Application endpoints
+│   └── main.go           # Entry point of the application
 ├── server/
 │   ├── common/           # Common utilities
 │   ├── config/           # Configuration files
-│   ├── database/         # Database configuration
-│   ├── handlers/         # HTTP handlers
-│   ├── models/           # Data models
+│   ├── database/         # Database files
+│   ├── controllers/      # Handles logic and communication between server and client
+│   ├── models/           # Contains business logic and data structures
+│   ├── routes/           # Handles routing logic
 │   └── utils/            # Functions can be used anywhere
 ├── web/ 
 │   ├── assets/           # CSS, JS, and images
-│   └── templates/        # HTML templates
+│   └── templates/        # HTML templates for the user interface
 ├── Dockerfile     # Docker configuration
 ├── go.mod         # Go module file
 ├── go.sum         # Go module checksum
@@ -71,10 +71,13 @@ Key tables include:
 - Backend
   - Go 1.22+
   - SQLite3 database
+  - bcrypt
+  - UUID
 
 - Frontend
   - HTML5 & CSS3
   - JavaScript
+  - Font Awesome
 
 - Development & Deployment
   - Docker
