@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"forum/server/database/queries"
+	"forum/server/models"
 	"forum/server/utils"
 )
 
@@ -20,7 +20,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(w, r, http.StatusBadRequest)
 		return
 	}
-	post, statusCode, err := queries.FetchPost(db, postID)
+	post, statusCode, err := models.FetchPost(db, postID)
 	if err != nil {
 		log.Println("Error fetching posts from the database:", err)
 		utils.RenderError(w, r, statusCode)

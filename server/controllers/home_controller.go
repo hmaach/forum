@@ -1,4 +1,4 @@
-package handlers
+package controllers
 
 import (
 	"database/sql"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"forum/server/database/queries"
 	"forum/server/models"
 	"forum/server/utils"
 )
@@ -14,7 +13,7 @@ import (
 func fetchPosts(r *http.Request, db *sql.DB) ([]models.Post, int, error) {
 	categoryID := r.FormValue("category_id")
 	if categoryID == "" {
-		return queries.FetchPosts(db)
+		return models.FetchPosts(db)
 	}
 
 	id, err := strconv.Atoi(categoryID)
@@ -22,7 +21,7 @@ func fetchPosts(r *http.Request, db *sql.DB) ([]models.Post, int, error) {
 		return nil, http.StatusBadRequest, err
 	}
 
-	return queries.FetchPostsByCategory(db, id)
+	return models.FetchPostsByCategory(db, id)
 }
 
 func HandleHome(w http.ResponseWriter, r *http.Request, db *sql.DB) {
