@@ -2,8 +2,9 @@ package routes
 
 import (
 	"database/sql"
-	"forum/server/controllers"
 	"net/http"
+
+	"forum/server/controllers"
 )
 
 func Routes(db *sql.DB) http.Handler {
@@ -14,10 +15,10 @@ func Routes(db *sql.DB) http.Handler {
 
 	// routes to get pages
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		controllers.HandleHome(w, r, db)
+		controllers.IndexPosts(w, r, db)
 	})
 	mux.HandleFunc("/post/{id}", func(w http.ResponseWriter, r *http.Request) {
-		controllers.HandlePost(w, r, db)
+		controllers.ShowPost(w, r, db)
 	})
 	mux.HandleFunc("/login", controllers.GetLogin)
 	mux.HandleFunc("/register", controllers.GetRegister)
