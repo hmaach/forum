@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"slices"
 
-	"forum/server/database"
+	"forum/server/config"
 )
 
 var ValidFlags = []string{"--migrate", "--seed", "--drop"}
 
 func HandleFlags(flags []string, db *sql.DB) error {
-
 	if len(flags) != 1 {
 		return fmt.Errorf("expected a single flag, got %d", len(flags))
 	}
@@ -23,11 +22,11 @@ func HandleFlags(flags []string, db *sql.DB) error {
 
 	switch flag {
 	case "--migrate":
-		return database.CreateTables(db)
+		return config.CreateTables(db)
 	case "--seed":
-		return database.CreateDemoData(db)
+		return config.CreateDemoData(db)
 	case "--drop":
-		return database.Drop()
+		return config.Drop()
 	}
 	return nil
 }

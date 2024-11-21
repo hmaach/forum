@@ -7,8 +7,9 @@ import (
 	"os"
 
 	"forum/server/common"
-	"forum/server/database"
-	"forum/server/database/queries"
+	"forum/server/config"
+	"forum/server/models"
+	"forum/server/routes"
 	"forum/server/utils"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -16,7 +17,7 @@ import (
 
 func main() {
 	// Connect to the database
-	db, err := database.Connect()
+	db, err := config.Connect()
 	if err != nil {
 		log.Fatal("Database connection error:", err)
 	}
@@ -33,14 +34,14 @@ func main() {
 	}
 
 	// Fetch categories from the database to display in the navbar
-	common.Categories, err = queries.FetchCategories(db)
+	common.Categories, err = models.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}
 
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: routes(db),
+		Handler: routes.Routes(db),
 	}
 
 	// Start the HTTP server
