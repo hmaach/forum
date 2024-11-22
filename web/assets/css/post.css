@@ -2,16 +2,18 @@
 .posts {
     display: flex;
     flex-direction: column;
-    width: 78%;
+    width: 60%;
     align-items: center;
-    margin-bottom: 15px;
+    /* margin-left: 15px; */
+    /* border: red solid 1px; */
+    margin-left: 50px;
 }
 
 .post {
     display: flex;
     flex-direction: column;
     /* border: #2761f0 solid 1px; */
-    width: 70%;
+    /* width: 70%; */
     padding: 20px 20px 0 20px;
     /*border-bottom: 1px solid var(--color-border); */
     /* padding: 10px; */
@@ -108,10 +110,90 @@
     background-color: var(--color-bg-variant-hover);
 }
 
-.no-posts{
+.no-posts {
     color: var(--color-text-light);
     margin-top: 3rem;
     font-size: 0.9rem;
+}
+
+
+/* create post form */
+
+.create-post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 11px 0 0 50px;
+    padding: 20px 0;
+    width: 60%;
+    gap: 20px;
+    border: var(--color-border) solid 1px;
+    border-radius: 10px;
+}
+
+.create-post h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+.create-post input {
+    padding: 10px;
+    border: var(--color-border) solid 1px;
+    border-radius: 10px;
+    width: 70%;
+
+}
+
+.create-post textarea {
+    padding: 10px;
+    border: var(--color-border) solid 1px;
+    border-radius: 10px;
+    resize: vertical;
+    width: 70%;
+    height: 150px;
+}
+
+.create-post textarea:focus,
+.create-post input:focus {
+     outline: var(--color-primary) solid 1px;
+}
+
+.create-post-categories {
+    width: 70%;
+
+}
+
+.create-post-categories select {
+    padding: 10px;
+    border: var(--color-border) solid 1px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.create-post-categories select:focus {
+    outline: var(--color-primary) solid 1px;
+
+}
+
+.create-post-categories {}
+
+.create-post button {
+    width: fit-content;
+    height: fit-content;
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    padding: 8px 20px;
+    border-radius: 20px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.create-post button:hover {
+    background-color: var(--color-primary-hover);
 }
 
 /* style of post's comments  */
