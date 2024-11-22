@@ -77,6 +77,18 @@ func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
+func GetPostCreationForm(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := utils.RenderTemplate(w, r, "post-form", http.StatusOK, nil); err != nil {
+		log.Println("Error rendering template:", err)
+		utils.RenderError(w, r, http.StatusInternalServerError)
+	}
+}
+
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.RenderError(w, r, http.StatusMethodNotAllowed)

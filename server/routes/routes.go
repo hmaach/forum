@@ -23,6 +23,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/{id}", func(w http.ResponseWriter, r *http.Request) {
 		controllers.ShowPost(w, r, db)
 	})
+	mux.HandleFunc("/post/create", controllers.GetPostCreationForm)
 	mux.HandleFunc("/login", controllers.GetLogin)
 	mux.HandleFunc("/register", controllers.GetRegister)
 	mux.HandleFunc("/500", controllers.InternalServerError)
