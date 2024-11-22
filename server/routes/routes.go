@@ -17,6 +17,9 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		controllers.IndexPosts(w, r, db)
 	})
+	mux.HandleFunc("/category/{id}", func(w http.ResponseWriter, r *http.Request) {
+		controllers.IndexPostsByCategory(w, r, db)
+	})
 	mux.HandleFunc("/post/{id}", func(w http.ResponseWriter, r *http.Request) {
 		controllers.ShowPost(w, r, db)
 	})

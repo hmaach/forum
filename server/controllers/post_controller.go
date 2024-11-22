@@ -15,24 +15,32 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(w, r, http.StatusNotFound)
 		return
 	}
-	var (
-		posts      []models.Post
-		statusCode int
-		err        error
-	)
 
-	categoryID := r.FormValue("category_id")
-
-	if categoryID == "" {
-		posts, statusCode, err = models.FetchPosts(db)
-	} else {
-		id, errConv := strconv.Atoi(categoryID)
-		if errConv != nil {
-			utils.RenderError(w, r, http.StatusBadRequest)
-		}
-		posts, statusCode, err = models.FetchPostsByCategory(db, id)
+	posts, statusCode, err := models.FetchPosts(db)
+	if err != nil {
+		log.Println("Error fetching posts:", err)
+		utils.RenderError(w, r, statusCode)
+		return
 	}
 
+	if err := utils.RenderTemplate(w, r, "home", statusCode, posts); err != nil {
+		log.Println("Error rendering template:", err)
+		utils.RenderError(w, r, http.StatusInternalServerError)
+	}
+}
+
+func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodGet {
+		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		return
+	}
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		utils.RenderError(w, r, http.StatusBadRequest)
+	}
+
+	posts, statusCode, err := models.FetchPostsByCategory(db, id)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(w, r, statusCode)
