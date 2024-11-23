@@ -1,0 +1,37 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="posts">
+        {{if .Data}}
+        {{range .Data}}
+        <div class="post">
+            <div class="post-header">
+                <p class="post-user">{{.UserName}}</p>
+                <span></span>
+                <p class="post-time">{{.CreatedAt}} </p>
+            </div>
+            <div class="post-body">
+                <p class="post-title">{{.Title}} </p>
+                <p class="post-content">{{.Content}} </p>
+                <div class="post-categories">
+                    {{range .Categories}}
+                    <span class="post-category">#{{.}}</span>
+                    {{end}}
+                </div>
+            </div>
+            <div class="post-footer">
+                <span class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
+                <span class="post-dislike post-footer-hover"><i
+                        class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+                <a href="/post/{{.ID}}" class="post-comments post-footer-hover">
+                    <i class="fa-regular fa-comment"></i>{{.Comments}}
+                </a>
+            </div>
+        </div>
+        {{end}}
+        {{else}}
+        <p class="no-posts">No posts available to display !</p>
+        {{end}}
+    </div>
+</div>
+{{template "footer.html"}}
