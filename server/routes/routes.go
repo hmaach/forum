@@ -24,6 +24,9 @@ func Routes(db *sql.DB) http.Handler {
 		controllers.ShowPost(w, r, db)
 	})
 	mux.HandleFunc("/post/create", controllers.GetPostCreationForm)
+	mux.HandleFunc("/post/store", func(w http.ResponseWriter, r *http.Request) {
+		controllers.StorePost(w, r, db)
+	})
 	mux.HandleFunc("/login", controllers.GetLogin)
 	mux.HandleFunc("/register", controllers.GetRegister)
 	mux.HandleFunc("/500", controllers.InternalServerError)
