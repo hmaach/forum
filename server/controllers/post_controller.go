@@ -89,9 +89,19 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func StorePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if r.Method != http.MethodPost {
 		utils.RenderError(w, r, http.StatusMethodNotAllowed)
 		return
 	}
+
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	categories := r.Form["categories"]
+
+	log.Println("Title:", title)
+	log.Println("Content:", content)
+	log.Println("Categories:", categories)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

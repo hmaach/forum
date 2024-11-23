@@ -2,6 +2,12 @@
 {{template "navbar.html" .}}
 <div class="container">
     <div class="posts">
+        <div class="posts-header">
+            <a href="/post/create" class="create-post-link">
+                <i class="fa-solid fa-plus"></i>
+                Create post
+            </a>
+        </div>
         {{if .Data}}
         {{range .Data}}
         <div class="post">
