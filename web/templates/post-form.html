@@ -1,14 +1,14 @@
 {{template "header.html" .}}
 {{template "navbar.html" .}}
 <div class="container">
-    <form action="#" method="post" class="create-post">
+    <form action="/post/store" method="post" class="create-post">
         <h1>Create post</h1>
-        <input name="content" placeholder="Title" />
+        <input name="title" class="create-post-title" placeholder="Title" />
         <div class="create-post-categories">
-            <select name="categories" id="categories">
-                <option selected>Add Category</option>
+            <select id="categories-select" onchange="e=>selectCategory(e)">
+                <option selected disabled>Add Category</option>
                 {{range .Categories}}
-                <option value="{{.ID}}">{{.Label}}</option>
+                <option value='{"id":"{{.ID}}","label":"{{.Label}}"}'>{{.Label}}</option>
                 {{end}}
             </select>
         </div>
