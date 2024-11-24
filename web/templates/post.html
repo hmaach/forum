@@ -1,0 +1,72 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<script>
+    function reaction(postId,reaction) {
+        document.getElementById("errorlogin").innerText = ``
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/post/postreaction", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                document.getElementById("likescount").innerHTML = `<i
+                    class="fa-regular fa-thumbs-up"></i>${response.likesCount}`;
+                document.getElementById("dislikescount").innerHTML = `<i
+                    class="fa-regular fa-thumbs-down"></i>${response.dislikesCount}`;
+            } else if (xhr.status !== 200) {
+                document.getElementById("errorlogin").innerText = `You must login first!`
+            }
+        };
+        xhr.send(`reaction=${reaction}&post_id=${postId}`);
+    }
+</script>
+<div class="container">
+    <div class="post">
+        <div class="post-header">
+            <p class="post-user">{{.Data.Post.UserName}}</p>
+            <span></span>
+            <p class="post-time">{{.Data.Post.CreatedAt}} </p>
+        </div>
+        <div class="post-body">
+            <p class="post-title">{{.Data.Post.Title}} </p>
+            <p class="post-content">{{.Data.Post.Content}} </p>
+            <div class="post-categories">
+                {{range .Data.Post.Categories}}
+                <span class="post-category">#{{.}}</span>
+                {{end}}
+            </div>
+        </div>
+        <div class="post-footer">
+           
+            <button id="likescount" onclick="reaction('{{.Data.Post.ID}}','like')" class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Data.Post.Likes}}</button>
+            <button id="dislikescount" onclick="reaction('{{.Data.Post.ID}}','dislike')" class="post-dislike post-footer-hover"><i
+                    class="fa-regular fa-thumbs-down"></i>{{.Data.Post.Dislikes}}</button>
+            <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Data.Post.Comments}}</span>
+        </div>
+        <span style="color:red" id="errorlogin"></span>
+    </div>
+    <div class="comments">
+        <form action="addcommentREQ" method="post" class="comment-add">
+            <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
+            <textarea name="comment" placeholder="Add a comment..."></textarea>
+            <button>Comment</button>
+        </form>
+        {{range .Data.Comments}}
+        <div class="comment">
+            <div class="comment-header">
+                <p class="comment-user">{{.UserName}}</p>
+                <span></span>
+                <p class="comment-time">{{.CreatedAt}} </p>
+            </div>
+            <div class="comment-body">
+                <p class="comment-content">{{.Content}} </p>
+            </div>
+            <div class="comment-footer">
+                <span class="comment-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
+                <span class="comment-dislike"><i class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{template "footer.html"}}

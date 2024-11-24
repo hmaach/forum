@@ -1,0 +1,18 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<div class="container">
+    <form action="createpost" method="post" class="create-post">
+        <h1>Create post</h1>
+        <input name="title" placeholder="Title" />
+        <div class="create-post-categories">
+            <select name="categories[]" id="categories" multiple>
+                {{range .Categories}}
+                <option value="{{.ID}}">{{.Label}}</option>
+                {{end}}
+            </select>
+        </div>
+        <textarea name="content" placeholder="What's on your mind?"></textarea>
+        <button>Post</button>
+    </form>
+</div>
+{{template "footer.html"}}
