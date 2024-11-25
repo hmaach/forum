@@ -31,11 +31,9 @@ func main() {
 		log.Fatal("Database connection error:", err)
 	}
 	defer db.Close() 
-	defer clearSession(db)
 
 
 	err = config.CreateTables(db)
-	fmt.Println(err)
 	// Handle command-line flags
 	if len(os.Args) > 1 {
 		if err := utils.HandleFlags(os.Args[1:], db); err != nil {
