@@ -41,6 +41,10 @@ func Routes(db *sql.DB) http.Handler {
 		controllers.ReactToPost(w, r, db)
 	})
 
+	mux.HandleFunc("/post/commentreaction", func(w http.ResponseWriter, r *http.Request) {
+		controllers.ReactToComment(w, r, db)
+	})
+
 	mux.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
 		controllers.Signin(w, r, db)
 	})
