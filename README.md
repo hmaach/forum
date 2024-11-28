@@ -7,6 +7,7 @@ A comprehensive web forum application built using Go that enables user communica
 - Abdelhamid Bouziani
 - Hamza Maach
 - Omar Ait Benhammou
+- Mehdi Moulabbi
 - ...
 
 ## Features
