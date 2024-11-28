@@ -12,17 +12,21 @@ import (
 )
 
 func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
-	}
+
 	var valid bool
-	if _, valid = ValidSession(r, db); valid {
+	if _, _,valid = ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
-	err := utils.RenderTemplate(w, r, "register", http.StatusOK, nil)
+
+	if r.Method != http.MethodGet {
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed,false,"")
+		return
+	}
+	
+
+	err := utils.RenderTemplate(db,w, r, "register", http.StatusOK, nil,false,"")
 	if err != nil {
 		log.Println(err)
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -30,8 +34,14 @@ func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	var valid bool
+	if _, _,valid = ValidSession(r, db); valid {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
 	if r.Method != http.MethodPost {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed,false,"")
 		return
 	}
 	if err := r.ParseForm(); err != nil {
@@ -44,7 +54,7 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
 
-	if username == "" || password == "" || email == "" || password != passwordConfirmation {
+	if len(username) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
 		http.Error(w, "Please verify your data and try again!", http.StatusBadRequest)
 		return
 	}
@@ -58,11 +68,11 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Write([]byte(`
 	   <html>
 	   <body>
-		  <p>User ` + username + ` has been created successfully. Redirecting to the login page in 5 seconds...</p>
+		  <p>User ` + username + ` has been created successfully. Redirecting to the login page in 2 seconds...</p>
 		  <script>
 			 setTimeout(function() {
 				window.location.href = "/login";
-			 }, 5000);
+			 }, 2000);
 		  </script>
 	   </body>
 	   </html>

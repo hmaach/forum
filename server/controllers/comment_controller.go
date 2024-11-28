@@ -2,26 +2,29 @@ package controllers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
-	"forum/server/common"
 	"forum/server/utils"
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodPost {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+	var user_id int
+	var valid bool
+	var username string
+
+	if user_id, username, valid = ValidSession(r, db); !valid {
+		w.WriteHeader(401)
+		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	var user_id int
-	var valid bool
-
-	if user_id,valid = ValidSession(r,db); !valid {
-		common.IsAuthenticated = false
-		http.Redirect(w, r, "/login", http.StatusFound)
+	if r.Method != http.MethodPost {
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
 		return
 	}
 
@@ -32,17 +35,37 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	content := r.FormValue("comment")
 	id := r.FormValue("postid")
 	postid, err := strconv.Atoi(id)
-	if err != nil {
-		utils.RenderError(w, r, http.StatusBadRequest)
+	if err != nil || strings.TrimSpace(content) == "" {
+		w.WriteHeader(400)
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 		return
 	}
-	_, err = AddComment(db, user_id, postid, content)
+	comm_id, err := AddComment(db, user_id, postid, content)
 	if err != nil {
 		http.Error(w, "Cannot add comment, try again!", http.StatusBadRequest)
 		return
 	}
-	http.Redirect(w, r, "/post/"+strconv.Itoa(postid), http.StatusFound)
+	// http.Redirect(w, r, "/post/"+strconv.Itoa(postid), http.StatusFound)
 
+	var commentscount int
+	err2 := db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postid).Scan(&commentscount)
+	if err2 != nil {
+		fmt.Println(err)
+		utils.RenderError(db, w, r, 500, valid, username)
+		return
+	}
+
+	// Return the new count as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"ID":            comm_id,
+		"username":      username,
+		"created_at":    time.Now().Format("15:04 02/01/2006"),
+		"content":       content,
+		"likes":         0,
+		"dislikes":      0,
+		"commentscount": commentscount,
+	})
 }
 
 func AddComment(db *sql.DB, user_id, post_id int, content string) (int64, error) {

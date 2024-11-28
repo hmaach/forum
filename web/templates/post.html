@@ -24,13 +24,17 @@
             <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Data.Post.Comments}}</span>
         </div>
         <span style="color:red" id="errorlogin{{.Data.Post.ID}}"></span>
+        <br>
+        <div class="comment-add">
+            <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
+            <textarea id="comment-content" name="comment" placeholder="Add a comment..." required></textarea>
+            <button onclick="addcomment('{{.Data.Post.ID}}')">submit</button>
+        </div>
+        <br>
+        <br>
     </div>
     <div class="comments">
-        <form action="addcommentREQ" method="post" class="comment-add">
-            <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
-            <textarea name="comment" placeholder="Add a comment..."></textarea>
-            <button>Comment</button>
-        </form>
+        
         {{range .Data.Comments}}
         <div class="comment">
             <div class="comment-header">

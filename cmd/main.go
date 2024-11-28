@@ -1,28 +1,17 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"forum/server/common"
 	"forum/server/config"
-	"forum/server/models"
 	"forum/server/routes"
 	"forum/server/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
-func clearSession(db *sql.DB) {
-	_, err := db.Exec("DELETE FROM sessions")
-	if err != nil {
-		fmt.Println("Error clearing sessions:", err)
-	} else {
-		fmt.Println("Sessions cleared successfully")
-	}
-}
 
 func main() {
 	// Connect to the database
@@ -30,8 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Database connection error:", err)
 	}
-	defer db.Close() 
-
 
 	err = config.CreateTables(db)
 	// Handle command-line flags
@@ -45,7 +32,7 @@ func main() {
 	}
 
 	// Fetch categories from the database to display in the navbar
-	common.Categories, err = models.FetchCategories(db)
+	// common.Categories, err = models.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}

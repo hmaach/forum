@@ -3,21 +3,17 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	"forum/server/common"
 	"net/http"
 )
 
 func Logout(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-
-	if user_id, valid := ValidSession(r,db); valid {
+	if user_id, _, valid := ValidSession(r, db); valid {
 		_, err := db.Exec(`DELETE FROM sessions WHERE user_id = ?;`, user_id)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Error while loging out!", http.StatusSeeOther)
 			return
 		}
-		common.IsAuthenticated = false
-		common.UserName = ""
 		w.Header().Set("Content-Type", "text/html")
 		w.Write([]byte(`
 	   <html>

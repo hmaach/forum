@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"forum/server/common"
 	"net/http"
 	"strconv"
 )
@@ -18,9 +17,8 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, valid = ValidSession(r, db); !valid {
+	if user_id, _, valid = ValidSession(r, db); !valid {
 		w.WriteHeader(401)
-		common.IsAuthenticated = false
 		return
 	}
 
@@ -43,8 +41,15 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if dbreaction == "" {
 		_, err = AddPostReaction(db, user_id, post_id, userReaction)
 	} else {
-		query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
-		_, err = db.Exec(query, userReaction, user_id, post_id)
+		if userReaction == dbreaction {
+			fmt.Println("ok")
+			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
+		_, err1 := db.Exec(query, user_id, post_id)
+		_ = err1
+		} else {
+			query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
+			_, err = db.Exec(query, userReaction, user_id, post_id)
+		}
 	}
 
 	if err != nil {
@@ -60,7 +65,6 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Return the new count as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{"likesCount": likeCount, "dislikesCount": dislikeCount})
-
 }
 
 func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -72,9 +76,8 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, valid = ValidSession(r, db); !valid {
+	if user_id, _, valid = ValidSession(r, db); !valid {
 		w.WriteHeader(401)
-		common.IsAuthenticated = false
 		return
 	}
 
@@ -115,7 +118,6 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Return the new count as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{"commentlikesCount": likeCount, "commentdislikesCount": dislikeCount})
-
 }
 
 func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
@@ -128,7 +130,6 @@ func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, 
 
 	return preactionID, nil
 }
-
 
 func AddCommentReaction(db *sql.DB, user_id, comment_id int, reaction string) (int64, error) {
 	task := `INSERT INTO comment_reactions (user_id,comment_id,reaction) VALUES (?,?,?)`

@@ -293,7 +293,10 @@
 .comment-body {
     margin: 8px 0 0 20px;
 }
-
+.comment-body p{
+    overflow: scroll;
+    margin: 8px 0 0 20px;
+}
 .comment-content {
     font-size: 0.9rem;
     font-weight: 500;
