@@ -2,7 +2,7 @@
 .posts {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: 90%;
     align-items: center;
     /* margin-left: 15px; */
     /* border: red solid 1px; */
@@ -14,7 +14,7 @@
     flex-wrap: wrap;
     flex-direction: column;
     /* border: #2761f0 solid 1px; */
-    width: 70%;
+    width: 100%;
     padding: 20px 20px 0 20px;
     /*border-bottom: 1px solid var(--color-border); */
     /* padding: 10px; */
@@ -53,18 +53,28 @@
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.7;
-    width: 70%;
+    width: 95%;
 }
 
 .post-title {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 600;
+    color: black;
 }
 
 .post-content {
     font-size: 0.9rem;
     font-weight: 500;
     word-wrap: break-word;
+}
+
+#post-content-home {
+    overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 2; /* number of lines to show */
+           line-clamp: 2;
+   -webkit-box-orient: vertical;
 }
 
 .post-categories {

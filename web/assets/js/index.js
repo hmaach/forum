@@ -1,3 +1,16 @@
+function throttle(fn, delay) {
+    let last = 0;
+    return function () {
+        const now = +new Date();
+        if (now - last > delay) {
+            fn.apply(this, arguments);
+            last = now;
+        }
+    };
+}
+
+const addcomment = throttle(addcomm,5000)
+
 function postreaction(postId, reaction) {
     document.getElementById("errorlogin"+postId).innerText = ``
     const xhr = new XMLHttpRequest();
@@ -43,7 +56,7 @@ function commentreaction(commentid, reaction) {
 }
 
 
-function addcomment(postId) {
+function addcomm(postId) {
     const content = document.getElementById("comment-content");
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/post/addcommentREQ", true);

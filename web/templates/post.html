@@ -2,13 +2,14 @@
 {{template "navbar.html" .}}
 <div class="container">
     <div class="post">
-        <div class="post-header">
-            <p class="post-user">{{.Data.Post.UserName}}</p>
-            <span></span>
-            <p class="post-time">{{.Data.Post.CreatedAt}} </p>
-        </div>
         <div class="post-body">
             <p class="post-title">{{.Data.Post.Title}} </p>
+            <div class="post-header">By: 
+                <p class="post-user">{{.Data.Post.UserName}} </p>
+                <span></span>
+                <p class="post-time">at: {{.Data.Post.CreatedAt}} </p>
+            </div>
+            <br>
             <p class="post-content">{{.Data.Post.Content}} </p>
             <div class="post-categories">
                 {{range .Data.Post.Categories}}

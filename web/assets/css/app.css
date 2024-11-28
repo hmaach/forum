@@ -39,6 +39,8 @@ body {
         "Apple Color Emoji",
         "Segoe UI Emoji",
         "Segoe UI Symbol";
+        display: flex;
+        flex-direction: column;
 }
 
 /* The entire scrollbar */
@@ -73,7 +75,7 @@ body {
 
 /* Header style */
 header {
-    position: fixed;
+    /* position: fixed; */
     width: 100%;
     height: 65px;
     display: flex;
@@ -82,7 +84,7 @@ header {
     justify-content: space-between;
     padding: 0 1rem;
     border-bottom: 1px solid var(--color-border);
-    z-index: 1;
+    /* z-index: 1; */
 }
 
 header a {
@@ -129,6 +131,13 @@ header:first-child {
 .container {
     display: flex;
     flex-direction: column;
-    padding-top: 65px;
-    margin-left: 320px;
+    padding-top: 5px;
+    margin-left: 10px;
+    width: 70%;
+}
+
+.nav-contentbody {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
 }

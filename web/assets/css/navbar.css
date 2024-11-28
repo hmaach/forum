@@ -1,12 +1,13 @@
 /* Nav style */
 nav {
-    position: fixed;
+    /* position: fixed; */
     background-color: var(--color-bg);
     text-decoration: none;
-    width: 300px;
+    width: 30%;
+    min-width: 300px;
     height: 100vh;
     padding: 20px 0 0 10px;
-    margin-top: 65px;
+    /* margin-top: 65px; */
     border-right: 1px solid var(--color-border);
 }
 

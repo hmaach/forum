@@ -1,5 +1,1 @@
-trimspace in entries
-
-check passwords befor login
-
-
+added throttle for comment
