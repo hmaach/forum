@@ -1,4 +1,5 @@
 function postreaction(postId, reaction) {
+
     document.getElementById("errorlogin"+postId).innerText = ``
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/post/postreaction", true);
@@ -17,9 +18,13 @@ function postreaction(postId, reaction) {
             }, 1000);
         }
     };
+
     xhr.send(`reaction=${reaction}&post_id=${postId}`);
+
 }
+
 function commentreaction(commentid, reaction) {
+
     document.getElementById("commenterrorlogin" + commentid).innerText = ``
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/post/commentreaction", true);
@@ -39,11 +44,14 @@ function commentreaction(commentid, reaction) {
            
         }
     };
+
     xhr.send(`reaction=${reaction}&comment_id=${commentid}`);
+
 }
 
 
 function addcomment(postId) {
+    
     const content = document.getElementById("comment-content");
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/post/addcommentREQ", true);
@@ -85,5 +93,6 @@ function addcomment(postId) {
             }, 1000);
         }
     };
+
     xhr.send(`postid=${postId}&comment=${content.value}`);
 }

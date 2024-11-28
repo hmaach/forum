@@ -12,10 +12,12 @@ import (
 
 // RenderError handles error responses
 func RenderError(db *sql.DB,w http.ResponseWriter, r *http.Request, statusCode int, isauth bool, username string) {
+	
 	typeError := models.Error{
 		Code:    statusCode,
 		Message: http.StatusText(statusCode),
 	}
+
 	if err := RenderTemplate(db,w, r, "error", statusCode, typeError, isauth, username); err != nil {
 		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
 		log.Println(err)
@@ -30,13 +32,16 @@ func ParseTemplates(tmpl string) (*template.Template, error) {
 		"../web/templates/partials/navbar.html",
 		"../web/templates/"+tmpl+".html",
 	)
+
 	if err != nil {
 		return nil, fmt.Errorf("error parsing template files: %w", err)
 	}
+
 	return t, nil
 }
 
 func RenderTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request, tmpl string, statusCode int, data any, isauth bool, username string) error {
+	
 	t, err := ParseTemplates(tmpl)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -61,9 +66,11 @@ func RenderTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request, tmpl str
 		UserName:        username,
 		Categories:      cat,
 	}
+
 	w.WriteHeader(statusCode)
 	// Execute the template with the provided data
 	err = t.ExecuteTemplate(w, tmpl+".html", globalData)
+	
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 		return fmt.Errorf("error executing template: %w", err)
