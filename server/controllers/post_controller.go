@@ -3,121 +3,125 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
+	"forum/server/models"
+	"forum/server/utils"
 	"log"
 	"net/http"
 	"strconv"
-
-	"forum/server/common"
-	"forum/server/models"
-	"forum/server/utils"
+	"strings"
 )
 
 func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.URL.Path != "/" || r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusNotFound)
-		return
-	}
-
-	var user_id int
 	var valid bool
-	if user_id,valid = ValidSession(r,db); valid {
-		common.IsAuthenticated = true
-		db.QueryRow("SELECT username FROM users WHERE id = ?",user_id).Scan(&common.UserName)
+	var username string
+	_, username, valid = ValidSession(r, db)
+
+	if r.URL.Path != "/" || r.Method != http.MethodGet {
+		utils.RenderError(db,w, r, http.StatusNotFound, valid, username)
+		return
 	}
 
 	posts, statusCode, err := models.FetchPosts(db)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
-		utils.RenderError(w, r, statusCode)
+		utils.RenderError(db,w, r, statusCode, valid, username)
 		return
 	}
 
-	if err := utils.RenderTemplate(w, r, "home", statusCode, posts); err != nil {
+	if err := utils.RenderTemplate(db,w, r, "home", statusCode, posts, valid, username); err != nil {
 		log.Println("Error rendering template:", err)
-		utils.RenderError(w, r, http.StatusInternalServerError)
+		utils.RenderError(db,w, r, http.StatusInternalServerError, valid, username)
 	}
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	var valid bool
+	var username string
+	_, username, valid = ValidSession(r, db)
+
 	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, valid, username)
 		return
 	}
 
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		utils.RenderError(w, r, http.StatusBadRequest)
+		utils.RenderError(db,w, r, http.StatusBadRequest, valid, username)
 	}
 
 	posts, statusCode, err := models.FetchPostsByCategory(db, id)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
-		utils.RenderError(w, r, statusCode)
+		utils.RenderError(db,w, r, statusCode, valid, username)
 		return
 	}
 
-	if err := utils.RenderTemplate(w, r, "home", statusCode, posts); err != nil {
+	if err := utils.RenderTemplate(db,w, r, "home", statusCode, posts,valid,username); err != nil {
 		log.Println("Error rendering template:", err)
-		utils.RenderError(w, r, http.StatusInternalServerError)
+		utils.RenderError(db,w, r, http.StatusInternalServerError, valid, username)
 	}
 }
 
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	var valid bool
+	var username string
+	_, username, valid = ValidSession(r, db)
+
 	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, valid, username)
 		return
 	}
 	postID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		utils.RenderError(w, r, http.StatusBadRequest)
+		utils.RenderError(db,w, r, http.StatusBadRequest, valid, username)
 		return
 	}
 	post, statusCode, err := models.FetchPost(db, postID)
 	if err != nil {
 		log.Println("Error fetching posts from the database:", err)
-		utils.RenderError(w, r, statusCode)
+		utils.RenderError(db,w, r, statusCode, valid, username)
 		return
 	}
 
-	err = utils.RenderTemplate(w, r, "post", statusCode, post)
+	err = utils.RenderTemplate(db,w, r, "post", statusCode, post, valid, username)
 	if err != nil {
 		log.Println(err)
-		utils.RenderError(w, r, http.StatusInternalServerError)
+		utils.RenderError(db,w, r, http.StatusInternalServerError, valid, username)
 	}
 }
 
 func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
-	}
-
 	var valid bool
+	var username string
 
-	if _, valid = ValidSession(r, db); !valid {
-		common.IsAuthenticated = false
+	if _, username, valid = ValidSession(r, db); !valid {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	if err := utils.RenderTemplate(w, r, "post-form", http.StatusOK, nil); err != nil {
+	if r.Method != http.MethodGet {
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, valid, username)
+		return
+	}
+
+	if err := utils.RenderTemplate(db,w, r, "post-form", http.StatusOK, nil, valid, username); err != nil {
 		log.Println("Error rendering template:", err)
-		utils.RenderError(w, r, http.StatusInternalServerError)
+		utils.RenderError(db,w, r, http.StatusInternalServerError, valid, username)
 	}
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodPost {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+	var user_id int
+	var valid bool
+	var username string
+
+	if user_id, username, valid = ValidSession(r, db); !valid {
+		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	var user_id int
-	var valid bool
-
-	if user_id, valid = ValidSession(r, db); !valid {
-		common.IsAuthenticated = false
-		http.Redirect(w, r, "/login", http.StatusFound)
+	if r.Method != http.MethodPost {
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, valid, username)
 		return
 	}
 
@@ -130,7 +134,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	content := r.FormValue("content")
 	catids := r.Form["categories[]"]
 
-	if catids == nil || title == "" || content == "" {
+	if catids == nil || strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
 		http.Error(w, "Please verify your entries and try again!", http.StatusBadRequest)
 		return
 	}
@@ -169,7 +173,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			   </body>
 			   </html>
 			`))
-
 }
 
 func AddPost(db *sql.DB, user_id int, title, content string) (int64, error) {

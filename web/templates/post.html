@@ -1,22 +1,5 @@
 {{template "header.html" .}}
 {{template "navbar.html" .}}
-<script>
-    function reaction(postId,reaction) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/post/postreaction", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                document.getElementById("likescount").innerHTML = `<i
-                    class="fa-regular fa-thumbs-up"></i>${response.likesCount}`;
-                document.getElementById("dislikescount").innerHTML = `<i
-                    class="fa-regular fa-thumbs-down"></i>${response.dislikesCount}`;
-            }
-        };
-        xhr.send(`reaction=${reaction}&post_id=${postId}`);
-    }
-</script>
 <div class="container">
     <div class="post">
         <div class="post-header">
@@ -35,18 +18,23 @@
         </div>
         <div class="post-footer">
            
-            <button id="likescount" onclick="reaction('{{.Data.Post.ID}}','like')" class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Data.Post.Likes}}</button>
-            <button id="dislikescount" onclick="reaction('{{.Data.Post.ID}}','dislike')" class="post-dislike post-footer-hover"><i
+            <button id="likescount{{.Data.Post.ID}}" onclick="postreaction('{{.Data.Post.ID}}','like')" class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Data.Post.Likes}}</button>
+            <button id="dislikescount{{.Data.Post.ID}}" onclick="postreaction('{{.Data.Post.ID}}','dislike')" class="post-dislike post-footer-hover"><i
                     class="fa-regular fa-thumbs-down"></i>{{.Data.Post.Dislikes}}</button>
             <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Data.Post.Comments}}</span>
         </div>
+        <span style="color:red" id="errorlogin{{.Data.Post.ID}}"></span>
+        <br>
+        <div class="comment-add">
+            <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
+            <textarea id="comment-content" name="comment" placeholder="Add a comment..." required></textarea>
+            <button onclick="addcomment('{{.Data.Post.ID}}')">submit</button>
+        </div>
+        <br>
+        <br>
     </div>
     <div class="comments">
-        <form action="addcommentREQ" method="post" class="comment-add">
-            <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
-            <textarea name="comment" placeholder="Add a comment..."></textarea>
-            <button>Comment</button>
-        </form>
+        
         {{range .Data.Comments}}
         <div class="comment">
             <div class="comment-header">
@@ -58,9 +46,11 @@
                 <p class="comment-content">{{.Content}} </p>
             </div>
             <div class="comment-footer">
-                <span class="comment-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
-                <span class="comment-dislike"><i class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+                <button id="commentlikescount{{.ID}}" onclick="commentreaction('{{.ID}}','like')" class="comment-like"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
+                <button id="commentdislikescount{{.ID}}" onclick="commentreaction('{{.ID}}','dislike')" class="comment-dislike"><i
+                        class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</button>
             </div>
+            <span style="color:red" id="commenterrorlogin{{.ID}}"></span>
         </div>
         {{end}}
     </div>

@@ -9,26 +9,25 @@ import (
 	"net/http"
 	"time"
 
-	"forum/server/common"
 	"forum/server/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
-	}
-
 	var valid bool
 
-	if _,valid = ValidSession(r,db); valid {
+	if _, _, valid = ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	
-	err := utils.RenderTemplate(w, r, "login", http.StatusOK, nil)
+
+	if r.Method != http.MethodGet {
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
+		return
+	}
+
+	err := utils.RenderTemplate(db,w, r, "login", http.StatusOK, nil, false, "")
 	if err != nil {
 		log.Println(err)
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -44,8 +43,15 @@ func generateSessionID() (string, error) {
 }
 
 func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	var valid bool
+
+	if _, _, valid = ValidSession(r, db); valid {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
 	if r.Method != http.MethodPost {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
 		return
 	}
 
@@ -57,8 +63,8 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	if username == "" || password == "" {
-		http.Error(w, "Username and password are required", http.StatusBadRequest)
+	if len(username) < 4 || len(password) < 6 {
+		utils.RenderError(db,w, r, http.StatusNotFound, false, "")
 		return
 	}
 
@@ -68,10 +74,10 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+			utils.RenderError(db,w, r, http.StatusNotFound, false, "")
 			return
 		}
-		http.Error(w, "Server error", http.StatusInternalServerError)
+		utils.RenderError(db,w, r, http.StatusInternalServerError, false, "")
 		return
 	}
 
@@ -89,8 +95,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	err = AddSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
-	common.IsAuthenticated = true
-	common.UserName = username
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
@@ -108,25 +112,25 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// w.Write([]byte("Logged in successfully"))
 }
 
-func ValidSession(r *http.Request, db *sql.DB) (int, bool) {
+func ValidSession(r *http.Request, db *sql.DB) (int, string, bool) {
 	cookie, err := r.Cookie("session_id")
 	if err != nil || cookie == nil {
-		return -1, false
+		return -1, "", false
 	}
 	var expiration time.Time
 	var user_id int
-	err = db.QueryRow("SELECT user_id,expires_at FROM sessions WHERE session_id = ?", cookie.Value).Scan(&user_id, &expiration)
+	var username string
+	err = db.QueryRow("SELECT s.user_id,s.expires_at,u.username FROM sessions s INNER JOIN users u ON s.user_id = u.id WHERE session_id = ?", cookie.Value).Scan(&user_id, &expiration, &username)
 	if err != nil || expiration.Before(time.Now()) {
-		return -1, false
+		return -1, "", false
 	}
-	return user_id, true
+	return user_id, username, true
 }
 
+func AddSession(db *sql.DB, user_id int, session_id string, expires_at time.Time) error {
+	task := `INSERT OR REPLACE INTO sessions (user_id,session_id,expires_at) VALUES (?,?,?)`
 
-func AddSession(db *sql.DB, user_id int, session_id string, expires_at time.Time ) error {
-	task := `INSERT INTO sessions (user_id,session_id,expires_at) VALUES (?,?,?)`
-
-	_, err := db.Exec(task, user_id, session_id,expires_at)
+	_, err := db.Exec(task, user_id, session_id, expires_at)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}

@@ -1,22 +1,22 @@
 package utils
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"text/template"
 
-	"forum/server/common"
 	"forum/server/models"
 )
 
 // RenderError handles error responses
-func RenderError(w http.ResponseWriter, r *http.Request, statusCode int) {
+func RenderError(db *sql.DB,w http.ResponseWriter, r *http.Request, statusCode int, isauth bool, username string) {
 	typeError := models.Error{
 		Code:    statusCode,
 		Message: http.StatusText(statusCode),
 	}
-	if err := RenderTemplate(w, r, "error", statusCode, typeError); err != nil {
+	if err := RenderTemplate(db,w, r, "error", statusCode, typeError, isauth, username); err != nil {
 		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
 		log.Println(err)
 	}
@@ -36,7 +36,7 @@ func ParseTemplates(tmpl string) (*template.Template, error) {
 	return t, nil
 }
 
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, statusCode int, data any) error {
+func RenderTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request, tmpl string, statusCode int, data any, isauth bool, username string) error {
 	t, err := ParseTemplates(tmpl)
 	if err != nil {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
@@ -50,11 +50,16 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, statusC
 	// 	limitedCategories = Categories[:6]
 	// }
 
+	cat, err := models.FetchCategories(db)
+	if err != nil {
+		cat = nil
+	}
+
 	globalData := models.GlobalData{
-		IsAuthenticated: common.IsAuthenticated,
+		IsAuthenticated: isauth,
 		Data:            data,
-		UserName:        common.UserName,
-		Categories:      common.Categories,
+		UserName:        username,
+		Categories:      cat,
 	}
 	w.WriteHeader(statusCode)
 	// Execute the template with the provided data

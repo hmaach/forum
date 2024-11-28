@@ -1,9 +1,9 @@
 package common
 
-import "forum/server/models"
+// import "forum/server/models"
 
-var (
-	IsAuthenticated bool
-	UserName        string
-	Categories      = []models.Category{}
-)
+// var (
+// 	IsAuthenticated bool
+// 	UserName        string
+// 	Categories      = []models.Category{}
+// )

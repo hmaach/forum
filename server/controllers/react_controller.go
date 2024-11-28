@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"forum/server/common"
 	"net/http"
 	"strconv"
 )
@@ -18,9 +17,8 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, valid = ValidSession(r, db); !valid {
-		common.IsAuthenticated = false
-		http.Redirect(w, r, "/login", http.StatusFound)
+	if user_id, _, valid = ValidSession(r, db); !valid {
+		w.WriteHeader(401)
 		return
 	}
 
@@ -43,8 +41,15 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if dbreaction == "" {
 		_, err = AddPostReaction(db, user_id, post_id, userReaction)
 	} else {
-		query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
-		_, err = db.Exec(query, userReaction, user_id, post_id)
+		if userReaction == dbreaction {
+			fmt.Println("ok")
+			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
+		_, err1 := db.Exec(query, user_id, post_id)
+		_ = err1
+		} else {
+			query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
+			_, err = db.Exec(query, userReaction, user_id, post_id)
+		}
 	}
 
 	if err != nil {
@@ -60,10 +65,59 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Return the new count as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{"likesCount": likeCount, "dislikesCount": dislikeCount})
-
 }
 
 func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var user_id int
+	var valid bool
+
+	if user_id, _, valid = ValidSession(r, db); !valid {
+		w.WriteHeader(401)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		return
+	}
+
+	userReaction := r.FormValue("reaction")
+	id := r.FormValue("comment_id")
+	comment_id, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "Invalid form data!", http.StatusBadRequest)
+		return
+	}
+
+	var dbreaction string
+	db.QueryRow("SELECT reaction FROM comment_reactions WHERE user_id=? AND comment_id=?", user_id, comment_id).Scan(&dbreaction)
+
+	if dbreaction == "" {
+		_, err = AddCommentReaction(db, user_id, comment_id, userReaction)
+	} else {
+		query := "UPDATE comment_reactions SET reaction = ? WHERE user_id = ? AND comment_id = ?"
+		_, err = db.Exec(query, userReaction, user_id, comment_id)
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "failed to update reaction", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch the new count of reactions for this post
+	var likeCount, dislikeCount int
+	db.QueryRow("SELECT COUNT(*) FROM comment_reactions WHERE comment_id=? AND reaction=?", comment_id, "like").Scan(&likeCount)
+	db.QueryRow("SELECT COUNT(*) FROM comment_reactions WHERE comment_id=? AND reaction=?", comment_id, "dislike").Scan(&dislikeCount)
+
+	// Return the new count as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"commentlikesCount": likeCount, "commentdislikesCount": dislikeCount})
 }
 
 func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
@@ -75,4 +129,16 @@ func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, 
 	preactionID, _ := result.LastInsertId()
 
 	return preactionID, nil
+}
+
+func AddCommentReaction(db *sql.DB, user_id, comment_id int, reaction string) (int64, error) {
+	task := `INSERT INTO comment_reactions (user_id,comment_id,reaction) VALUES (?,?,?)`
+	result, err := db.Exec(task, user_id, comment_id, reaction)
+	if err != nil {
+		fmt.Println(err)
+		return 0, fmt.Errorf("error inserting reaction data -> ")
+	}
+	creactionID, _ := result.LastInsertId()
+
+	return creactionID, nil
 }

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS sessions (
-    user_id BIGINT NOT NULL,
+    user_id BIGINT UNIQUE NOT NULL,
     session_id TEXT NOT NULL,
     expires_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) on DELETE CASCADE
@@ -61,3 +61,10 @@ CREATE TABLE IF NOT EXISTS comment_reactions (
     UNIQUE (user_id, comment_id),
     CHECK (reaction IN ('like', 'dislike'))
 );
+
+INSERT OR IGNORE INTO categories (label) VALUES
+('Technology'),
+('Health'),
+('Travel'),
+('Education'),
+('Entertainment');
