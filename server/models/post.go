@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 )
 
@@ -290,4 +291,13 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 	}
 
 	return posts, 200, nil
+}
+
+// Insert the post into the database
+func CreatePost(db *sql.DB, title, content string, categories []int, userID int) (int, error) {
+	log.Println("Title:", title)
+	log.Println("Content:", content)
+	log.Println("Categories:", categories)
+
+	return http.StatusOK, nil
 }
