@@ -95,11 +95,18 @@ func StorePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	title := r.FormValue("title")
 	content := r.FormValue("content")
-	categories := r.Form["categories"]
+	var categories []int
+	for _, categoryID := range r.Form["categories"] {
+		id, _ := strconv.Atoi(categoryID)
+		categories = append(categories, id)
+	}
 
-	log.Println("Title:", title)
-	log.Println("Content:", content)
-	log.Println("Categories:", categories)
+	user_id := 1
+	status, err = models.CreatePost(db, title, content, categories, user_id)
+	if status != http.StatusOK {
+		log.Println("Error storing post:", err)
+		utils.RenderError(w, r, status)
+	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
