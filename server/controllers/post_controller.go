@@ -33,7 +33,7 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	status, err := requests.IndexPostsByCategoryRequest(r)
 	if status != http.StatusOK {
-		log.Println("Error creating post:", err)
+		log.Println("Error fetching posts", err)
 		utils.RenderError(w, r, status)
 	}
 
@@ -52,10 +52,48 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
+func IndexPostsByUser(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodGet {
+		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		return
+	}
+
+	posts, statusCode, err := models.FetchPosts(db)
+	if err != nil {
+		log.Println("Error fetching posts:", err)
+		utils.RenderError(w, r, statusCode)
+		return
+	}
+
+	if err := utils.RenderTemplate(w, r, "home", statusCode, posts); err != nil {
+		log.Println("Error rendering template:", err)
+		utils.RenderError(w, r, http.StatusInternalServerError)
+	}
+}
+
+func IndexPostsLikedByUser(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodGet {
+		utils.RenderError(w, r, http.StatusMethodNotAllowed)
+		return
+	}
+
+	posts, statusCode, err := models.FetchPosts(db)
+	if err != nil {
+		log.Println("Error fetching posts:", err)
+		utils.RenderError(w, r, statusCode)
+		return
+	}
+
+	if err := utils.RenderTemplate(w, r, "home", statusCode, posts); err != nil {
+		log.Println("Error rendering template:", err)
+		utils.RenderError(w, r, http.StatusInternalServerError)
+	}
+}
+
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	status, err := requests.CreatePostRequest(r)
+	status, err := requests.ShowPostRequest(r)
 	if status != http.StatusOK {
-		log.Println("Error creating post:", err)
+		log.Println("Error showing post:", err)
 		utils.RenderError(w, r, status)
 	}
 
