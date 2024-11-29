@@ -8,7 +8,7 @@ A comprehensive web forum application built using Go that enables user communica
 - Hamza Maach
 - Omar Ait Benhammou
 - Mehdi Moulabbi
-- ...
+- Youssef Basta
 
 ## Features
 
@@ -40,6 +40,7 @@ forum/
 │   ├── database/         # Database files
 │   ├── controllers/      # Handles logic and communication between server and client
 │   ├── models/           # Contains business logic and data structures
+│   ├── requests/         # Validate the incoming request
 │   ├── routes/           # Handles routing logic
 │   └── utils/            # Functions can be used anywhere
 ├── web/ 
