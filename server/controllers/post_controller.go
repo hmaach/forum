@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"forum/server/models"
+	"forum/server/requests"
 	"forum/server/utils"
 )
 
@@ -30,15 +31,13 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
+	status, err := requests.IndexPostsByCategoryRequest(r)
+	if status != http.StatusOK {
+		log.Println("Error creating post:", err)
+		utils.RenderError(w, r, status)
 	}
 
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		utils.RenderError(w, r, http.StatusBadRequest)
-	}
+	id, _ := strconv.Atoi(r.PathValue("id"))
 
 	posts, statusCode, err := models.FetchPostsByCategory(db, id)
 	if err != nil {
@@ -54,15 +53,13 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodGet {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
+	status, err := requests.CreatePostRequest(r)
+	if status != http.StatusOK {
+		log.Println("Error creating post:", err)
+		utils.RenderError(w, r, status)
 	}
-	postID, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		utils.RenderError(w, r, http.StatusBadRequest)
-		return
-	}
+
+	postID, _ := strconv.Atoi(r.PathValue("id"))
 	post, statusCode, err := models.FetchPost(db, postID)
 	if err != nil {
 		log.Println("Error fetching posts from the database:", err)
@@ -90,9 +87,10 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func StorePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodPost {
-		utils.RenderError(w, r, http.StatusMethodNotAllowed)
-		return
+	status, err := requests.CreatePostRequest(r)
+	if status != http.StatusOK {
+		log.Println("Error creating post:", err)
+		utils.RenderError(w, r, status)
 	}
 
 	title := r.FormValue("title")
