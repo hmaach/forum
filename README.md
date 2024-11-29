@@ -25,8 +25,10 @@ A comprehensive web forum application built using Go that enables user communica
   - Like/dislike posts and comments
 
 - Content Discovery
+  - Sort posts by created date (Default)
+  - Filter posts by user's own
+  - Filter posts liked by user
   - Filter posts by categories
-  - Filter posts by created date
 
 ## Project Structure
 
