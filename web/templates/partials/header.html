@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/assets/css/login.css">
     <link rel="stylesheet" href="/assets/css/post.css">
     <link rel="stylesheet" href="/assets/css/error.css">
+    <link rel="stylesheet" href="/assets/css/about.css">
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -21,9 +22,13 @@
                 <span class="forum-title">forum</span>
             </p>
         </a>
+        <a href="/post/create" class="login-link">
+            <i class="fa-solid fa-plus"></i>
+            Create post
+        </a>
         {{ if .IsAuthenticated}}
         <div class="login-link">
-            <a href="/login">Hamza Maach
+            <a href="/logout">{{.UserName}}
                 <i class="fa-solid fa-user"></i>
             </a>
         </div>

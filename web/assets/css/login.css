@@ -1,7 +1,7 @@
 /* style of login and register pages */
 .login-page,
 .register-page {
-    background-image: url(https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg);
+    /* background-image: url(https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg); */
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;

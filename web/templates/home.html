@@ -2,23 +2,19 @@
 {{template "navbar.html" .}}
 <div class="container">
     <div class="posts">
-        <div class="posts-header">
-            <a href="/post/create" class="create-post-link">
-                <i class="fa-solid fa-plus"></i>
-                Create post
-            </a>
-        </div>
         {{if .Data}}
         {{range .Data}}
         <div class="post">
-            <div class="post-header">
-                <p class="post-user">{{.UserName}}</p>
-                <span></span>
-                <p class="post-time">{{.CreatedAt}} </p>
-            </div>
             <div class="post-body">
-                <p class="post-title">{{.Title}} </p>
-                <p class="post-content">{{.Content}} </p>
+                <a href="/post/{{.ID}}" class="post-title">{{.Title}}</a>
+                <div class="post-header">by : 
+                    <p class="post-user">{{.UserName}} </p>
+                    <span></span>
+                    <p class="post-time"> at : {{.CreatedAt}} </p>
+                </div>
+                <br>
+                <!-- <p class="post-title">{{.Title}} </p> -->
+                <p class="post-content" id="post-content-home">{{.Content}} </p>
                 <div class="post-categories">
                     {{range .Categories}}
                     <span class="post-category">#{{.}}</span>
@@ -26,13 +22,21 @@
                 </div>
             </div>
             <div class="post-footer">
-                <span class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</span>
-                <span class="post-dislike post-footer-hover"><i
-                        class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</span>
+
+                <div class="post-footer">
+
+                    <button id="likescount{{.ID}}" onclick="postreaction('{{.ID}}','like')"
+                        class="post-like post-footer-hover"><i
+                            class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
+                    <button id="dislikescount{{.ID}}" onclick="postreaction('{{.ID}}','dislike')"
+                        class="post-dislike post-footer-hover"><i
+                            class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</button>
+                </div>
                 <a href="/post/{{.ID}}" class="post-comments post-footer-hover">
                     <i class="fa-regular fa-comment"></i>{{.Comments}}
                 </a>
             </div>
+            <span style="color:red" id="errorlogin{{.ID}}"></span>
         </div>
         {{end}}
         {{else}}

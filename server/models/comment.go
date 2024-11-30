@@ -28,19 +28,19 @@ func FetchCommentsByPostID(postID int, db *sql.DB) ([]Comment, error) {
 			SELECT
 				COUNT(*)
 			FROM
-				comments_reactions AS cr
+				comment_reactions AS cr
 			WHERE
 				cr.comment_id = c.id
-				AND cr.type = 'like'
+				AND cr.reaction = 'like'
 		) AS likes_count,
 		(
 			SELECT
 				COUNT(*)
 			FROM
-				comments_reactions AS cr
+				comment_reactions AS cr
 			WHERE
 				cr.comment_id = c.id
-				AND cr.type = 'dislike'
+				AND cr.reaction = 'dislike'
 		) AS dislikes_count
 	FROM
 		comments c

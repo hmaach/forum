@@ -7,8 +7,7 @@ A comprehensive web forum application built using Go that enables user communica
 - Abdelhamid Bouziani
 - Hamza Maach
 - Omar Ait Benhammou
-- Mehdi Moulabbi
-- Youssef Basta
+- ...
 
 ## Features
 
@@ -25,10 +24,8 @@ A comprehensive web forum application built using Go that enables user communica
   - Like/dislike posts and comments
 
 - Content Discovery
-  - Sort posts by created date (Default)
-  - Filter posts by user's own
-  - Filter posts liked by user
   - Filter posts by categories
+  - Filter posts by created date
 
 ## Project Structure
 
@@ -42,7 +39,6 @@ forum/
 │   ├── database/         # Database files
 │   ├── controllers/      # Handles logic and communication between server and client
 │   ├── models/           # Contains business logic and data structures
-│   ├── requests/         # Validate the incoming request
 │   ├── routes/           # Handles routing logic
 │   └── utils/            # Functions can be used anywhere
 ├── web/ 

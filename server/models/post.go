@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 	"strings"
 )
 
@@ -42,19 +41,19 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 			SELECT
 				COUNT(*)
 			FROM
-				posts_reactions AS pr
+				post_reactions AS pr
 			WHERE
 				pr.post_id = p.id
-				AND pr.type = 'like'
+				AND pr.reaction = 'like'
 		) AS likes_count,
 		(
 			SELECT
 				COUNT(*)
 			FROM
-				posts_reactions AS pr
+				post_reactions AS pr
 			WHERE
 				pr.post_id = p.id
-				AND pr.type = 'dislike'
+				AND pr.reaction = 'dislike'
 		) AS dislikes_count,
 		(
 			SELECT
@@ -66,7 +65,7 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 		) AS comments_count,
 		(
 			SELECT
-				GROUP_CONCAT(c.label)
+				COALESCE(GROUP_CONCAT(c.label),"No catigorie")
 			FROM
 				categories c
 			INNER JOIN post_category pc ON c.id = pc.category_id
@@ -77,7 +76,7 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 		posts p
 		INNER JOIN users u ON p.user_id = u.id
 	ORDER BY
-		p.created_at;
+		p.created_at DESC;
 	`
 	rows, err := db.Query(query)
 	if err != nil {
@@ -136,15 +135,15 @@ func FetchPost(db *sql.DB, postID int) (PostDetail, int, error) {
 		p.created_at,
 		(
 			SELECT COUNT(*)
-			FROM posts_reactions AS pr
+			FROM post_reactions AS pr
 			WHERE pr.post_id = p.id
-			AND pr.type = 'like'
+			AND pr.reaction = 'like'
 		) AS likes_count,
 		(
 			SELECT COUNT(*)
-			FROM posts_reactions AS pr
+			FROM post_reactions AS pr
 			WHERE pr.post_id = p.id
-			AND pr.type = 'dislike'
+			AND pr.reaction = 'dislike'
 		) AS dislikes_count,
 		(
 			SELECT COUNT(*)
@@ -214,19 +213,19 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 				SELECT
 					COUNT(*)
 				FROM
-					posts_reactions AS pr
+					post_reactions AS pr
 				WHERE
 					pr.post_id = p.id
-					AND pr.type = 'like'
+					AND pr.reaction = 'like'
 			) AS likes_count,
 			(
 				SELECT
 					COUNT(*)
 				FROM
-					posts_reactions AS pr
+					post_reactions AS pr
 				WHERE
 					pr.post_id = p.id
-					AND pr.type = 'dislike'
+					AND pr.reaction = 'dislike'
 			) AS dislikes_count,
 			(
 				SELECT
@@ -291,13 +290,4 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 	}
 
 	return posts, 200, nil
-}
-
-// Insert the post into the database
-func CreatePost(db *sql.DB, title, content string, categories []int, userID int) (int, error) {
-	log.Println("Title:", title)
-	log.Println("Content:", content)
-	log.Println("Categories:", categories)
-
-	return http.StatusOK, nil
 }

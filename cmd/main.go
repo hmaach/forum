@@ -6,9 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"forum/server/common"
 	"forum/server/config"
-	"forum/server/models"
 	"forum/server/routes"
 	"forum/server/utils"
 
@@ -21,8 +19,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Database connection error:", err)
 	}
-	defer db.Close()
 
+	err = config.CreateTables(db)
 	// Handle command-line flags
 	if len(os.Args) > 1 {
 		if err := utils.HandleFlags(os.Args[1:], db); err != nil {
@@ -33,8 +31,6 @@ func main() {
 		return
 	}
 
-	// Fetch categories from the database to display in the navbar
-	common.Categories, err = models.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}
