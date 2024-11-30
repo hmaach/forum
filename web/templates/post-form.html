@@ -1,0 +1,28 @@
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+<div class="container">
+    <form id="createPostForm" action="/post/store" method="post" class="create-post">
+        <h1>Create a New Post</h1>
+        <div class="create-post-fields">
+            <label for="postTitle">Title</label>
+            <input id="postTitle" name="title" class="create-post-title" placeholder="Enter your post title here..." />
+        </div>
+        <div class="create-post-fields">
+            <label for="categories-select">Categories</label>
+            <div class="create-post-categories">
+                <select id="categories-select" name="category">
+                    <option value="" selected disabled>Select a category</option>
+                    {{range .Categories}}
+                    <option value='{"id":"{{.ID}}","label":"{{.Label}}"}'>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+        </div>
+        <div class="create-post-fields">
+            <label for="postContent">Content</label>
+            <textarea id="postContent" name="content" placeholder="What's on your mind?"></textarea>
+        </div>
+        <button type="submit">Publish Post</button>
+    </form>
+</div>
+{{template "footer.html"}}
