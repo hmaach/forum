@@ -12,6 +12,7 @@ import (
 )
 
 func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+
 	var valid bool
 	var username string
 	_, username, valid = ValidSession(r, db)
@@ -32,6 +33,7 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		log.Println("Error rendering template:", err)
 		utils.RenderError(db,w, r, http.StatusInternalServerError, valid, username)
 	}
+
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
