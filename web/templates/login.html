@@ -1,10 +1,11 @@
+
 {{template "header.html" .}}
 <div class="login-page">
     <div class="login-card">
         <h1>Log in</h1>
-        <form action="/login" method="post" class="login-form">
-            <input type="text" name="username" class="login-input" placeholder="email or username">
-            <input type="password" name="password" class="login-input" placeholder="********">
+        <form id="loginForm" action="/login" method="post" class="login-form">
+            <input type="text" id="username" name="username" class="login-input" placeholder="email or username">
+            <input type="password" id="password" name="password" class="login-input" placeholder="********">
             <button type="submit" class="login-submit">Log in<i class="fa-solid fa-right-to-bracket"></i></button>
         </form>
         <span class="form-line"></span>
@@ -12,3 +13,4 @@
     </div>
 </div>
 {{template "footer.html"}}
+     
