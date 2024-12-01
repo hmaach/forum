@@ -1,1 +1,3 @@
-added throttle for comment
+category back button problem (redirect to home)
+
+add limit to category post

@@ -85,7 +85,8 @@ function addcomm(postId) {
         </div>
                 `
             document.getElementsByClassName("comments")[0].prepend(comment)
-            document.getElementsByClassName("post-comments")[0].innerHTML = `<i class="fa-regular fa-comment"></i>`+response.commentscount
+            document.getElementsByClassName("post-comments")[0].innerHTML = `<i class="fa-regular fa-comment"></i>`+response.commentscount            
+            content.value = ""
         } else if (xhr.status === 400) {
             document.getElementById("errorlogin"+postId).innerText = `Invalid comment!`
             setTimeout(() => {
@@ -103,15 +104,12 @@ function addcomm(postId) {
 
 
 function pagination(dir, data) {
-    if (dir === "next") {
-        if (!data) {
-            return
-        }
+    if (dir === "next" && data) {
         const page = +document.querySelector(".currentpage").innerText + 1
         window.location.href = "/?PageID=" + page;
     }
 
-    if (dir === "back") {
+    if (dir === "back" && document.querySelector(".currentpage").innerText > "1" ) {
         const page = +document.querySelector(".currentpage").innerText - 1
         window.location.href = "/?PageID=" + page;
     }
