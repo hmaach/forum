@@ -1,5 +1,6 @@
 {{template "header.html" .}}
 {{template "navbar.html" .}}
+
 <div class="container">
     <div class="posts">
         {{if .Data}}
@@ -7,7 +8,7 @@
         <div class="post">
             <div class="post-body">
                 <a href="/post/{{.ID}}" class="post-title">{{.Title}}</a>
-                <div class="post-header">by : 
+                <div class="post-header">by :
                     <p class="post-user">{{.UserName}} </p>
                     <span></span>
                     <p class="post-time"> at : {{.CreatedAt}} </p>
@@ -26,8 +27,7 @@
                 <div class="post-footer">
 
                     <button id="likescount{{.ID}}" onclick="postreaction('{{.ID}}','like')"
-                        class="post-like post-footer-hover"><i
-                            class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
+                        class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
                     <button id="dislikescount{{.ID}}" onclick="postreaction('{{.ID}}','dislike')"
                         class="post-dislike post-footer-hover"><i
                             class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</button>
@@ -42,6 +42,36 @@
         {{else}}
         <p class="no-posts">No posts available to display !</p>
         {{end}}
+        <style>
+            .pagination {
+                display: inline-block;
+            }
+
+            .pagination * {
+                color: black;
+                float: left;
+                padding: 8px 16px;
+                text-decoration: none;
+            }
+        </style>
+
+        <div class="pagination">
+            <a onclick="pagination('back', `{{if .Data}}true{{end}}`)" class="back" href="#">&laquo;
+                Back</a>
+            <span class="currentpage">1</span>
+            <a onclick="pagination('next', `{{if .Data}}true{{end}}`)" class="next" href="#">Next
+                &raquo;</a>
+        </div>
     </div>
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.get('PageID') == 0) {
+            window.location.href = "/";
+        }
+        document.querySelector(".currentpage").innerText = urlParams.get('PageID') > 0 ? urlParams.get('PageID') : 1
+    </script>
+    
 </div>
 {{template "footer.html"}}
+

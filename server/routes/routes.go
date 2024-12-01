@@ -28,11 +28,10 @@ func Routes(db *sql.DB) http.Handler {
 		controllers.CreateComment(w, r, db)
 	})
 
-
 	mux.HandleFunc("/post/create", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetPostCreationForm(w, r, db)
 	})
-	
+
 	mux.HandleFunc("/post/createpost", func(w http.ResponseWriter, r *http.Request) {
 		controllers.CreatePost(w, r, db)
 	})
@@ -52,7 +51,7 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
 		controllers.Signup(w, r, db)
 	})
-	
+
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetLogin(w, r, db)
 	})
@@ -64,6 +63,10 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetRegister(w, r, db)
 	})
+
+	// mux.HandleFunc("/page/{id}", func(w http.ResponseWriter, r *http.Request) {
+	// 	controllers.Pagination(w, r, db)
+	// })
 
 	// mux.HandleFunc("/500", controllers.InternalServerError)
 	// mux.HandleFunc("/about", controllers.GetAbout)

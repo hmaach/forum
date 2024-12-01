@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"forum/server/config"
 	"forum/server/routes"
@@ -32,6 +33,14 @@ func main() {
 	defer db.Close()
 
 	err = config.CreateTables(db)
+
+	for i := 1; i <= 50; i++ {
+		db.Exec(`INSERT INTO posts (user_id, title, content) VALUES
+(1, ?, ?)`, "title "+strconv.Itoa(i), "content"+strconv.Itoa(i))
+		_, err := db.Exec(`INSERT INTO post_category (post_id, category_id) VALUES
+(?,1)`, i)
+		fmt.Println(err, i)
+	}
 	// Handle command-line flags
 	if len(os.Args) > 1 {
 		if err := utils.HandleFlags(os.Args[1:], db); err != nil {

@@ -42,7 +42,6 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		_, err = AddPostReaction(db, user_id, post_id, userReaction)
 	} else {
 		if userReaction == dbreaction {
-			fmt.Println("ok")
 			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
 		_, err1 := db.Exec(query, user_id, post_id)
 		_ = err1

@@ -100,3 +100,21 @@ function addcomm(postId) {
     };
     xhr.send(`postid=${postId}&comment=${content.value}`);
 }
+
+
+function pagination(dir, data) {
+    if (dir === "next") {
+        if (!data) {
+            return
+        }
+        const page = +document.querySelector(".currentpage").innerText + 1
+        window.location.href = "/?PageID=" + page;
+    }
+
+    if (dir === "back") {
+        const page = +document.querySelector(".currentpage").innerText - 1
+        window.location.href = "/?PageID=" + page;
+    }
+
+
+}

@@ -26,7 +26,7 @@ type PostDetail struct {
 	Comments []Comment
 }
 
-func FetchPosts(db *sql.DB) ([]Post, int, error) {
+func FetchPosts(db *sql.DB, currentPage int) ([]Post, int, error) {
 	var posts []Post
 
 	// Query to fetch posts
@@ -76,9 +76,10 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 		posts p
 		INNER JOIN users u ON p.user_id = u.id
 	ORDER BY
-		p.created_at DESC;
+		p.created_at DESC
+	LIMIT 10 OFFSET ? ;
 	`
-	rows, err := db.Query(query)
+	rows, err := db.Query(query, currentPage)
 	if err != nil {
 		log.Println("Error executing query:", err)
 		return nil, 500, err
