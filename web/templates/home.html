@@ -2,12 +2,18 @@
 {{template "navbar.html" .}}
 <div class="container">
     <div class="posts">
+        <div class="posts-header">
+            <a href="/post/create" class="create-post-link">
+                <i class="fa-solid fa-plus"></i>
+                Create post
+            </a>
+        </div>
         {{if .Data}}
         {{range .Data}}
         <div class="post">
             <div class="post-body">
                 <a href="/post/{{.ID}}" class="post-title">{{.Title}}</a>
-                <div class="post-header">by : 
+                <div class="post-header">by :
                     <p class="post-user">{{.UserName}} </p>
                     <span></span>
                     <p class="post-time"> at : {{.CreatedAt}} </p>
@@ -22,16 +28,11 @@
                 </div>
             </div>
             <div class="post-footer">
-
-                <div class="post-footer">
-
-                    <button id="likescount{{.ID}}" onclick="postreaction('{{.ID}}','like')"
-                        class="post-like post-footer-hover"><i
-                            class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
-                    <button id="dislikescount{{.ID}}" onclick="postreaction('{{.ID}}','dislike')"
-                        class="post-dislike post-footer-hover"><i
-                            class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</button>
-                </div>
+                <button id="likescount{{.ID}}" onclick="postreaction('{{.ID}}','like')"
+                    class="post-like post-footer-hover"><i class="fa-regular fa-thumbs-up"></i>{{.Likes}}</button>
+                <button id="dislikescount{{.ID}}" onclick="postreaction('{{.ID}}','dislike')"
+                    class="post-dislike post-footer-hover"><i
+                        class="fa-regular fa-thumbs-down"></i>{{.Dislikes}}</button>
                 <a href="/post/{{.ID}}" class="post-comments post-footer-hover">
                     <i class="fa-regular fa-comment"></i>{{.Comments}}
                 </a>

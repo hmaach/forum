@@ -1,13 +1,12 @@
 /* Nav style */
 nav {
-    /* position: fixed; */
+    position: fixed;
     background-color: var(--color-bg);
     text-decoration: none;
-    width: 30%;
-    min-width: 300px;
+    width: 300px;
     height: 100vh;
     padding: 20px 0 0 10px;
-    /* margin-top: 65px; */
+    margin-top: 65px;
     border-right: 1px solid var(--color-border);
 }
 
@@ -79,9 +78,3 @@ nav i {
 /* .categories-list li a:hover {
     color: var(--color-primary-hover);
 } */
-
-.no-categories{
-    color: var(--color-text-light);
-    font-size: 0.9rem;
-    margin: 10px 0 10px 50px;
-}

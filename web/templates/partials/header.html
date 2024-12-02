@@ -21,16 +21,10 @@
                 <span class="forum-title">forum</span>
             </p>
         </a>
-        <a href="/post/create" class="login-link">
-            <i class="fa-solid fa-plus"></i>
-            Create post
-        </a>
         {{ if .IsAuthenticated}}
-        <div class="login-link">
-            <a href="/logout">{{.UserName}}
-                <i class="fa-solid fa-user"></i>
-            </a>
-        </div>
+        <a href="/logout" class="login-link">{{.UserName}}
+            <i class="fa-solid fa-user"></i>
+        </a>
         {{else}}
         <a href="/login" class="login-link">Log in
             <i class="fa-solid fa-right-to-bracket"></i>
