@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"forum/server/config"
+	"forum/server/models"
 	"forum/server/utils"
 )
 
@@ -43,7 +44,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(db,w, r, http.StatusBadRequest,valid,username)
 		return
 	}
-	comm_id, err := AddComment(db, user_id, postid, content)
+	comm_id, err := models.StoreComment(db, user_id, postid, content)
 	if err != nil {
 		http.Error(w, "Cannot add comment, try again!", http.StatusBadRequest)
 		return
@@ -71,15 +72,3 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	})
 }
 
-func AddComment(db *sql.DB, user_id, post_id int, content string) (int64, error) {
-	task := `INSERT INTO comments (user_id,post_id,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, post_id, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	commentID, _ := result.LastInsertId()
-
-	return commentID, nil
-}

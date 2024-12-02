@@ -291,3 +291,29 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 
 	return posts, 200, nil
 }
+
+func StorePost(db *sql.DB, user_id int, title, content string) (int64, error) {
+	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
+
+	result, err := db.Exec(task, user_id, title, content)
+	if err != nil {
+		return 0, fmt.Errorf("%v", err)
+	}
+
+	postID, _ := result.LastInsertId()
+
+	return postID, nil
+}
+
+func StorePostCategory(db *sql.DB, post_id int64, category_id int) (int64, error) {
+	task := `INSERT INTO post_category (post_id,category_id) VALUES (?,?)`
+
+	result, err := db.Exec(task, post_id, category_id)
+	if err != nil {
+		return 0, fmt.Errorf("%v", err)
+	}
+
+	postcatID, _ := result.LastInsertId()
+
+	return postcatID, nil
+}

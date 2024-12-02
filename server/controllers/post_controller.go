@@ -117,7 +117,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	catids := requests.RequestPost.Categorie
 	user_id := requests.RequestPost.UserID
 
-	pid, err := AddPost(db, user_id, title, content)
+	pid, err := models.StorePost(db, user_id, title, content)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
@@ -130,7 +130,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			http.Error(w, "Internal server error", 500)
 			return
 		}
-		_, err = AddPostCat(db, pid, catid)
+		_, err = models.StorePostCategory(db, pid, catid)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
@@ -151,30 +151,4 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			   </body>
 			   </html>
 			`))
-}
-
-func AddPost(db *sql.DB, user_id int, title, content string) (int64, error) {
-	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, title, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postID, _ := result.LastInsertId()
-
-	return postID, nil
-}
-
-func AddPostCat(db *sql.DB, post_id int64, category_id int) (int64, error) {
-	task := `INSERT INTO post_category (post_id,category_id) VALUES (?,?)`
-
-	result, err := db.Exec(task, post_id, category_id)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postcatID, _ := result.LastInsertId()
-
-	return postcatID, nil
 }
