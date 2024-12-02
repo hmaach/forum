@@ -3,11 +3,12 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
+	"forum/server/config"
 	"net/http"
 )
 
 func Logout(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if user_id, _, valid := ValidSession(r, db); valid {
+	if user_id, _, valid := config.ValidSession(r, db); valid {
 		_, err := db.Exec(`DELETE FROM sessions WHERE user_id = ?;`, user_id)
 		if err != nil {
 			fmt.Println(err)

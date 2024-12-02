@@ -2,6 +2,7 @@ package validators
 
 import (
 	"database/sql"
+	"html"
 	"net/http"
 	"strconv"
 
@@ -67,7 +68,6 @@ func ShowPost_Request(r *http.Request, db *sql.DB) (int, string, bool, int) {
 		return http.StatusMethodNotAllowed, username, valid, 0
 	}
 
-	// check categoryID if can be converted to int
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -91,7 +91,7 @@ func GetPostCreationForm_Request(r *http.Request, db *sql.DB) (int, string, bool
 // /////////////////////////////////////////////////////////////////////////////
 func CreatePost_Request(r *http.Request, db *sql.DB) (int, string, bool, int, string, string, []string) {
 	userid, username, valid := config.ValidSession(r, db)
-	// Parse form values
+
 	err := r.ParseForm()
 	if err != nil {
 		return http.StatusBadRequest, username, valid, userid, "", "", nil
@@ -100,6 +100,9 @@ func CreatePost_Request(r *http.Request, db *sql.DB) (int, string, bool, int, st
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	categories := r.Form["categories"]
+
+	title = html.EscapeString(title)
+	content = html.EscapeString(content)
 
 	// Validate the title
 	if title == "" {

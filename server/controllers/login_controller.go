@@ -5,66 +5,46 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
+	"forum/server/models"
 	"forum/server/utils"
+	"forum/server/validators"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
+	statuscode, valid := validators.GetLogin_Request(r, db)
 
-	if _, _, valid = ValidSession(r, db); valid {
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, false, "")
+		return
+	}
+
+	if valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
-	if r.Method != http.MethodGet {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
-		return
-	}
-
-	err := utils.RenderTemplate(db,w, r, "login", http.StatusOK, nil, false, "")
+	err := utils.RenderTemplate(db, w, r, "login", http.StatusOK, nil, false, "")
 	if err != nil {
-		log.Println(err)
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }
 
-func generateSessionID() (string, error) {
-	bytes := make([]byte, 16)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(bytes), nil
-}
-
 func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
+	statuscode, valid, username, password := validators.Signin_Request(r, db)
 
-	if _, _, valid = ValidSession(r, db); valid {
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, false, "")
+		return
+	}
+	if valid {
 		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
-
-	if r.Method != http.MethodPost {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
-		return
-	}
-
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-
-	if len(username) < 4 || len(password) < 6 {
-		utils.RenderError(db,w, r, http.StatusNotFound, false, "")
 		return
 	}
 
@@ -74,10 +54,10 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.RenderError(db,w, r, http.StatusNotFound, false, "")
+			utils.RenderError(db, w, r, http.StatusNotFound, false, "")
 			return
 		}
-		utils.RenderError(db,w, r, http.StatusInternalServerError, false, "")
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
 
@@ -94,7 +74,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	err = AddSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
+	err = models.AddSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
@@ -112,28 +92,10 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// w.Write([]byte("Logged in successfully"))
 }
 
-func ValidSession(r *http.Request, db *sql.DB) (int, string, bool) {
-	cookie, err := r.Cookie("session_id")
-	if err != nil || cookie == nil {
-		return -1, "", false
+func generateSessionID() (string, error) {
+	bytes := make([]byte, 16)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
 	}
-	var expiration time.Time
-	var user_id int
-	var username string
-	err = db.QueryRow("SELECT s.user_id,s.expires_at,u.username FROM sessions s INNER JOIN users u ON s.user_id = u.id WHERE session_id = ?", cookie.Value).Scan(&user_id, &expiration, &username)
-	if err != nil || expiration.Before(time.Now()) {
-		return -1, "", false
-	}
-	return user_id, username, true
-}
-
-func AddSession(db *sql.DB, user_id int, session_id string, expires_at time.Time) error {
-	task := `INSERT OR REPLACE INTO sessions (user_id,session_id,expires_at) VALUES (?,?,?)`
-
-	_, err := db.Exec(task, user_id, session_id, expires_at)
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	return nil
+	return hex.EncodeToString(bytes), nil
 }

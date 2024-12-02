@@ -3,11 +3,9 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	"html"
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"forum/server/models"
 	"forum/server/utils"
@@ -16,12 +14,13 @@ import (
 
 func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, page := validators.IndexPosts_Request(r, db)
-	
+
 	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-	
+
 	posts, statusCode, err := models.FetchPosts(db, page)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
@@ -41,14 +40,15 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	
+
 	statuscode, username, valid, categorieId, pageId := validators.IndexPostsByCategory_Request(r, db)
-	
+
 	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-	
+
 	posts, statusCode, err := models.FetchPostsByCategory(db, categorieId, pageId)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
@@ -56,31 +56,22 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	if posts == nil && pageId > 0 {
-		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
-	}
-
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, valid, username); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
+		return
 	}
 }
 
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
-	var username string
-	_, username, valid = ValidSession(r, db)
+	statuscode, username, valid, postId := validators.ShowPost_Request(r, db)
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, valid, username)
+		return
+	}
 
-	if r.Method != http.MethodGet {
-		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
-		return
-	}
-	postID, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
-		return
-	}
-	post, statusCode, err := models.FetchPost(db, postID)
+	post, statusCode, err := models.FetchPost(db, postId)
 	if err != nil {
 		log.Println("Error fetching posts from the database:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
@@ -91,20 +82,20 @@ func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if err != nil {
 		log.Println(err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
+		return
 	}
 }
 
 func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
-	var username string
 
-	if _, username, valid = ValidSession(r, db); !valid {
-		http.Redirect(w, r, "/login", http.StatusFound)
+	statuscode, username, valid := validators.GetPostCreationForm_Request(r, db)
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-
-	if r.Method != http.MethodGet {
-		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
+	if !valid {
+		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
@@ -116,51 +107,32 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var user_id int
-	var valid bool
-	var username string
 
-	if user_id, username, valid = ValidSession(r, db); !valid {
+	statuscode, username, valid, userid, title, content, categories := validators.CreatePost_Request(r, db)
+	if statuscode != http.StatusOK {
+		utils.RenderError(db, w, r, statuscode, valid, username)
+		return
+	}
+
+	if !valid {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
-		return
-	}
-
-	title := r.FormValue("title")
-	content := r.FormValue("content")
-	catids := r.Form["categories"]
-
-	title = html.EscapeString(title)
-	content = html.EscapeString(content)
-
-	if catids == nil || strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
-		http.Error(w, "Please verify your entries and try again!", http.StatusBadRequest)
-		return
-	}
-
-	pid, err := AddPost(db, user_id, title, content)
+	pid, err := models.AddPost(db, userid, title, content)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
 		return
 	}
 
-	for i := 0; i < len(catids); i++ {
-		catid, err := strconv.Atoi(catids[i])
+	for i := 0; i < len(categories); i++ {
+		catid, err := strconv.Atoi(categories[i])
 		if err != nil {
 			http.Error(w, "Internal server error", 500)
 			return
 		}
-		_, err = AddPostCat(db, pid, catid)
+		_, err = models.AddPostCat(db, pid, catid)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
@@ -181,30 +153,4 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			   </body>
 			   </html>
 			`))
-}
-
-func AddPost(db *sql.DB, user_id int, title, content string) (int64, error) {
-	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, title, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postID, _ := result.LastInsertId()
-
-	return postID, nil
-}
-
-func AddPostCat(db *sql.DB, post_id int64, category_id int) (int64, error) {
-	task := `INSERT INTO post_category (post_id,category_id) VALUES (?,?)`
-
-	result, err := db.Exec(task, post_id, category_id)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postcatID, _ := result.LastInsertId()
-
-	return postcatID, nil
 }

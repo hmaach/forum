@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 type Comment struct {
@@ -82,4 +83,42 @@ func FetchCommentsByPostID(postID int, db *sql.DB) ([]Comment, error) {
 	}
 
 	return comments, nil
+}
+
+func AddComment(db *sql.DB, user_id, post_id int, content string) (int64, error) {
+	task := `INSERT INTO comments (user_id,post_id,content) VALUES (?,?,?)`
+
+	result, err := db.Exec(task, user_id, post_id, content)
+	if err != nil {
+		return 0, fmt.Errorf("%v", err)
+	}
+
+	commentID, _ := result.LastInsertId()
+
+	return commentID, nil
+}
+
+// //////////////////////////////////////////////////////
+func AddCommentReaction(db *sql.DB, user_id, comment_id int, reaction string) (int64, error) {
+	task := `INSERT INTO comment_reactions (user_id,comment_id,reaction) VALUES (?,?,?)`
+	result, err := db.Exec(task, user_id, comment_id, reaction)
+	if err != nil {
+		fmt.Println(err)
+		return 0, fmt.Errorf("error inserting reaction data -> ")
+	}
+	creactionID, _ := result.LastInsertId()
+
+	return creactionID, nil
+}
+
+// /////////////////////////////////////////////////////
+func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
+	task := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
+	result, err := db.Exec(task, user_id, post_id, reaction)
+	if err != nil {
+		return 0, fmt.Errorf("error inserting reaction data -> ")
+	}
+	preactionID, _ := result.LastInsertId()
+
+	return preactionID, nil
 }

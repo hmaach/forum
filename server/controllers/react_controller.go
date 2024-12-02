@@ -4,47 +4,31 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"forum/server/models"
+	"forum/server/utils"
+	"forum/server/validators"
 	"net/http"
-	"strconv"
 )
 
 func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	statuscode, username, valid, user_id, post_id, userReaction := validators.ReactToPost_Request(r, db)
+
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-
-	var user_id int
-	var valid bool
-
-	if user_id, _, valid = ValidSession(r, db); !valid {
-		w.WriteHeader(401)
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
-		return
-	}
-
-	userReaction := r.FormValue("reaction")
-	id := r.FormValue("post_id")
-	post_id, err := strconv.Atoi(id)
-	if err != nil {
-		http.Error(w, "Invalid form data!", http.StatusBadRequest)
-		return
-	}
-
 	var dbreaction string
+	var err error
 	db.QueryRow("SELECT reaction FROM post_reactions WHERE user_id=? AND post_id=?", user_id, post_id).Scan(&dbreaction)
 
 	if dbreaction == "" {
-		_, err = AddPostReaction(db, user_id, post_id, userReaction)
+		_, err = models.AddPostReaction(db, user_id, post_id, userReaction)
 	} else {
 		if userReaction == dbreaction {
 			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
-		_, err1 := db.Exec(query, user_id, post_id)
-		_ = err1
+			_, err1 := db.Exec(query, user_id, post_id)
+			_ = err1
 		} else {
 			query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
 			_, err = db.Exec(query, userReaction, user_id, post_id)
@@ -67,37 +51,20 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+	statuscode, username, valid, user_id, comment_id, userReaction := validators.ReactToPost_Request(r, db)
 
-	var user_id int
-	var valid bool
-
-	if user_id, _, valid = ValidSession(r, db); !valid {
-		w.WriteHeader(401)
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
-		return
-	}
-
-	userReaction := r.FormValue("reaction")
-	id := r.FormValue("comment_id")
-	comment_id, err := strconv.Atoi(id)
-	if err != nil {
-		http.Error(w, "Invalid form data!", http.StatusBadRequest)
+	if statuscode != http.StatusOK {
+		w.WriteHeader(statuscode)
+		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
 
 	var dbreaction string
+	var err error
 	db.QueryRow("SELECT reaction FROM comment_reactions WHERE user_id=? AND comment_id=?", user_id, comment_id).Scan(&dbreaction)
 
 	if dbreaction == "" {
-		_, err = AddCommentReaction(db, user_id, comment_id, userReaction)
+		_, err = models.AddCommentReaction(db, user_id, comment_id, userReaction)
 	} else {
 		query := "UPDATE comment_reactions SET reaction = ? WHERE user_id = ? AND comment_id = ?"
 		_, err = db.Exec(query, userReaction, user_id, comment_id)
@@ -117,27 +84,4 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Return the new count as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{"commentlikesCount": likeCount, "commentdislikesCount": dislikeCount})
-}
-
-func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
-	task := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
-	result, err := db.Exec(task, user_id, post_id, reaction)
-	if err != nil {
-		return 0, fmt.Errorf("error inserting reaction data -> ")
-	}
-	preactionID, _ := result.LastInsertId()
-
-	return preactionID, nil
-}
-
-func AddCommentReaction(db *sql.DB, user_id, comment_id int, reaction string) (int64, error) {
-	task := `INSERT INTO comment_reactions (user_id,comment_id,reaction) VALUES (?,?,?)`
-	result, err := db.Exec(task, user_id, comment_id, reaction)
-	if err != nil {
-		fmt.Println(err)
-		return 0, fmt.Errorf("error inserting reaction data -> ")
-	}
-	creactionID, _ := result.LastInsertId()
-
-	return creactionID, nil
 }
