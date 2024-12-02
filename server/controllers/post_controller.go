@@ -40,7 +40,7 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	statucode, er := requests.IndexPosts_Request(r, db)
+	statucode, er := requests.IndexPostsByCategory_Request(r, db)
 
 	if statucode != http.StatusOK {
 		fmt.Println(er)

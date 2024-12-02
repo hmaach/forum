@@ -24,7 +24,7 @@ var RequestPost Post_Request
 
 func IndexPosts_Request(r *http.Request, db *sql.DB) (int, error) {
 	if r.URL.Path != "/" {
-		return http.StatusBadRequest, fmt.Errorf("Page Not Found!")
+		return http.StatusBadRequest, fmt.Errorf("page not found")
 	}
 	if r.Method != http.MethodGet {
 		return http.StatusMethodNotAllowed, fmt.Errorf("method not allowed")
@@ -131,7 +131,7 @@ func CreatePost_Request(r *http.Request, db *sql.DB) (int, error) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		return http.StatusBadRequest, fmt.Errorf("Invalid form data")
+		return http.StatusBadRequest, fmt.Errorf("invalid form data")
 	}
 	var valid bool
 	var username string
