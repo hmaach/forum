@@ -26,14 +26,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	if r.Method != http.MethodPost {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed,valid,username)
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
 		return
 	}
 
-	
-
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 		return
 	}
 	content := r.FormValue("comment")
@@ -41,12 +39,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	postid, err := strconv.Atoi(id)
 	if err != nil || strings.TrimSpace(content) == "" {
 		w.WriteHeader(400)
-		utils.RenderError(db,w, r, http.StatusBadRequest,valid,username)
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 		return
 	}
 	comm_id, err := models.StoreComment(db, user_id, postid, content)
 	if err != nil {
-		http.Error(w, "Cannot add comment, try again!", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 		return
 	}
 	// http.Redirect(w, r, "/post/"+strconv.Itoa(postid), http.StatusFound)
@@ -55,7 +53,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err2 := db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postid).Scan(&commentscount)
 	if err != nil || err2 != nil {
 		fmt.Println(err)
-		utils.RenderError(db,w, r, 500,valid,username)
+		utils.RenderError(db, w, r, 500, valid, username)
 		return
 	}
 
@@ -71,4 +69,3 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		"commentscount": commentscount,
 	})
 }
-

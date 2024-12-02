@@ -21,14 +21,18 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(db, w, r, http.StatusNotFound, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
 		return
 	}
-	fmt.Println(statucode)
+	// fmt.Println(statucode)
 	posts, statusCode, err := models.FetchPosts(db)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
 		return
 	}
-
+	// log.Println("hi", statusCode)
+	if db == nil {
+		// http.Error(w, "Status  code: 500 | Internal Server Error", http.StatusInternalServerError)
+		utils.RenderError(db, w, r, http.StatusInternalServerError, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
+	}
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, requests.RequestPost.Isvalid, requests.RequestPost.UserName); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
@@ -120,20 +124,23 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	pid, err := models.StorePost(db, user_id, title, content)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
+		// http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusBadRequest, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
 		return
 	}
 
 	for i := 0; i < len(catids); i++ {
 		catid, err := strconv.Atoi(catids[i])
 		if err != nil {
-			http.Error(w, "Internal server error", 500)
+			// http.Error(w, "Internal server error", 500)
+			utils.RenderError(db, w, r, http.StatusInternalServerError, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
 			return
 		}
 		_, err = models.StorePostCategory(db, pid, catid)
 		if err != nil {
 			fmt.Println(err)
-			http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
+			// http.Error(w, "Cannot create post, try again", http.StatusBadRequest)
+			utils.RenderError(db, w, r, http.StatusBadRequest, requests.RequestPost.Isvalid, requests.RequestPost.UserName)
 			return
 		}
 	}

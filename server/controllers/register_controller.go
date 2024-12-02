@@ -25,7 +25,7 @@ func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := utils.RenderTemplate(db, w, r, "register", http.StatusOK, nil, false, "")
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		utils.RenderError(nil, w, r, http.StatusNotFound, false, "")
 	}
 }
 
@@ -41,7 +41,8 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		// http.Error(w, "Invalid form data", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusBadRequest, false, "")
 		return
 	}
 
@@ -51,7 +52,8 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	passwordConfirmation := r.FormValue("password-confirmation")
 
 	if len(username) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
-		http.Error(w, "Please verify your data and try again!", http.StatusBadRequest)
+		// http.Error(w, "Please verify your data and try again!", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusBadRequest, false, "")
 		return
 	}
 

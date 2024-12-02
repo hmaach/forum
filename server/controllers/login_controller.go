@@ -24,14 +24,14 @@ func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	if r.Method != http.MethodGet {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, false, "")
 		return
 	}
 
-	err := utils.RenderTemplate(db,w, r, "login", http.StatusOK, nil, false, "")
+	err := utils.RenderTemplate(db, w, r, "login", http.StatusOK, nil, false, "")
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 	}
 }
 
@@ -52,12 +52,12 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	if r.Method != http.MethodPost {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, false, "")
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, false, "")
 		return
 	}
 
@@ -65,7 +65,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	password := r.FormValue("password")
 
 	if len(username) < 4 || len(password) < 6 {
-		utils.RenderError(db,w, r, http.StatusNotFound, false, "")
+		utils.RenderError(db, w, r, http.StatusNotFound, false, "")
 		return
 	}
 
@@ -75,30 +75,33 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.RenderError(db,w, r, http.StatusNotFound, false, "")
+			utils.RenderError(db, w, r, http.StatusNotFound, false, "")
 			return
 		}
-		utils.RenderError(db,w, r, http.StatusInternalServerError, false, "")
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
 
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		// http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		utils.RenderError(db, w, r, http.StatusUnauthorized, false, "")
 		return
 	}
 	////////////////////////////////////////
 
 	sessionID, err := generateSessionID()
 	if err != nil {
-		http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		// http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
 
 	err = config.AddSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		// http.Error(w, "Failed to create session", http.StatusInternalServerError)
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
 
@@ -112,5 +115,3 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
 	// w.Write([]byte("Logged in successfully"))
 }
-
-
