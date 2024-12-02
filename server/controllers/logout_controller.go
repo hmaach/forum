@@ -4,18 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-
-	"forum/server/config"
-	"forum/server/utils"
 )
 
 func Logout(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	if user_id, _, valid := config.ValidSession(r, db); valid {
+	if user_id, _, valid := ValidSession(r, db); valid {
 		_, err := db.Exec(`DELETE FROM sessions WHERE user_id = ?;`, user_id)
 		if err != nil {
 			fmt.Println(err)
-			// http.Error(w, "Error while loging out!", http.StatusSeeOther)
-			utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
+			http.Error(w, "Error while loging out!", http.StatusSeeOther)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html")

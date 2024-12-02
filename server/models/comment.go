@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 type Comment struct {
@@ -83,17 +82,4 @@ func FetchCommentsByPostID(postID int, db *sql.DB) ([]Comment, error) {
 	}
 
 	return comments, nil
-}
-
-func StoreComment(db *sql.DB, user_id, post_id int, content string) (int64, error) {
-	task := `INSERT INTO comments (user_id,post_id,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, post_id, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	commentID, _ := result.LastInsertId()
-
-	return commentID, nil
 }

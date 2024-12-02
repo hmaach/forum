@@ -26,7 +26,7 @@ type PostDetail struct {
 	Comments []Comment
 }
 
-func FetchPosts(db *sql.DB) ([]Post, int, error) {
+func FetchPosts(db *sql.DB, currentPage int) ([]Post, int, error) {
 	var posts []Post
 
 	// Query to fetch posts
@@ -65,7 +65,7 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 		) AS comments_count,
 		(
 			SELECT
-				COALESCE(GROUP_CONCAT(c.label),"No catigorie")
+				GROUP_CONCAT(c.label)
 			FROM
 				categories c
 			INNER JOIN post_category pc ON c.id = pc.category_id
@@ -76,9 +76,10 @@ func FetchPosts(db *sql.DB) ([]Post, int, error) {
 		posts p
 		INNER JOIN users u ON p.user_id = u.id
 	ORDER BY
-		p.created_at DESC;
+		p.created_at DESC
+	LIMIT 10 OFFSET ? ;
 	`
-	rows, err := db.Query(query)
+	rows, err := db.Query(query, currentPage)
 	if err != nil {
 		log.Println("Error executing query:", err)
 		return nil, 500, err
@@ -199,7 +200,7 @@ func FetchPost(db *sql.DB, postID int) (PostDetail, int, error) {
 	}, 200, nil
 }
 
-func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
+func FetchPostsByCategory(db *sql.DB, categoryID int,currentpage int) ([]Post, int, error) {
 	var posts []Post
 	query := `
 		SELECT
@@ -251,8 +252,9 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 		WHERE pc.category_id = ?
 		ORDER BY
 			p.created_at
+		LIMIT 10 OFFSET ? ;
 	`
-	rows, err := db.Query(query, categoryID)
+	rows, err := db.Query(query, categoryID,currentpage)
 	if err != nil {
 		log.Println("Error executing query:", err)
 		return nil, 500, err
@@ -290,30 +292,4 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 	}
 
 	return posts, 200, nil
-}
-
-func StorePost(db *sql.DB, user_id int, title, content string) (int64, error) {
-	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, title, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postID, _ := result.LastInsertId()
-
-	return postID, nil
-}
-
-func StorePostCategory(db *sql.DB, post_id int64, category_id int) (int64, error) {
-	task := `INSERT INTO post_category (post_id,category_id) VALUES (?,?)`
-
-	result, err := db.Exec(task, post_id, category_id)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postcatID, _ := result.LastInsertId()
-
-	return postcatID, nil
 }

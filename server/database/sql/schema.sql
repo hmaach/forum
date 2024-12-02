@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS post_category (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id BIGINT NOT NULL,
-    category_id BIGINT NOT NULL,
+    category_id BIGINT,
     FOREIGN KEY (post_id) REFERENCES posts(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (category_id) REFERENCES categories(id)
     UNIQUE (post_id, category_id)
 );
 CREATE TABLE IF NOT EXISTS categories (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS comments (
     post_id BIGINT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id)ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS post_reactions (

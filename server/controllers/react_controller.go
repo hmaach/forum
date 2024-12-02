@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"forum/server/config"
 	"net/http"
 	"strconv"
 )
@@ -18,7 +17,7 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, _, valid = config.ValidSession(r, db); !valid {
+	if user_id, _, valid = ValidSession(r, db); !valid {
 		w.WriteHeader(401)
 		return
 	}
@@ -43,7 +42,6 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		_, err = AddPostReaction(db, user_id, post_id, userReaction)
 	} else {
 		if userReaction == dbreaction {
-			fmt.Println("ok")
 			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
 		_, err1 := db.Exec(query, user_id, post_id)
 		_ = err1
@@ -77,7 +75,7 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, _, valid = config.ValidSession(r, db); !valid {
+	if user_id, _, valid = ValidSession(r, db); !valid {
 		w.WriteHeader(401)
 		return
 	}
