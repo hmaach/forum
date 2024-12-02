@@ -2,17 +2,28 @@
 {{template "navbar.html" .}}
 <div class="container">
     <form action="createpost" method="post" class="create-post">
-        <h1>Create post</h1>
-        <input name="title" placeholder="Title" />
-        <div class="create-post-categories">
-            <select name="categories[]" id="categories" multiple>
-                {{range .Categories}}
-                <option value="{{.ID}}">{{.Label}}</option>
-                {{end}}
-            </select>
+        <h1>Create a New Post</h1>
+        <div class="create-post-fields">
+            <label>Title</label>
+            <input name="title" class="create-post-title" placeholder="Enter your post title here..." />
         </div>
-        <textarea name="content" placeholder="What's on your mind?"></textarea>
-        <button>Post</button>
+        <div class="create-post-fields">
+            <label>Categories</label>
+            <div class="create-post-categories">
+                <div class="selected-categories"></div>
+                <select id="categories-select" onchange="e => selectCategory(e)">
+                    <option selected disabled>Select a category</option>
+                    {{range .Categories}}
+                    <option value='{"id":"{{.ID}}","label":"{{.Label}}"}'>{{.Label}}</option>
+                    {{end}}
+                </select>
+            </div>
+        </div>
+        <div class="create-post-fields">
+            <label>Content</label>
+            <textarea name="content" placeholder="What's on your mind?"></textarea>
+        </div>
+        <button type="submit">Publish Post</button>
     </form>
 </div>
 {{template "footer.html"}}
