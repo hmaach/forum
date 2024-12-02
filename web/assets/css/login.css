@@ -1,7 +1,7 @@
 /* style of login and register pages */
 .login-page,
 .register-page {
-    /* background-image: url(https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg); */
+    background-image: url(../images/bg.jpg);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -14,11 +14,11 @@
 
 .login-card,
 .register-card {
-    /* border: solid 1px var(--color-primary); */
+    border: solid 1px var(--color-border);
     background-color: var(--color-bg);
     width: 400px;
     height: fit-content;
-    padding: 20px;
+    padding: 40px 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
