@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}
-
+	config.CreateTables(db)
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: routes.Routes(db),
