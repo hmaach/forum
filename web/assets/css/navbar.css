@@ -79,3 +79,9 @@ nav i {
 /* .categories-list li a:hover {
     color: var(--color-primary-hover);
 } */
+
+.no-categories{
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin: 10px 0 10px 50px;
+}
