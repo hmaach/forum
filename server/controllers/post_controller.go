@@ -11,27 +11,17 @@ import (
 
 	"forum/server/models"
 	"forum/server/utils"
+	"forum/server/validators"
 )
 
 func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
-	var username string
-	_, username, valid = ValidSession(r, db)
-
-	if r.URL.Path != "/" || r.Method != http.MethodGet {
-		utils.RenderError(db, w, r, http.StatusNotFound, valid, username)
+	statuscode, username, valid, page := validators.IndexPosts_Request(r, db)
+	
+	if statuscode != http.StatusOK {
+		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-	id := r.FormValue("PageID")
-	page, er := strconv.Atoi(id)
-	if er != nil && id != "" {
-		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
-		return
-	}
-	page = (page - 1) * 10
-	if page < 0 {
-		page = 0
-	}
+	
 	posts, statusCode, err := models.FetchPosts(db, page)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
@@ -51,36 +41,23 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var valid bool
-	var username string
-	_, username, valid = ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
+	
+	statuscode, username, valid, categorieId, pageId := validators.IndexPostsByCategory_Request(r, db)
+	
+	if statuscode != http.StatusOK {
+		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
-	}
-
-	pid := r.FormValue("PageID")
-	page, _ := strconv.Atoi(pid)
-	page = (page - 1) * 10
-	if page < 0 {
-		page = 0
-	}
-
-	posts, statusCode, err := models.FetchPostsByCategory(db, id, page)
+	
+	posts, statusCode, err := models.FetchPostsByCategory(db, categorieId, pageId)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
 		return
 	}
 
-	if posts == nil && page > 0 {
-		utils.RenderError(db, w, r, 404, valid, username)
+	if posts == nil && pageId > 0 {
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 	}
 
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, valid, username); err != nil {

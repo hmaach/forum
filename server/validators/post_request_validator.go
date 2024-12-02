@@ -2,114 +2,99 @@ package validators
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"forum/server/config"
 )
 
-type Post_Request struct {
-	UserID      int
-	UserName    string
-	Isvalid     bool
-	Title       string
-	Content     string
-	Categorie   []string
-	CategorieId int
-	PostId      int
-}
-
-var RequestPost Post_Request
-
-func IndexPosts_Request(r *http.Request, db *sql.DB) (int, error) {
+func IndexPosts_Request(r *http.Request, db *sql.DB) (int, string, bool, int) {
+	_, username, valid := config.ValidSession(r, db)
 	if r.URL.Path != "/" {
-		return http.StatusBadRequest, fmt.Errorf("page not found")
+		return http.StatusNotFound, username, valid, 0
 	}
+
 	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, fmt.Errorf("method not allowed")
+		return http.StatusMethodNotAllowed, username, valid, 0
 	}
 
-	var valid bool
-	var username string
-	_, username, valid = config.ValidSession(r, db)
-
-	RequestPost.UserName = username
-	RequestPost.Isvalid = valid
-
-	return http.StatusOK, nil
+	id := r.FormValue("PageID")
+	page, er := strconv.Atoi(id)
+	if er != nil && id != "" {
+		return http.StatusBadRequest, username, valid, 0
+	}
+	page = (page - 1) * 10
+	if page < 0 {
+		page = 0
+	}
+	return http.StatusOK, username, valid, page
 }
 
 // ////////////////////////////////////////////////////////////////
-func IndexPostsByCategory_Request(r *http.Request, db *sql.DB) (int, error) {
+func IndexPostsByCategory_Request(r *http.Request, db *sql.DB) (int, string, bool, int, int) {
+	_, username, valid := config.ValidSession(r, db)
+
 	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, fmt.Errorf("method not allowed")
+		return http.StatusMethodNotAllowed, username, valid, 0, 0
+	}
+
+	// check categoryID if can be converted to int
+	idStr := r.PathValue("id")
+	categorieId, err := strconv.Atoi(idStr)
+	if err != nil {
+		return http.StatusBadRequest, username, valid, 0, 0
+	}
+
+	page := r.FormValue("PageID")
+	pageId, er := strconv.Atoi(page)
+
+	if er != nil && page != "" {
+		return http.StatusBadRequest, username, valid, 0, 0
+	}
+
+	pageId = (pageId - 1) * 10
+	if pageId < 0 {
+		pageId = 0
+	}
+	return http.StatusOK, username, valid, categorieId, pageId
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+func ShowPost_Request(r *http.Request, db *sql.DB) (int, string, bool, int) {
+	_, username, valid := config.ValidSession(r, db)
+
+	if r.Method != http.MethodGet {
+		return http.StatusMethodNotAllowed, username, valid, 0
 	}
 
 	// check categoryID if can be converted to int
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return http.StatusBadRequest, fmt.Errorf("invalid category ID %s", idStr)
+		return http.StatusBadRequest, username, valid, 0
 	}
 
-	var valid bool
-	var username string
-	_, username, valid = config.ValidSession(r, db)
-
-	RequestPost.UserName = username
-	RequestPost.Isvalid = valid
-	RequestPost.CategorieId = id
-
-	return http.StatusOK, nil
+	return http.StatusOK, username, valid, id
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-func ShowPost_Request(r *http.Request, db *sql.DB) (int, error) {
+func GetPostCreationForm_Request(r *http.Request, db *sql.DB) (int, string, bool) {
+	_, username, valid := config.ValidSession(r, db)
+
 	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, fmt.Errorf("method not allowed")
+		return http.StatusMethodNotAllowed, username, valid
 	}
 
-	// check categoryID if can be converted to int
-	idStr := r.PathValue("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return http.StatusBadRequest, fmt.Errorf("invalid category ID %s", idStr)
-	}
-
-	var valid bool
-	var username string
-	_, username, valid = config.ValidSession(r, db)
-
-	RequestPost.UserName = username
-	RequestPost.Isvalid = valid
-	RequestPost.PostId = id
-
-	return http.StatusOK, nil
+	return http.StatusOK, username, valid
 }
 
 // /////////////////////////////////////////////////////////////////////////////
-func GetPostCreationForm_Request(r *http.Request, db *sql.DB) (int, error) {
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, fmt.Errorf("method not allowed")
-	}
-
-	var valid bool
-	var username string
-	_, username, valid = config.ValidSession(r, db)
-
-	RequestPost.UserName = username
-	RequestPost.Isvalid = valid
-
-	return http.StatusOK, nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-func CreatePost_Request(r *http.Request, db *sql.DB) (int, error) {
+func CreatePost_Request(r *http.Request, db *sql.DB) (int, string, bool, int, string, string, []string) {
+	userid, username, valid := config.ValidSession(r, db)
 	// Parse form values
 	err := r.ParseForm()
 	if err != nil {
-		return http.StatusBadRequest, fmt.Errorf("failed to parse form data: %v", err)
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	}
 
 	title := r.FormValue("title")
@@ -118,32 +103,21 @@ func CreatePost_Request(r *http.Request, db *sql.DB) (int, error) {
 
 	// Validate the title
 	if title == "" {
-		return http.StatusBadRequest, fmt.Errorf("post's title cannot be empty")
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	} else if len(title) > 100 {
-		return http.StatusBadRequest, fmt.Errorf("post's title cannot be over 100 characters")
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	}
 
 	// Validate the content
 	if content == "" {
-		return http.StatusBadRequest, fmt.Errorf("post's content cannot be empty")
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	} else if len(content) > 1000 {
-		return http.StatusBadRequest, fmt.Errorf("post's content cannot be over 1000 characters")
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	}
 
 	if err := r.ParseForm(); err != nil {
-		return http.StatusBadRequest, fmt.Errorf("invalid form data")
+		return http.StatusBadRequest, username, valid, userid, "", "", nil
 	}
-	var valid bool
-	var username string
-	var userid int
-	userid, username, valid = config.ValidSession(r, db)
 
-	RequestPost.UserName = username
-	RequestPost.Isvalid = valid
-	RequestPost.Content = content
-	RequestPost.Title = title
-	RequestPost.Categorie = categories
-	RequestPost.UserID = userid
-
-	return http.StatusOK, nil
+	return http.StatusOK, username, valid, userid, title, content, categories
 }
