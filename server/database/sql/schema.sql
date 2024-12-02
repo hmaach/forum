@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS post_category (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id BIGINT NOT NULL,
-    category_id BIGINT,
+    category_id BIGINT NOT NULL,
     FOREIGN KEY (post_id) REFERENCES posts(id),
     FOREIGN KEY (category_id) REFERENCES categories(id)
     UNIQUE (post_id, category_id)

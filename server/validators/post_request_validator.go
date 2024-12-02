@@ -1,4 +1,4 @@
-package requests
+package validators
 
 import (
 	"database/sql"

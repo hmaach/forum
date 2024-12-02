@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"strconv"
@@ -133,6 +134,7 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if err := utils.RenderTemplate(db, w, r, "post-form", http.StatusOK, nil, valid, username); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
+		return
 	}
 }
 
@@ -159,6 +161,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	catids := r.Form["categories"]
+
+	title = html.EscapeString(title)
+	content = html.EscapeString(content)
 
 	if catids == nil || strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
 		http.Error(w, "Please verify your entries and try again!", http.StatusBadRequest)
