@@ -200,7 +200,7 @@ func FetchPost(db *sql.DB, postID int) (PostDetail, int, error) {
 	}, 200, nil
 }
 
-func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
+func FetchPostsByCategory(db *sql.DB, categoryID int,currentpage int) ([]Post, int, error) {
 	var posts []Post
 	query := `
 		SELECT
@@ -252,8 +252,9 @@ func FetchPostsByCategory(db *sql.DB, categoryID int) ([]Post, int, error) {
 		WHERE pc.category_id = ?
 		ORDER BY
 			p.created_at
+		LIMIT 10 OFFSET ? ;
 	`
-	rows, err := db.Query(query, categoryID)
+	rows, err := db.Query(query, categoryID,currentpage)
 	if err != nil {
 		log.Println("Error executing query:", err)
 		return nil, 500, err

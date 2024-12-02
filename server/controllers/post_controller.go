@@ -22,7 +22,10 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	id := r.FormValue("PageID")
-	page, _ := strconv.Atoi(id)
+	page, er := strconv.Atoi(id)
+	if er != nil {
+		fmt.Println(er)
+	}
 	page = (page -1) * 10
 	if page < 0 {
 		page = 0
@@ -32,6 +35,9 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
 		return
+	}
+	if posts == nil && page > 0 {
+		utils.RenderError(db, w, r, 404, valid, username)
 	}
 
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, valid, username); err != nil {
@@ -55,11 +61,22 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
 	}
 
-	posts, statusCode, err := models.FetchPostsByCategory(db, id)
+	pid := r.FormValue("PageID")
+	page, _ := strconv.Atoi(pid)
+	page = (page -1) * 10
+	if page < 0 {
+		page = 0
+	}
+
+	posts, statusCode, err := models.FetchPostsByCategory(db, id,page)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
 		return
+	}
+
+	if posts == nil && page > 0 {
+		utils.RenderError(db, w, r, 404, valid, username)
 	}
 
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, valid, username); err != nil {

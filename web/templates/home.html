@@ -66,12 +66,20 @@
     <script>
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        if (urlParams.get('PageID') == 0) {
-            window.location.href = "/";
+        const path = window.location.pathname
+        fetch(path + "?PageID=" + (parseInt(urlParams.get('PageID')) + 1)).then(response => {
+            if (response.status != 200) {
+                const nextbtn = document.querySelector(".next")
+                nextbtn.outerHTML = `<a class="next" style="cursor : not-allowed; color : grey;">Next &raquo;</a>`
+            }
+        })
+
+        if (urlParams.get('PageID') <= 1) {
+            const backbtn = document.querySelector(".back")
+            backbtn.outerHTML = `<a class="back" style="cursor : not-allowed; color : grey;">&laquo; Back</a>`
         }
         document.querySelector(".currentpage").innerText = urlParams.get('PageID') > 0 ? urlParams.get('PageID') : 1
     </script>
-    
+
 </div>
 {{template "footer.html"}}
-
