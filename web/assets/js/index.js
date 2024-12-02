@@ -102,39 +102,41 @@ function addcomm(postId) {
     xhr.send(`postid=${postId}&comment=${content.value}`);
 }
 
-// const select = document.getElementById('categories-select');
+const select = document.getElementById('categories-select');
+if (select) {
 
-// select.addEventListener('change', (e) => {
-//     // Parse the value as JSON to extract id and label
-//     const selectedValue = JSON.parse(e.target.value);
-//     const { id, label } = selectedValue;
-//     // console.log('ID:', id, 'Label:', label);
+    select.addEventListener('change', (e) => {
+        // Parse the value as JSON to extract id and label
+        const selectedValue = JSON.parse(e.target.value);
+        const { id, label } = selectedValue;
+        // console.log('ID:', id, 'Label:', label);
 
-//     // create the elemenet for the category
-//     const span = document.createElement('span');
-//     span.textContent = label;
-//     span.classList.add('selected-category');
-
-
-//     // create hidden input to hold the id of selected category
-//     const input = document.createElement('input')
-//     input.type = 'hidden';
-//     input.value = id
-//     input.name = 'categories'
-
-//     // add the elements (span and hidden input) 
-//     // at the first  position of the categories container
-//     const categoriesContainer = document.querySelector('.selected-categories');
-//     categoriesContainer.append(input, span);
+        // create the elemenet for the category
+        const span = document.createElement('span');
+        span.textContent = label;
+        span.classList.add('selected-category');
 
 
-//     // disable the option selected in the select
-//     e.target.options[e.target.selectedIndex].disabled = true;
+        // create hidden input to hold the id of selected category
+        const input = document.createElement('input')
+        input.type = 'hidden';
+        input.value = id
+        input.name = 'categories'
 
-//     // Reset the select 
-//     e.target.selectedIndex = 0;
-// });
+        // add the elements (span and hidden input) 
+        // at the first  position of the categories container
+        const categoriesContainer = document.querySelector('.selected-categories');
+        categoriesContainer.append(input, span);
 
+
+        // disable the option selected in the select
+        e.target.options[e.target.selectedIndex].disabled = true;
+
+        // Reset the select 
+        e.target.selectedIndex = 0;
+    });
+
+}
 
 async function pagination(dir, data) {
     const path = window.location.pathname

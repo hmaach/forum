@@ -23,10 +23,11 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	id := r.FormValue("PageID")
 	page, er := strconv.Atoi(id)
-	if er != nil {
-		fmt.Println(er)
+	if er != nil && id != "" {
+		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
+		return
 	}
-	page = (page -1) * 10
+	page = (page - 1) * 10
 	if page < 0 {
 		page = 0
 	}
@@ -38,11 +39,13 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	if posts == nil && page > 0 {
 		utils.RenderError(db, w, r, 404, valid, username)
+		return
 	}
 
 	if err := utils.RenderTemplate(db, w, r, "home", statusCode, posts, valid, username); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
+		return
 	}
 }
 
@@ -63,12 +66,12 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	pid := r.FormValue("PageID")
 	page, _ := strconv.Atoi(pid)
-	page = (page -1) * 10
+	page = (page - 1) * 10
 	if page < 0 {
 		page = 0
 	}
 
-	posts, statusCode, err := models.FetchPostsByCategory(db, id,page)
+	posts, statusCode, err := models.FetchPostsByCategory(db, id, page)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
@@ -155,7 +158,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	title := r.FormValue("title")
 	content := r.FormValue("content")
-	catids := r.Form["categories[]"]
+	catids := r.Form["categories"]
 
 	if catids == nil || strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
 		http.Error(w, "Please verify your entries and try again!", http.StatusBadRequest)

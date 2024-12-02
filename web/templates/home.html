@@ -73,7 +73,7 @@
         if (!isNaN(parseInt(urlParams.get('PageID')))) {
             page = parseInt(urlParams.get('PageID'))
         }
-        fetch(path + "?PageID=" + page + 1).then(response => {
+        fetch(path + "?PageID=" + (page + 1)).then(response => {
             if (response.status != 200) {
                 const nextbtn = document.querySelector(".next")
                 nextbtn.outerHTML = `<a class="next" style="cursor : not-allowed; color : grey;">Next &raquo;</a>`
