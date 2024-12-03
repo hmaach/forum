@@ -151,31 +151,28 @@ function pagination(dir, data) {
     }
 }
 
-function loginError() {
+function loginError(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
     const xml = new XMLHttpRequest();
-    xml.open("POST", "/signin", true);
-    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xml.open("POST", "/signin", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 
-    xml.onreadystatechange = function () { 
-        console.log(xml.readyState,xml.status)      
-        // if (xml.readyState === 4) {
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
             if (xml.status === 200) {
                 window.location.href = '/'
-            }
-             if (xml.status !== 200){
+            } else {
                 const logerror = document.querySelector(".form-line")
                 logerror.innerText = 'Invalid password or username'
-                logerror.style.color = "red"
                 setTimeout(() => {
                     logerror.innerText = ''
-                }, 3000);
+                    logerror.style.color= 'red'
+                }, 1000)
             }
-        //}
-    };
+        }
+    }
 
     // Get form data
-    const formData = new URLSearchParams(new FormData(document.querySelector('.login-form'))).toString();
-    console.log(formData)
-
-    xml.send(formData);
+    const formData = new URLSearchParams(new FormData(document.querySelector('.login-form'))).toString()
+    xml.send(formData)
 }

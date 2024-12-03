@@ -37,7 +37,6 @@ func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, valid, username, password := validators.Signin_Request(r, db)
-	fmt.Println(statuscode)
 	if statuscode != http.StatusOK {
 		w.WriteHeader(statuscode)
 		return
