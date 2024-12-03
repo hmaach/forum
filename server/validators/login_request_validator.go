@@ -18,7 +18,7 @@ func GetLogin_Request(r *http.Request, db *sql.DB) (int, bool) {
 
 // /////////////////////////////////////////////////////////////////////////////
 func Signin_Request(r *http.Request, db *sql.DB) (int, bool, string, string) {
-	
+
 	if r.Method != http.MethodPost {
 		return http.StatusMethodNotAllowed, false, "", ""
 	}
@@ -34,10 +34,8 @@ func Signin_Request(r *http.Request, db *sql.DB) (int, bool, string, string) {
 
 	username = html.EscapeString(username)
 	password = html.EscapeString(password)
-
 	if len(username) < 4 || len(password) < 6 {
 		return http.StatusBadRequest, valid, "", ""
 	}
-
 	return http.StatusOK, valid, username, password
 }

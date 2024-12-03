@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -36,13 +37,13 @@ func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, valid, username, password := validators.Signin_Request(r, db)
-
+	fmt.Println(statuscode)
 	if statuscode != http.StatusOK {
 		w.WriteHeader(statuscode)
 		return
 	}
 	if valid {
-		http.Redirect(w, r, "/", http.StatusFound)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -59,7 +60,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
-	fmt.Println("fffffffff")
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
 		w.WriteHeader(401)
@@ -88,7 +88,10 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		Expires: time.Now().Add(10 * time.Hour),
 		Path:    "/",
 	})
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
+	// Return the new count as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{})
+	//http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
 	// w.Write([]byte("Logged in successfully"))
 }
 

@@ -2,41 +2,15 @@
 <div class="login-page">
     <div class="login-card">
         <h1>Log in</h1>
-        <form action="/signin" method="post" class="login-form">
-            <input type="text" name="username" class="login-input" placeholder="email or username">
-            <input type="password" name="password" class="login-input" placeholder="********">
-            <button type="submit" class="login-submit">Log in<i class="fa-solid fa-right-to-bracket"></i></button>
+        <form class="login-form">
+            <input type="text" name="username" class="login-input" placeholder="email or username" required>
+            <input type="password" name="password" class="login-input" placeholder="********" required>
+            <button onclick="loginError()" type="submit" class="login-submit">Log in <i
+                    class="fa-solid fa-right-to-bracket"></i></button>
+            <span class="form-line"></span>
+
         </form>
-        <span class="form-line"></span>
         <p class="form-second-option">New to 01Forum? <a href="/register">Register</a></p>
     </div>
-    <script> 
-        document.querySelector(".login-submit").addEventListener("click",(ev)=>{
-            console.log("ffff")
-            fetch("/signin",{method:"POST"}).then(
-                res =>{
-                   if (res.status !== 200){
-                        const err = document.querySelector('.form-line')
-                            err.innerText = 'invalid username or password'
-                            err.style.color = 'red'
-                            setTimeout(() => {
-                                err.innerText = ``
-                            }, 2000);
-                   }else{
-                        window.location.href = '/'
-                   } 
-                }
-            )
-        })
-        
-        // const password = document.querySelector(".login-input")  
-        
-        // fetch().then(response => {
-        //     if (response.status != 200) {
-        //         const nextbtn = document.querySelector(".next")
-        //         nextbtn.outerHTML = `<a class="next" style="cursor : not-allowed; color : grey;">Next &raquo;</a>`
-        //     }
-        // })
-    </script>
 </div>
 {{template "footer.html"}}
