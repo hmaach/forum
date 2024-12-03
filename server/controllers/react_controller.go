@@ -4,18 +4,22 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"forum/server/models"
 	"forum/server/utils"
 	"forum/server/validators"
-	"net/http"
 )
 
 func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, user_id, post_id, reaction := validators.ReactToPost_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
+		return
+	}
+	if !valid {
+		w.WriteHeader(401)
 		return
 	}
 	var dbreaction string
@@ -53,8 +57,12 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, user_id, comment_id, userReaction := validators.ReactToPost_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
+		return
+	}
+
+	if !valid {
+		w.WriteHeader(401)
 		return
 	}
 

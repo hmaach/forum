@@ -14,7 +14,6 @@ func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid := validators.GetRegister_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
@@ -33,7 +32,6 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, email, newUserName, password := validators.Signup_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}

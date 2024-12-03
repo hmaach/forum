@@ -2,8 +2,9 @@ package validators
 
 import (
 	"database/sql"
-	"forum/server/config"
 	"net/http"
+
+	"forum/server/config"
 )
 
 func GetRegister_Request(r *http.Request, db *sql.DB) (int, string, bool) {
@@ -32,7 +33,7 @@ func Signup_Request(r *http.Request, db *sql.DB) (int, string, bool, string, str
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
 
-	if len(username) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
+	if len(newUserName) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
 		return http.StatusBadRequest, username, valid, "", "", ""
 	}
 	return http.StatusOK, username, valid, email, newUserName, password

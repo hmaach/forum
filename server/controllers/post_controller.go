@@ -16,7 +16,6 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, page := validators.IndexPosts_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
@@ -44,7 +43,6 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, categorieId, pageId := validators.IndexPostsByCategory_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
@@ -66,7 +64,6 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, postId := validators.ShowPost_Request(r, db)
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
@@ -90,7 +87,6 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	statuscode, username, valid := validators.GetPostCreationForm_Request(r, db)
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}

@@ -10,5 +10,33 @@
         <span class="form-line"></span>
         <p class="form-second-option">New to 01Forum? <a href="/register">Register</a></p>
     </div>
+    <script> 
+        document.querySelector(".login-submit").addEventListener("click",(ev)=>{
+            console.log("ffff")
+            fetch("/signin",{method:"POST"}).then(
+                res =>{
+                   if (res.status !== 200){
+                        const err = document.querySelector('.form-line')
+                            err.innerText = 'invalid username or password'
+                            err.style.color = 'red'
+                            setTimeout(() => {
+                                err.innerText = ``
+                            }, 2000);
+                   }else{
+                        window.location.href = '/'
+                   } 
+                }
+            )
+        })
+        
+        // const password = document.querySelector(".login-input")  
+        
+        // fetch().then(response => {
+        //     if (response.status != 200) {
+        //         const nextbtn = document.querySelector(".next")
+        //         nextbtn.outerHTML = `<a class="next" style="cursor : not-allowed; color : grey;">Next &raquo;</a>`
+        //     }
+        // })
+    </script>
 </div>
 {{template "footer.html"}}

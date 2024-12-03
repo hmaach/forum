@@ -14,16 +14,12 @@ import (
 
 func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, username, valid, content, postid, user_id := validators.CreateComment_Request(r, db)
-
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
 	}
-
 	if !valid {
 		w.WriteHeader(401)
-		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 

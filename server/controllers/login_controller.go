@@ -19,7 +19,6 @@ func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	statuscode, valid := validators.GetLogin_Request(r, db)
 
 	if statuscode != http.StatusOK {
-		w.WriteHeader(statuscode)
 		utils.RenderError(db, w, r, statuscode, false, "")
 		return
 	}
@@ -40,7 +39,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	if statuscode != http.StatusOK {
 		w.WriteHeader(statuscode)
-		utils.RenderError(db, w, r, statuscode, false, "")
 		return
 	}
 	if valid {
@@ -54,16 +52,18 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.RenderError(db, w, r, http.StatusNotFound, false, "")
+			w.WriteHeader(401)
+			//utils.RenderError(db, w, r, http.StatusNotFound, false, "")
 			return
 		}
 		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
 		return
 	}
-
+	fmt.Println("fffffffff")
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		w.WriteHeader(401)
+		//http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 	////////////////////////////////////////

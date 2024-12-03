@@ -27,13 +27,14 @@
                         class="fa-regular fa-thumbs-down"></i>{{.Data.Post.Dislikes}}</button>
                 <span class="post-comments"><i class="fa-regular fa-comment"></i>{{.Data.Post.Comments}}</span>
             </div>
+            <span style="color:red; border: none;" id="errorlogin{{.Data.Post.ID}}"></span>
 
         </div>
             <div class="comment-add">
                 <textarea name="postid" hidden>{{.Data.Post.ID}}</textarea>
                 <textarea id="comment-content" name="comment" placeholder="Add a comment..." required></textarea>
                 <button onclick="addcomment('{{.Data.Post.ID}}')">submit</button>
-                <span style="color:red" id="errorlogin{{.Data.Post.ID}}"></span>
+                <!-- <span style="color:red" id="errorlogin{{.Data.Post.ID}}"></span> -->
             </div>
         <div class="comments">
             {{range .Data.Comments}}
