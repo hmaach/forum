@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!usernameRegex.test(username)) {
-            alert("Invalid username. Must be 3-16 characters long and include only letters, numbers, dots, underscores, or dashes.");
+            ("Invalid username. Must be 3-16 characters long and include only letters, numbers, dots, underscores, or dashes.");
             event.preventDefault(); 
             return;
         }
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault(); 
             return;
         }
-        
+
         if (password !== passwordConfirmation) {
             alert("Passwords do not match.");
             event.preventDefault();
