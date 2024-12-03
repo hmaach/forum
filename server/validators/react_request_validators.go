@@ -17,13 +17,13 @@ func ReactToPost_Request(r *http.Request, db *sql.DB) (int, string, bool, int, i
 		return http.StatusBadRequest, username, valid,0,0,""
 	}
 
-	userReaction := r.FormValue("reaction")
+	reaction := r.FormValue("reaction")
 	id := r.FormValue("post_id")
 	post_id, err := strconv.Atoi(id)
 	if err != nil{
 		return http.StatusBadRequest, username, valid,0,0,""
 	}
-	return http.StatusOK, username, valid, userId,post_id,userReaction
+	return http.StatusOK, username, valid, userId,post_id,reaction
 }
 
 ///////////////////////////////////////////////////////////////

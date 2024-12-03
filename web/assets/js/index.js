@@ -56,7 +56,7 @@ function commentreaction(commentid, reaction) {
 }
 
 
-function addcomm(postId) {
+function addcomment(postId) {
     const content = document.getElementById("comment-content");
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/post/addcommentREQ", true);

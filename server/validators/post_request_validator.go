@@ -39,7 +39,6 @@ func IndexPostsByCategory_Request(r *http.Request, db *sql.DB) (int, string, boo
 		return http.StatusMethodNotAllowed, username, valid, 0, 0
 	}
 
-	// check categoryID if can be converted to int
 	idStr := r.PathValue("id")
 	categorieId, err := strconv.Atoi(idStr)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 )
 
 func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	statuscode, username, valid, user_id, post_id, userReaction := validators.ReactToPost_Request(r, db)
+	statuscode, username, valid, user_id, post_id, reaction := validators.ReactToPost_Request(r, db)
 
 	if statuscode != http.StatusOK {
 		w.WriteHeader(statuscode)
@@ -23,15 +23,14 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	db.QueryRow("SELECT reaction FROM post_reactions WHERE user_id=? AND post_id=?", user_id, post_id).Scan(&dbreaction)
 
 	if dbreaction == "" {
-		_, err = models.AddPostReaction(db, user_id, post_id, userReaction)
+		_, err = models.AddPostReaction(db, user_id, post_id, reaction)
 	} else {
-		if userReaction == dbreaction {
+		if reaction == dbreaction {
 			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
-			_, err1 := db.Exec(query, user_id, post_id)
-			_ = err1
+			_, err = db.Exec(query, user_id, post_id)
 		} else {
 			query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
-			_, err = db.Exec(query, userReaction, user_id, post_id)
+			_, err = db.Exec(query, reaction, user_id, post_id)
 		}
 	}
 
