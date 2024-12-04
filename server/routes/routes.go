@@ -30,8 +30,11 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/create", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetPostCreationForm(w, r, db)
 	})
-	mux.HandleFunc("/myposts", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/user-posts", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetMyPosts(w, r, db)
+	})
+	mux.HandleFunc("/liked-posts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetLikedPosts(w, r, db)
 	})
 
 	mux.HandleFunc("/post/createpost", func(w http.ResponseWriter, r *http.Request) {
