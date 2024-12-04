@@ -23,15 +23,11 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/{id}", func(w http.ResponseWriter, r *http.Request) {
 		controllers.ShowPost(w, r, db)
 	})
-
-	mux.HandleFunc("/post/addcommentREQ", func(w http.ResponseWriter, r *http.Request) {
-		controllers.CreateComment(w, r, db)
-	})
-
+	
 	mux.HandleFunc("/post/create", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetPostCreationForm(w, r, db)
 	})
-
+	
 	mux.HandleFunc("/post/createpost", func(w http.ResponseWriter, r *http.Request) {
 		controllers.CreatePost(w, r, db)
 	})
@@ -39,30 +35,35 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/postreaction", func(w http.ResponseWriter, r *http.Request) {
 		controllers.ReactToPost(w, r, db)
 	})
+	
+	mux.HandleFunc("/post/addcommentREQ", func(w http.ResponseWriter, r *http.Request) {
+		controllers.CreateComment(w, r, db)
+	})
 
 	mux.HandleFunc("/post/commentreaction", func(w http.ResponseWriter, r *http.Request) {
 		controllers.ReactToComment(w, r, db)
+	})
+	
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetLogin(w, r, db)
 	})
 
 	mux.HandleFunc("/signin", func(w http.ResponseWriter, r *http.Request) {
 		controllers.Signin(w, r, db)
 	})
 
-	mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
-		controllers.Signup(w, r, db)
+	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetRegister(w, r, db)
 	})
 
-	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		controllers.GetLogin(w, r, db)
+	mux.HandleFunc("/signup", func(w http.ResponseWriter, r *http.Request) {
+		controllers.Signup(w, r, db)
 	})
 
 	mux.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		controllers.Logout(w, r, db)
 	})
 
-	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		controllers.GetRegister(w, r, db)
-	})
 
 	return mux
 }
