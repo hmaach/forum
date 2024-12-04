@@ -84,7 +84,7 @@ header {
     justify-content: space-between;
     padding: 0 1rem;
     border-bottom: 1px solid var(--color-border);
-    z-index: 1;
+    z-index: 2;
 }
 
 header a {
@@ -133,4 +133,108 @@ header:first-child {
     flex-direction: column;
     padding-top: 65px;
     margin-left: 320px;
+    min-height: 75vh;
+}
+
+/* footer style */
+/* footer {
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--color-bg-variant);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 1rem 0;
+    font-weight: 400;
+}
+
+.footer-team a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: var(--transition);
+    background-color: var(--color-bg);
+    border: solid 1px var(--color-border);
+    border-radius: 10px;
+    padding: 3px 7px;
+    font-size: 0.9rem;
+}
+
+.footer-team a:hover {
+    background-color: var(--color-bg-variant-hover);
+}
+
+.footer-team img {
+    width: 14px;
+} */
+
+footer {
+    background-color: var(--color-bg-variant);
+    color: var(--color-text);
+    padding: 20px 10px;
+    text-align: center;
+    border-top: 3px solid var(--color-primary);
+}
+
+footer div {
+    margin-bottom: 10px;
+}
+
+footer span {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.footer-team {
+    margin-top: 15px;
+}
+
+.footer-team span {
+    font-size: 14px;
+    font-weight: normal;
+    margin-right: 8px;
+    color: var(--color-text);
+}
+
+.footer-team a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 10px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-team a:hover {
+    color: var(--color-primary-hover);  
+    transform: scale(1.1);
+}
+
+.footer-team img {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    footer {
+        text-align: center;
+    }
+
+    footer .footer-team {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    footer .footer-team a {
+        margin: 5px;
+    }
 }

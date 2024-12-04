@@ -2,11 +2,12 @@
 .posts {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 75%;
     align-items: center;
     /* margin-left: 15px; */
     /* border: red solid 1px; */
     margin-left: 50px;
+    min-height: 73vh;
 }
 
 .posts-header {
@@ -273,6 +274,22 @@
 
 .create-post button:hover {
     background-color: var(--color-primary-hover);
+}
+
+/* pagination style */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 78%;
+    /* border: red 1px solid; */
+    margin: 20px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: var(--color-text);
 }
 
 /* style of post's comments  */

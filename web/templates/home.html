@@ -42,33 +42,20 @@
         {{else}}
         <p class="no-posts">No posts available to display !</p>
         {{end}}
-        <style>
-            .pagination {
-                display: inline-block;
-            }
-
-            .pagination * {
-                color: black;
-                float: left;
-                padding: 8px 16px;
-                text-decoration: none;
-            }
-        </style>
-
-        <div class="pagination">
-            <a onclick="pagination('back', `{{if .Data}}true{{end}}`)" class="back" href="#">&laquo;
-                Back</a>
-            <span class="currentpage">1</span>
-            <a onclick="pagination('next', `{{if .Data}}true{{end}}`)" class="next" href="#">Next
-                &raquo;</a>
-        </div>
+    </div>
+    <div class="pagination">
+        <a onclick="pagination('back', `{{if .Data}}true{{end}}`)" class="back" href="#">&laquo;
+            Back</a>
+        <span class="currentpage">1</span>
+        <a onclick="pagination('next', `{{if .Data}}true{{end}}`)" class="next" href="#">Next
+            &raquo;</a>
     </div>
     <script>
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const path = window.location.pathname
-        let page =  1
-        
+        let page = 1
+
         if (!isNaN(parseInt(urlParams.get('PageID')))) {
             page = parseInt(urlParams.get('PageID'))
         }
@@ -85,6 +72,6 @@
         }
         document.querySelector(".currentpage").innerText = urlParams.get('PageID') > 0 ? urlParams.get('PageID') : 1
     </script>
-    </div>
+</div>
 </div>
 {{template "footer.html"}}
