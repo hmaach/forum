@@ -151,8 +151,9 @@ function pagination(dir, data) {
     }
 }
 
-function loginError(event) {
-    event.preventDefault(); // Prevent the form from submitting normally
+function loginError() {
+    const username =document.getElementById("username")
+    const password =document.getElementById("password")
     const xml = new XMLHttpRequest();
     xml.open("POST", "/signin", true)
     xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -164,15 +165,14 @@ function loginError(event) {
             } else {
                 const logerror = document.querySelector(".form-line")
                 logerror.innerText = 'Invalid password or username'
+                logerror.style.color= 'red'
                 setTimeout(() => {
                     logerror.innerText = ''
-                    logerror.style.color= 'red'
                 }, 1000)
             }
         }
     }
 
     // Get form data
-    const formData = new URLSearchParams(new FormData(document.querySelector('.login-form'))).toString()
-    xml.send(formData)
+    xml.send(`username=${username.value}&password=${password.value}`)
 }
