@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -45,7 +44,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-
 	// Retrieve user information from SQLite
 	var passwordHash string
 	var user_id int
@@ -53,7 +51,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(401)
-			//utils.RenderError(db, w, r, http.StatusNotFound, false, "")
+			// utils.RenderError(db, w, r, http.StatusNotFound, false, "")
 			return
 		}
 		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
@@ -62,7 +60,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
 		w.WriteHeader(401)
-		//http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		// http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 	////////////////////////////////////////
@@ -87,11 +85,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		Expires: time.Now().Add(10 * time.Hour),
 		Path:    "/",
 	})
-	// Return the new count as JSON
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]int{})
-	//http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
-	// w.Write([]byte("Logged in successfully"))
+	w.WriteHeader(http.StatusOK)
 }
 
 func generateSessionID() (string, error) {
