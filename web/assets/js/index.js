@@ -87,12 +87,12 @@ function addcomm(postId) {
             document.getElementsByClassName("comments")[0].prepend(comment)
             document.getElementsByClassName("post-comments")[0].innerHTML = `<i class="fa-regular fa-comment"></i>` + response.commentscount
             content.value = ""
-        } else if (xhr.status === 400) {
-            document.getElementById("errorlogin" + postId).innerText = `Invalid comment!`
-            setTimeout(() => {
-                document.getElementById("errorlogin" + postId).innerText = ``
-            }, 1000);
-        } else if (xhr.status === 401) {
+            // } else if (xhr.status === 400) {
+            //     document.getElementById("errorlogin" + postId).innerText = `Invalid comment!`
+            //     setTimeout(() => {
+            //         document.getElementById("errorlogin" + postId).innerText = ``
+            //     }, 1000);
+        } else {
             document.getElementById("errorlogin" + postId).innerText = `You must login first!`
             setTimeout(() => {
                 document.getElementById("errorlogin" + postId).innerText = ``
@@ -138,7 +138,7 @@ if (select) {
 
 }
 
-async function pagination(dir, data) {
+function pagination(dir, data) {
     const path = window.location.pathname
     if (dir === "next" && data) {
         const page = +document.querySelector(".currentpage").innerText + 1
@@ -149,4 +149,30 @@ async function pagination(dir, data) {
         const page = +document.querySelector(".currentpage").innerText - 1
         window.location.href = path + "?PageID=" + page;
     }
+}
+
+function loginError() {
+    const username =document.getElementById("username")
+    const password =document.getElementById("password")
+    const xml = new XMLHttpRequest();
+    xml.open("POST", "/signin", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
+            if (xml.status === 200) {
+                window.location.href = '/'
+            } else {
+                const logerror = document.querySelector(".form-line")
+                logerror.innerText = 'Invalid password or username'
+                logerror.style.color= 'red'
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1000)
+            }
+        }
+    }
+
+    // Get form data
+    xml.send(`username=${username.value}&password=${password.value}`)
 }

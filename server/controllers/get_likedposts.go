@@ -3,20 +3,22 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	"forum/server/models"
-	"forum/server/utils"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"forum/server/config"
+	"forum/server/models"
+	"forum/server/utils"
 )
 
 func GetLikedPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
-	_, username, valid = ValidSession(r, db)
+	_, username, valid = config.ValidSession(r, db)
 
-	if r.URL.Path != "/likedposts" || r.Method != http.MethodGet {
+	if r.URL.Path != "/liked-posts" || r.Method != http.MethodGet {
 		utils.RenderError(db, w, r, http.StatusNotFound, valid, username)
 		return
 	}
@@ -45,7 +47,7 @@ func GetLikedPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	if err := utils.RenderTemplate(db, w, r, "likedposts", http.StatusOK, posts, valid, username); err != nil {
+	if err := utils.RenderTemplate(db, w, r, "home", http.StatusOK, posts, valid, username); err != nil {
 		log.Println("Template render error:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
 		return

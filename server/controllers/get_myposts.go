@@ -8,16 +8,17 @@ import (
 	"strconv"
 	"strings"
 
+	"forum/server/config"
 	"forum/server/models"
 	"forum/server/utils"
 )
 
-func GetMyPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetuserPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
-	_, username, valid = ValidSession(r, db)
+	_, username, valid = config.ValidSession(r, db)
 
-	if r.URL.Path != "/myposts" || r.Method != http.MethodGet {
+	if r.URL.Path != "/user-posts" || r.Method != http.MethodGet {
 		utils.RenderError(db, w, r, http.StatusNotFound, valid, username)
 		return
 	}
@@ -34,7 +35,7 @@ func GetMyPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		offset = 0
 	}
 
-	posts, statusCode, err := FetchMyPosts(db, username, offset)
+	posts, statusCode, err := FetchuserPosts(db, username, offset)
 	if err != nil {
 		log.Println("Error fetching posts:", err)
 		utils.RenderError(db, w, r, statusCode, valid, username)
@@ -46,14 +47,14 @@ func GetMyPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	if err := utils.RenderTemplate(db, w, r, "myposts", http.StatusOK, posts, valid, username); err != nil {
+	if err := utils.RenderTemplate(db, w, r, "home", http.StatusOK, posts, valid, username); err != nil {
 		log.Println("Template render error:", err)
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
 		return
 	}
 }
 
-func FetchMyPosts(db *sql.DB, username string, offset int) ([]models.Post, int, error) {
+func FetchuserPosts(db *sql.DB, username string, offset int) ([]models.Post, int, error) {
 	if username == "" {
 		return nil, 400, fmt.Errorf("invalid username")
 	}

@@ -33,14 +33,14 @@ func main() {
 	if err != nil {
 		log.Println("Error fetching categories from the database:", err)
 	}
-
+	config.CreateTables(db)
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    ":8000",
 		Handler: routes.Routes(db),
 	}
 
 	// Start the HTTP server
-	log.Println("Server starting on http://localhost:8080")
+	log.Println("Server starting on http://localhost:8000")
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal("Server error:", err)
 	}

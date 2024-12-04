@@ -5,47 +5,29 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 
+	"forum/server/models"
 	"forum/server/utils"
+	"forum/server/validators"
 )
 
 func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	var user_id int
-	var valid bool
-	var username string
-
-	if user_id, username, valid = ValidSession(r, db); !valid {
+	statuscode, username, valid, content, postid, user_id := validators.CreateComment_Request(r, db)
+	if statuscode != http.StatusOK {
+		utils.RenderError(db, w, r, statuscode, valid, username)
+		return
+	}
+	if !valid {
 		w.WriteHeader(401)
-		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
-		return
-	}
-
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
-		return
-	}
-	content := r.FormValue("comment")
-	id := r.FormValue("postid")
-	postid, err := strconv.Atoi(id)
-	if err != nil || strings.TrimSpace(content) == "" {
-		w.WriteHeader(400)
-		utils.RenderError(db, w, r, http.StatusBadRequest, valid, username)
-		return
-	}
-	comm_id, err := AddComment(db, user_id, postid, content)
+	comm_id, err := models.AddComment(db, user_id, postid, content)
 	if err != nil {
 		http.Error(w, "Cannot add comment, try again!", http.StatusBadRequest)
 		return
 	}
-	// http.Redirect(w, r, "/post/"+strconv.Itoa(postid), http.StatusFound)
 
 	var commentscount int
 	err2 := db.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postid).Scan(&commentscount)
@@ -66,17 +48,4 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		"dislikes":      0,
 		"commentscount": commentscount,
 	})
-}
-
-func AddComment(db *sql.DB, user_id, post_id int, content string) (int64, error) {
-	task := `INSERT INTO comments (user_id,post_id,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, post_id, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	commentID, _ := result.LastInsertId()
-
-	return commentID, nil
 }
