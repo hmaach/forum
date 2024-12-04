@@ -35,7 +35,13 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/create", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetPostCreationForm(w, r, db)
 	})
-	
+	mux.HandleFunc("/user-posts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetuserPosts(w, r, db)
+	})
+	mux.HandleFunc("/liked-posts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetLikedPosts(w, r, db)
+	})
+
 	mux.HandleFunc("/post/createpost", func(w http.ResponseWriter, r *http.Request) {
 		controllers.CreatePost(w, r, db)
 	})
