@@ -27,9 +27,11 @@ func Routes(db *sql.DB) http.Handler {
 	mux.HandleFunc("/post/addcommentREQ", func(w http.ResponseWriter, r *http.Request) {
 		controllers.CreateComment(w, r, db)
 	})
-
 	mux.HandleFunc("/post/create", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetPostCreationForm(w, r, db)
+	})
+	mux.HandleFunc("/myposts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.GetMyPosts(w, r, db)
 	})
 
 	mux.HandleFunc("/post/createpost", func(w http.ResponseWriter, r *http.Request) {
