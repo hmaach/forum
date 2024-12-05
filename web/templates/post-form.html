@@ -1,7 +1,7 @@
 {{template "header.html" .}}
 {{template "navbar.html" .}}
 <div class="container">
-    <form action="createpost" method="post" class="create-post">
+    <div class="create-post">
         <h1>Create a New Post</h1>
         <div class="create-post-fields">
             <label>Title</label>
@@ -21,9 +21,10 @@
         </div>
         <div class="create-post-fields">
             <label>Content</label>
-            <textarea name="content" placeholder="What's on your mind?"></textarea>
+            <textarea class="content" name="content" placeholder="What's on your mind?"></textarea>
         </div>
-        <button type="submit">Publish Post</button>
-    </form>
+        <span class="form-line" style="background-color: black;"></span>
+        <button onclick="CreatPostError()">Publish Post</button>
+    </div>
 </div>
 {{template "footer.html"}}

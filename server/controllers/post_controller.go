@@ -105,6 +105,7 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	statuscode, username, valid, userid, title, content, categories := validators.CreatePost_Request(r, db)
+	fmt.Println(statuscode)
 	if statuscode != http.StatusOK {
 		utils.RenderError(db, w, r, statuscode, valid, username)
 		return
@@ -125,7 +126,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	for i := 0; i < len(categories); i++ {
 		catid, err := strconv.Atoi(categories[i])
 		if err != nil {
-			http.Error(w, "Internal server error", 500)
+			fmt.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		_, err = models.AddPostCat(db, pid, catid)
@@ -135,18 +137,19 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			return
 		}
 	}
-
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(`
-			   <html>
-			   <body>
-				  <p>Post created successfully. Redirecting to the main page in 2 seconds...</p>
-				  <script>
-					 setTimeout(function() {
-						window.location.href = "/";
-					 }, 2000);
-				  </script>
-			   </body>
-			   </html>
-			`))
+	fmt.Println("goooooooood")
+	// w.Header().Set("Content-Type", "text/html")
+	// w.Write([]byte(`
+	// 		   <html>
+	// 		   <body>
+	// 			  <p>Post created successfully. Redirecting to the main page in 2 seconds...</p>
+	// 			  <script>
+	// 				 setTimeout(function() {
+	// 					window.location.href = "/";
+	// 				 }, 2000);
+	// 			  </script>
+	// 		   </body>
+	// 		   </html>
+	// 		`))
+	w.WriteHeader(http.StatusOK)
 }

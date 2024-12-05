@@ -176,3 +176,42 @@ function loginError() {
     // Get form data
     xml.send(`username=${username.value}&password=${password.value}`)
 }
+
+function CreatPostError() {
+    const title =document.querySelector(".create-post-title")
+    const content =document.querySelector(".content")
+    const categories =document.querySelector(".selected-categories")
+    let cateris = new Array()
+    Array.from(categories.getElementsByTagName('input')).forEach((x)=>{
+        cateris.push(x.value)
+    })
+    console.log(title.value,content.value,cateris)
+    const xml = new XMLHttpRequest();
+    xml.open("POST", "/post/createpost", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
+            if (xml.status === 200) {
+                window.location.href = '/'
+            } else if (xml.status === 401){
+                const logerror = document.querySelector(".form-line")
+                logerror.innerText = 'You must login first'
+                logerror.style.color= 'red'
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1000)
+            }else{
+                const logerror = document.querySelector(".form-line")
+                logerror.innerText = 'invalid entries try again'
+                logerror.style.color= 'red'
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1000)
+            }
+        }
+    }
+
+    // Get form data
+    xml.send(`title=${title.value}&content=${content.value}&categories=${cateris}`)
+}
