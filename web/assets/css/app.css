@@ -175,7 +175,7 @@ footer {
     color: var(--color-text);
     padding: 20px 10px;
     text-align: center;
-    border-top: 3px solid var(--color-primary);
+    border-top: 3px solid var(--color-border);
 }
 
 footer div {
