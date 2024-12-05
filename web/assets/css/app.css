@@ -18,7 +18,7 @@
 
     --container-width-lg: 75%;
     --container-width-md: 86%;
-    --container-width-ms: 80%;
+    --container-width-sm: 80%;
 }
 
 
@@ -137,39 +137,6 @@ header:first-child {
 }
 
 /* footer style */
-/* footer {
-    height: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background-color: var(--color-bg-variant);
-    border-top: 1px solid var(--color-border);
-    color: var(--color-text);
-    padding: 1rem 0;
-    font-weight: 400;
-}
-
-.footer-team a {
-    color: var(--color-text);
-    text-decoration: none;
-    transition: var(--transition);
-    background-color: var(--color-bg);
-    border: solid 1px var(--color-border);
-    border-radius: 10px;
-    padding: 3px 7px;
-    font-size: 0.9rem;
-}
-
-.footer-team a:hover {
-    background-color: var(--color-bg-variant-hover);
-}
-
-.footer-team img {
-    width: 14px;
-} */
-
 footer {
     background-color: var(--color-bg-variant);
     color: var(--color-text);
@@ -204,13 +171,14 @@ footer span {
     color: #007bff;
     font-size: 14px;
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     margin: 0 10px;
     transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .footer-team a:hover {
-    color: var(--color-primary-hover);  
+    color: var(--color-primary-hover);
     transform: scale(1.1);
 }
 
@@ -221,20 +189,17 @@ footer span {
 }
 
 
-/* Responsive design */
-@media (max-width: 768px) {
-    footer {
-        text-align: center;
+/* ================= medium style  ================== */
+@media screen and (max-width: 1024px) {
+    .container {
+        margin-left: 200px;
     }
+}
 
-    footer .footer-team {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    footer .footer-team a {
-        margin: 5px;
+/* ================= small style ================== */
+@media screen and (max-width: 600px) {
+    .container {
+        margin-left: 0px;
+        align-items: center;
     }
 }

@@ -76,6 +76,26 @@ nav i {
     text-transform: capitalize;
 }
 
-/* .categories-list li a:hover {
-    color: var(--color-primary-hover);
-} */
+
+/* ================= medium style  ================== */
+@media screen and (max-width: 1024px) {
+    nav {
+        width: 200px;
+        padding: 0;
+    }
+
+    .categories-list {
+        margin-left: 1rem;
+    }
+
+    .categories-list li a {
+        font-size: 0.9rem;
+    }
+}
+
+/* ================= small style ================== */
+@media screen and (max-width: 600px) {
+    nav {
+        display: none;
+    }
+}
