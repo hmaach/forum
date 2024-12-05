@@ -60,6 +60,15 @@ func Routes(db *sql.DB) http.Handler {
 		controllers.Logout(w, r, db)
 	})
 
+
+	mux.HandleFunc("/mycreatedposts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.MyCreatedPosts(w, r, db)
+	})
+	
+	mux.HandleFunc("/mylikedposts", func(w http.ResponseWriter, r *http.Request) {
+		controllers.MyLikedPosts(w, r, db)
+	})
+
 	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		controllers.GetRegister(w, r, db)
 	})

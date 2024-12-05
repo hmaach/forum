@@ -150,3 +150,102 @@ async function pagination(dir, data) {
         window.location.href = path + "?PageID=" + page;
     }
 }
+
+
+
+function CreatPostError() {
+    const title =document.querySelector(".create-post-title")
+    const content =document.querySelector(".content")
+    const categories =document.querySelector(".selected-categories")
+    let cateris = new Array()
+    Array.from(categories.getElementsByTagName('input')).forEach((x)=>{
+        cateris.push(x.value)
+    })
+    const xml = new XMLHttpRequest();
+    xml.open("POST", "/post/createpost", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
+            const logerror = document.querySelector(".errorarea")
+            if (xml.status === 200) {
+                logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
+                logerror.style.color = "green"
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 2000)
+                
+            } else if (xml.status === 401){
+                logerror.innerText = 'You are loged out, redirect to login page in 2s...'
+                setTimeout(() => {
+                    window.location.href = '/login'
+                }, 2000)
+
+            }else{
+                logerror.innerText = 'Error: check your entries and try again!'
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            }
+        }
+    }
+
+    // Get form data
+    xml.send(`title=${title.value}&content=${content.value}&categories=${cateris}`)
+}
+
+
+function register(){
+    const email = document.querySelector("#email")
+    const username = document.querySelector("#username")
+    const password = document.querySelector("#password")
+    const passConfirm = document.querySelector("#password-confirmation")
+
+    const xml = new XMLHttpRequest();
+    xml.open("POST", "/signup", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
+            const logerror = document.querySelector(".errorarea")
+            if (xml.status === 200) {
+                logerror.innerText = `User ${username.value} created successfully, redirect to login page in 2s ...`
+                logerror.style.color = "green"
+                setTimeout(() => {
+                    window.location.href = '/login'
+                }, 2000)
+                
+            } else if (xml.status === 302){
+                logerror.innerText = 'You are already loged in, redirect to home page in 2s...'
+                logerror.style.color = "green"
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 2000)
+
+            }else if (xml.status === 400) {
+                logerror.innerText = 'Error: verify your data and try again!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            } else if (xml.status === 304) {
+                logerror.innerText = 'User already exists!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            } else {
+                logerror.innerText = 'Cannot create user, try again later!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            }
+        }
+    }
+
+    // Get form data
+    xml.send(`email=${email.value}&username=${username.value}&password=${password.value}&password-confirmation=${passConfirm.value}`)
+
+
+}

@@ -3,6 +3,7 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 func Connect() (*sql.DB, error) {
@@ -16,5 +17,11 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}
+
+	_, err = db.Exec("PRAGMA foreign_keys = ON;")
+	if err != nil {
+		log.Fatal("Failed to enable foreign keys:", err)
+	}
+
 	return db, nil
 }

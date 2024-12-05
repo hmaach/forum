@@ -22,9 +22,13 @@
             </p>
         </a>
         {{ if .IsAuthenticated}}
-        <a href="/logout" class="login-link">{{.UserName}}
-            <i class="fa-solid fa-user"></i>
-        </a>
+        <div class="dropdown">
+            <button class="login-link">{{.UserName}} <i class="fa-solid fa-user"></i></button>
+            <div class="dropdown-content">
+                <a href="/logout" class="login-link" >Log Out
+                </a>
+            </div>
+        </div>
         {{else}}
         <a href="/login" class="login-link">Log in
             <i class="fa-solid fa-right-to-bracket"></i>

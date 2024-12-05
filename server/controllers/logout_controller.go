@@ -15,18 +15,8 @@ func Logout(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			return
 		}
 		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(`
-	   <html>
-	   <body>
-		  <p>You are loged out successfully. Redirecting to the main page in 2 seconds...</p>
-		  <script>
-			 setTimeout(function() {
-				window.location.href = "/";
-			 }, 2000);
-		  </script>
-	   </body>
-	   </html>
-	`))
+		http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
+		return
 	} else {
 		http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
 		return

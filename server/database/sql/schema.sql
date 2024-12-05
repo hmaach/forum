@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS sessions (
     user_id BIGINT UNIQUE NOT NULL,
     session_id TEXT NOT NULL,
-    expires_at TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) on DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS users (
