@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"forum/server/utils"
 
@@ -51,7 +52,8 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
 
-	if len(username) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
+
+	if len(strings.TrimSpace(username)) < 4 || len(strings.TrimSpace(password)) < 6 || email == "" || password != passwordConfirmation {
 		w.WriteHeader(400)
 		return
 	}

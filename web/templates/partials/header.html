@@ -25,7 +25,7 @@
         <div class="dropdown">
             <button class="login-link">{{.UserName}} <i class="fa-solid fa-user"></i></button>
             <div class="dropdown-content">
-                <a href="/logout" class="login-link" >Log Out
+                <a href="/logout" class="login-link">Log Out
                 </a>
             </div>
         </div>
@@ -35,3 +35,16 @@
         </a>
         {{end}}
     </header>
+
+    <noscript>
+        <style>
+            .container {
+                display: none;
+            }
+            .nojavascript {
+                display: block;
+                backdrop-filter: blur(2px);
+            }
+        </style>
+    </noscript>
+  
