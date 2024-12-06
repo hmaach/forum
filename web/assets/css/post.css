@@ -30,6 +30,11 @@
     transition: var(--transition);
 }
 
+.create-post-link i {
+
+    margin-right: 5px;
+}
+
 .create-post-link:hover {
     background-color: rgb(219, 219, 219);
 }
@@ -428,6 +433,7 @@
 @media screen and (max-width: 1024px) {
     .posts {
         width: var(--container-width-md);
+        margin-left: 30px;
     }
 
     .pagination {
@@ -447,6 +453,11 @@
         margin-left: 0;
     }
 
+    .post {
+        padding: 0;
+
+    }
+
     .pagination {
         width: var(--container-width-sm);
     }
@@ -454,4 +465,27 @@
     .create-post {
         width: var(--container-width-sm);
     }
+
+    .post-time {
+        font-size: 0.8rem;
+    }
+
+    .post-body {
+        /* margin: 10px 10px; */
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: black;
+    }
+
+    .create-post-link {
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+    }
+
 }

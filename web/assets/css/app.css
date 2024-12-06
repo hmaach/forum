@@ -18,7 +18,7 @@
 
     --container-width-lg: 75%;
     --container-width-md: 86%;
-    --container-width-sm: 80%;
+    --container-width-sm: 95%;
 }
 
 
@@ -127,6 +127,43 @@ header:first-child {
     background-color: var(--color-primary-hover);
 }
 
+.header-user {
+    margin-right: 2.5rem;
+    display: flex;
+}
+
+
+.header-username {
+    border: solid 1px var(--color-border);
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+    padding: 8px 20px;
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.logout-link {
+    text-decoration: none;
+    /* background-color: ; */
+    padding: 8px 15px;
+    color: rgb(187, 0, 0);
+    border: solid 1px rgb(187, 0, 0);
+    border-radius: 0 10px 10px 0;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.logout-link i {
+    margin-left: 10px;
+}
+
+.logout-link:hover {
+    background-color: rgb(187, 0, 0);
+    color: var(--color-white);
+}
+
 /* container style */
 .container {
     display: flex;
@@ -201,5 +238,52 @@ footer span {
     .container {
         margin-left: 0px;
         align-items: center;
+    }
+
+    header {
+        height: 50px;
+    }
+
+    .forum-title {
+        font-size: 1rem;
+    }
+
+    .img-01 {
+        width: 30px;
+    }
+
+    .login-link {
+        margin-right: 2.3rem;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+
+    .login-link i {
+        margin-left: 8px;
+    }
+
+    .header-user {
+        margin-right: 2.5rem;
+        display: flex;
+    }
+
+
+    .header-username {
+        padding: 5px 15px;
+        font-size: 0.9rem;
+    }
+
+    .logout-link {
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+    .logout-link i {
+        margin-left: 5px;
+    }
+
+    .container {
+        padding-top: 50px;
     }
 }

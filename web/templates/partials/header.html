@@ -22,9 +22,12 @@
             </p>
         </a>
         {{ if .IsAuthenticated}}
-        <a href="/logout" class="login-link">{{.UserName}}
-            <i class="fa-solid fa-user"></i>
-        </a>
+        <div class="header-user">
+            <span class="header-username">{{.UserName}}</span>
+            <a href="/logout" class="logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
         {{else}}
         <a href="/login" class="login-link">Log in
             <i class="fa-solid fa-right-to-bracket"></i>
