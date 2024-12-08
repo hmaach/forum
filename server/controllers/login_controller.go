@@ -46,17 +46,17 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 
 	if _, _, valid = ValidSession(r, db); valid {
-		http.Redirect(w, r, "/", http.StatusFound)
+		w.WriteHeader(302)
 		return
 	}
 
 	if r.Method != http.MethodPost {
-		utils.RenderError(db,w, r, http.StatusMethodNotAllowed, false, "")
+		w.WriteHeader(405)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		w.WriteHeader(400)
 		return
 	}
 
@@ -64,7 +64,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	password := r.FormValue("password")
 
 	if len(username) < 4 || len(password) < 6 {
-		utils.RenderError(db,w, r, http.StatusNotFound, false, "")
+		w.WriteHeader(400)
 		return
 	}
 
@@ -74,16 +74,16 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.RenderError(db,w, r, http.StatusNotFound, false, "")
+			w.WriteHeader(404)
 			return
 		}
-		utils.RenderError(db,w, r, http.StatusInternalServerError, false, "")
+		w.WriteHeader(500)
 		return
 	}
 
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		w.WriteHeader(401)
 		return
 	}
 	////////////////////////////////////////

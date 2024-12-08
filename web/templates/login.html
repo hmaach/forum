@@ -2,11 +2,12 @@
 <div class="login-page">
     <div class="login-card">
         <h1>Log in</h1>
-        <form action="/signin" method="post" class="login-form">
-            <input type="text" name="username" class="login-input" placeholder="email or username">
-            <input type="password" name="password" class="login-input" placeholder="********">
-            <button type="submit" class="login-submit">Log in<i class="fa-solid fa-right-to-bracket"></i></button>
-        </form>
+        <div class="login-form">
+            <input type="text" name="username" id="username" class="login-input" placeholder="email or username">
+            <input type="password" name="password" id="password" class="login-input" placeholder="********">
+            <span class="errorarea" style="color: rgb(255, 0, 0);"></span>
+            <button onclick="login()" class="login-submit">Log in<i class="fa-solid fa-right-to-bracket"></i></button>
+        </div>
         <span class="form-line"></span>
         <p class="form-second-option">New to 01Forum? <a href="/register">Register</a></p>
     </div>

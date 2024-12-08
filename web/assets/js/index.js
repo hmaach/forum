@@ -249,3 +249,62 @@ function register(){
 
 
 }
+
+
+
+function login(){
+    const username = document.querySelector("#username")
+    const password = document.querySelector("#password")
+
+    const xml = new XMLHttpRequest();
+    xml.open("POST", "/signin", true)
+    xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+
+    xml.onreadystatechange = function () {
+        if (xml.readyState === 4) {
+            const logerror = document.querySelector(".errorarea")
+            if (xml.status === 200) {
+                logerror.innerText = `Login in successfully, redirect to home page in 2s ...`
+                logerror.style.color = "green"
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 2000)
+                
+            } else if (xml.status === 302){
+                logerror.innerText = 'You are already loged in, redirect to home page in 2s...'
+                logerror.style.color = "green"
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 2000)
+
+            }else if (xml.status === 400) {
+                logerror.innerText = 'Error: verify your data and try again!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            } else if (xml.status === 404) {
+                logerror.innerText = 'User not found!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            } else if (xml.status === 401) {
+                logerror.innerText = 'Invalid username or password!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            } else {
+                logerror.innerText = 'Cannot create user, try again later!'
+                logerror.style.color = "red"
+                setTimeout(() => {
+                    logerror.innerText = ''
+                }, 1500)
+            }
+        }
+    }
+
+    // Get form data
+    xml.send(`username=${username.value}&password=${password.value}`)
+}
