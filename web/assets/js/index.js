@@ -152,8 +152,8 @@ function pagination(dir, data) {
 }
 
 function loginError() {
-    const username =document.getElementById("username")
-    const password =document.getElementById("password")
+    const username = document.getElementById("username")
+    const password = document.getElementById("password")
     const xml = new XMLHttpRequest();
     xml.open("POST", "/signin", true)
     xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -165,7 +165,7 @@ function loginError() {
             } else {
                 const logerror = document.querySelector(".form-line")
                 logerror.innerText = 'Invalid password or username'
-                logerror.style.color= 'red'
+                logerror.style.color = 'red'
                 setTimeout(() => {
                     logerror.innerText = ''
                 }, 1000)
@@ -175,4 +175,14 @@ function loginError() {
 
     // Get form data
     xml.send(`username=${username.value}&password=${password.value}`)
+}
+
+const displayNav = (e) => {
+    const nav = document.querySelector('nav')
+    nav.style.display = 'block'
+}
+
+const closeNav = (e) => {
+    const nav = document.querySelector('nav')
+    nav.style.display = 'none'
 }

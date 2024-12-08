@@ -3,6 +3,9 @@
 <div class="container">
     <div class="posts">
         <div class="posts-header">
+            <button class="nav-button" onclick="displayNav()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <a href="/post/create" class="create-post-link">
                 <i class="fa-solid fa-plus"></i>
                 Create post
@@ -13,12 +16,11 @@
         <div class="post">
             <div class="post-body">
                 <a href="/post/{{.ID}}" class="post-title">{{.Title}}</a>
-                <div class="post-header">by :
+                <div class="post-header">
                     <p class="post-user">{{.UserName}} </p>
                     <span></span>
-                    <p class="post-time"> at : {{.CreatedAt}} </p>
+                    <p class="post-time"> {{.CreatedAt}} </p>
                 </div>
-                <br>
                 <p class="post-content" id="post-content-home">{{.Content}} </p>
                 <div class="post-categories">
                     {{range .Categories}}
