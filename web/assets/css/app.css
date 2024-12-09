@@ -18,7 +18,7 @@
 
     --container-width-lg: 75%;
     --container-width-md: 86%;
-    --container-width-ms: 80%;
+    --container-width-sm: 95%;
 }
 
 
@@ -127,6 +127,43 @@ header:first-child {
     background-color: var(--color-primary-hover);
 }
 
+.header-user {
+    margin-right: 2.5rem;
+    display: flex;
+}
+
+
+.header-username {
+    border: solid 1px var(--color-border);
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+    padding: 8px 20px;
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.logout-link {
+    text-decoration: none;
+    /* background-color: ; */
+    padding: 8px 15px;
+    color: rgb(187, 0, 0);
+    border: solid 1px rgb(187, 0, 0);
+    border-radius: 0 10px 10px 0;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.logout-link i {
+    margin-left: 10px;
+}
+
+.logout-link:hover {
+    background-color: rgb(187, 0, 0);
+    color: var(--color-white);
+}
+
 /* container style */
 .container {
     display: flex;
@@ -137,45 +174,23 @@ header:first-child {
 }
 
 /* footer style */
-/* footer {
-    height: 30px;
+
+.footer-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background-color: var(--color-bg-variant);
-    border-top: 1px solid var(--color-border);
-    color: var(--color-text);
-    padding: 1rem 0;
-    font-weight: 400;
+    border-top: 3px solid var(--color-border);
+
 }
 
-.footer-team a {
-    color: var(--color-text);
-    text-decoration: none;
-    transition: var(--transition);
-    background-color: var(--color-bg);
-    border: solid 1px var(--color-border);
-    border-radius: 10px;
-    padding: 3px 7px;
-    font-size: 0.9rem;
+.hidden-footer {
+    width: 300px;
 }
-
-.footer-team a:hover {
-    background-color: var(--color-bg-variant-hover);
-}
-
-.footer-team img {
-    width: 14px;
-} */
 
 footer {
+    width: 65%;
     background-color: var(--color-bg-variant);
     color: var(--color-text);
     padding: 20px 10px;
     text-align: center;
-    border-top: 3px solid var(--color-border);
 }
 
 footer div {
@@ -192,25 +207,19 @@ footer span {
     margin-top: 15px;
 }
 
-.footer-team span {
-    font-size: 14px;
-    font-weight: normal;
-    margin-right: 8px;
-    color: var(--color-text);
-}
-
 .footer-team a {
     text-decoration: none;
-    color: #007bff;
+    color: var(--color-primary);
     font-size: 14px;
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     margin: 0 10px;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: var(--transition);
 }
 
 .footer-team a:hover {
-    color: var(--color-primary-hover);  
+    color: var(--color-primary-hover);
     transform: scale(1.1);
 }
 
@@ -221,20 +230,94 @@ footer span {
 }
 
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* ================= medium style  ================== */
+@media screen and (max-width: 1024px) {
+    .container {
+        margin-left: 200px;
+    }
+
+    .hidden-footer {
+        width: 200px;
+    }
+
     footer {
-        text-align: center;
+        width: 75%;
+    }
+}
+
+/* ================= small style ================== */
+@media screen and (max-width: 600px) {
+    .container {
+        margin-left: 0px;
+        align-items: center;
     }
 
-    footer .footer-team {
+    header {
+        height: 50px;
+    }
+
+    .forum-title {
+        font-size: 1rem;
+    }
+
+    .img-01 {
+        width: 30px;
+    }
+
+    .login-link {
+        margin-right: 2.3rem;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+
+    .login-link i {
+        margin-left: 8px;
+    }
+
+    .header-user {
+        margin-right: 2.5rem;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
     }
 
-    footer .footer-team a {
-        margin: 5px;
+
+    .header-username {
+        padding: 5px 15px;
+        font-size: 0.9rem;
+    }
+
+    .logout-link {
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+    .logout-link i {
+        margin-left: 5px;
+    }
+
+    .container {
+        padding-top: 50px;
+    }
+
+    .hidden-footer {
+        width: 0;
+    }
+
+    footer {
+        width: 100%;
+    }
+
+    .footer-team a {
+        font-size: 12px;
+        margin: 0 10px;
+    }
+    footer div {
+        margin-bottom: 0px;
+        font-size: 12px;
+
+    }
+    
+    footer span {
+        font-size: 13px;
     }
 }

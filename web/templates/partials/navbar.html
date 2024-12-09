@@ -17,3 +17,28 @@
         </li>
     </ul>
 </nav>
+
+<!-- mobile nav -->
+
+<nav class="mobile-nav">
+    <button class="close-nav" onclick="closeMobileNav()">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <ul class="nav-list">
+        <li><a href="/"><i class="fa-solid fa-house"></i>Home</a></li>
+        <li><a href="/user-posts"><i class="fa-regular fa-star"></i></i>My Posts</a></li>
+        <li><a href="/liked-posts"><i class="fa-regular fa-heart"></i></i>Liked Posts</a></li>
+        <li>
+            <span class="categories-title"><i class="fa-solid fa-list"></i>Categories</span>
+            {{if .Categories}}
+            <ul class="categories-list">
+                {{range .Categories}}
+                <li><a href="/category/{{.ID}}">#{{.Label}} ({{.PostsCount}})</a></li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p class="no-categories">No categories available.</p>
+            {{end}}
+        </li>
+    </ul>
+</nav>

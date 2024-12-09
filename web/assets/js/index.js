@@ -152,8 +152,8 @@ function pagination(dir, data) {
 }
 
 function loginError() {
-    const username =document.getElementById("username")
-    const password =document.getElementById("password")
+    const username = document.getElementById("username")
+    const password = document.getElementById("password")
     const xml = new XMLHttpRequest();
     xml.open("POST", "/signin", true)
     xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -165,7 +165,7 @@ function loginError() {
             } else {
                 const logerror = document.querySelector(".form-line")
                 logerror.innerText = 'Invalid password or username'
-                logerror.style.color= 'red'
+                logerror.style.color = 'red'
                 setTimeout(() => {
                     logerror.innerText = ''
                 }, 1000)
@@ -176,3 +176,35 @@ function loginError() {
     // Get form data
     xml.send(`username=${username.value}&password=${password.value}`)
 }
+
+const displayMobileNav = (e) => {
+    const nav = document.querySelector('.mobile-nav')
+    nav.style.display = 'block'
+}
+
+const closeMobileNav = (e) => {
+    const nav = document.querySelector('.mobile-nav')
+    nav.style.display = 'none'
+}
+
+const formatTime = (timeStr) => {
+    // Parse the input time string
+    const date = new Date(timeStr);
+
+    return date.toLocaleString('default', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }).replace(',',' ')
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-timestamp]").forEach((element) => {
+        const time = element.getAttribute("data-timestamp");
+        if (time) {
+            element.textContent = formatTime(time);
+        }
+    });
+});
