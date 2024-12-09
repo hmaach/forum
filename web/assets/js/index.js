@@ -177,12 +177,12 @@ function loginError() {
     xml.send(`username=${username.value}&password=${password.value}`)
 }
 
-const displayNav = (e) => {
-    const nav = document.querySelector('nav')
+const displayMobileNav = (e) => {
+    const nav = document.querySelector('.mobile-nav')
     nav.style.display = 'block'
 }
 
-const closeNav = (e) => {
-    const nav = document.querySelector('nav')
+const closeMobileNav = (e) => {
+    const nav = document.querySelector('.mobile-nav')
     nav.style.display = 'none'
 }
