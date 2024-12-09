@@ -174,12 +174,23 @@ header:first-child {
 }
 
 /* footer style */
+
+.footer-container {
+    display: flex;
+    border-top: 3px solid var(--color-border);
+
+}
+
+.hidden-footer {
+    width: 300px;
+}
+
 footer {
+    width: 65%;
     background-color: var(--color-bg-variant);
     color: var(--color-text);
     padding: 20px 10px;
     text-align: center;
-    border-top: 3px solid var(--color-border);
 }
 
 footer div {
@@ -196,22 +207,15 @@ footer span {
     margin-top: 15px;
 }
 
-.footer-team span {
-    font-size: 14px;
-    font-weight: normal;
-    margin-right: 8px;
-    color: var(--color-text);
-}
-
 .footer-team a {
     text-decoration: none;
-    color: #007bff;
+    color: var(--color-primary);
     font-size: 14px;
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
     margin: 0 10px;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: var(--transition);
 }
 
 .footer-team a:hover {
@@ -230,6 +234,14 @@ footer span {
 @media screen and (max-width: 1024px) {
     .container {
         margin-left: 200px;
+    }
+
+    .hidden-footer {
+        width: 200px;
+    }
+
+    footer {
+        width: 75%;
     }
 }
 
@@ -285,5 +297,27 @@ footer span {
 
     .container {
         padding-top: 50px;
+    }
+
+    .hidden-footer {
+        width: 0;
+    }
+
+    footer {
+        width: 100%;
+    }
+
+    .footer-team a {
+        font-size: 12px;
+        margin: 0 10px;
+    }
+    footer div {
+        margin-bottom: 0px;
+        font-size: 12px;
+
+    }
+    
+    footer span {
+        font-size: 13px;
     }
 }

@@ -8,7 +8,7 @@
                 <div class="post-header">
                     <p class="post-user">{{.Data.Post.UserName}} </p>
                     <span></span>
-                    <p class="post-time">{{.Data.Post.CreatedAt}} </p>
+                    <p class="post-time" data-timestamp="{{.Data.Post.CreatedAt}}"></p>
                 </div>
                 <p class="post-content">{{.Data.Post.Content}} </p>
                 <div class="post-categories">
@@ -41,7 +41,7 @@
                 <div class="comment-header">
                     <p class="comment-user">{{.UserName}}</p>
                     <span></span>
-                    <p class="comment-time">{{.CreatedAt}} </p>
+                    <p class="comment-time" data-timestamp="{{.CreatedAt}}"></p>
                 </div>
                 <div class="comment-body">
                     <p class="comment-content">{{.Content}} </p>

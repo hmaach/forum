@@ -186,3 +186,25 @@ const closeMobileNav = (e) => {
     const nav = document.querySelector('.mobile-nav')
     nav.style.display = 'none'
 }
+
+const formatTime = (timeStr) => {
+    // Parse the input time string
+    const date = new Date(timeStr);
+
+    return date.toLocaleString('default', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }).replace(',',' ')
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-timestamp]").forEach((element) => {
+        const time = element.getAttribute("data-timestamp");
+        if (time) {
+            element.textContent = formatTime(time);
+        }
+    });
+});
