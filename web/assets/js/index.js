@@ -1,3 +1,12 @@
+window.addEventListener('resize',()=>{
+    if (document.body.clientWidth > 600) {
+        document.querySelector('.mobile-nav').style.display = 'none';
+    }
+
+})
+ 
+
+
 function throttle(fn, delay) {
     let last = 0;
     return function () {
