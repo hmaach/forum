@@ -54,7 +54,7 @@
     margin-top: 11px;
     border: var(--color-border) solid 1px;
     border-radius: 10px;
-
+    overflow: hidden;
 }
 
 .post-header {

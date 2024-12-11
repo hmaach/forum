@@ -1,10 +1,9 @@
-window.addEventListener('resize',()=>{
+window.addEventListener('resize', () => {
     if (document.body.clientWidth > 600) {
         document.querySelector('.mobile-nav').style.display = 'none';
     }
-
 })
- 
+
 
 
 function throttle(fn, delay) {
@@ -206,7 +205,7 @@ const formatTime = (timeStr) => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-    }).replace(',',' ')
+    }).replace(',', ' ')
 }
 
 document.addEventListener("DOMContentLoaded", () => {

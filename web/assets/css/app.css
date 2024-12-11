@@ -142,6 +142,11 @@ header:first-child {
     color: var(--color-text);
 }
 
+.header-username i {
+    font-size: 0.9 rem;
+    margin-right: 8px;
+}
+
 .logout-link {
     text-decoration: none;
     /* background-color: ; */
@@ -286,6 +291,10 @@ footer span {
         font-size: 0.9rem;
     }
 
+    .header-username i {
+        font-size: 0.7rem;
+    }
+
     .logout-link {
         padding: 5px 12px;
         font-size: 0.9rem;
@@ -311,12 +320,13 @@ footer span {
         font-size: 12px;
         margin: 0 10px;
     }
+
     footer div {
         margin-bottom: 0px;
         font-size: 12px;
 
     }
-    
+
     footer span {
         font-size: 13px;
     }

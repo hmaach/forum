@@ -29,10 +29,7 @@ func main() {
 		}
 		return
 	}
-
-	if err != nil {
-		log.Println("Error fetching categories from the database:", err)
-	}
+	
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: routes.Routes(db),

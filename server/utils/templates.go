@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"text/template"
+	"html/template"
 
 	"forum/server/models"
 )
