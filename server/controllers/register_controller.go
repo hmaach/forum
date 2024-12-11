@@ -2,25 +2,28 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
-	"forum/server/models"
 	"forum/server/utils"
-	"forum/server/validators"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	statuscode, username, valid := validators.GetRegister_Request(r, db)
-
-	if statuscode != http.StatusOK {
-		utils.RenderError(db, w, r, statuscode, valid, username)
-		return
-	}
-	if valid {
+	var valid bool
+	if _, _, valid = ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
+
+	if r.Method != http.MethodGet {
+		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, false, "")
+		return
+	}
+
 	err := utils.RenderTemplate(db, w, r, "register", http.StatusOK, nil, false, "")
 	if err != nil {
 		log.Println(err)
@@ -29,29 +32,59 @@ func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	statuscode, username, valid, email, newUserName, password := validators.Signup_Request(r, db)
-
-	if statuscode != http.StatusOK {
-		utils.RenderError(db, w, r, statuscode, valid, username)
+	var valid bool
+	if _, _, valid = ValidSession(r, db); valid {
+		w.WriteHeader(302)
 		return
 	}
 
-	_, err := models.AddUser(db, email, newUserName, password)
+	if r.Method != http.MethodPost {
+		w.WriteHeader(405)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	email := r.FormValue("email")
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	passwordConfirmation := r.FormValue("password-confirmation")
+
+
+	if len(strings.TrimSpace(username)) < 4 || len(strings.TrimSpace(password)) < 6 || email == "" || password != passwordConfirmation {
+		w.WriteHeader(400)
+		return
+	}
+
+	_, err := AddUser(db, email, username, password)
 	if err != nil {
-		w.Write([]byte("Cannot create user, try again later!"))
+		if err.Error() == "UNIQUE constraint failed: users.username" {
+			w.WriteHeader(304)
+			return
+		}
+
+		w.WriteHeader(500)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(`
-	   <html>
-	   <body>
-		  <p>User ` + username + ` has been created successfully. Redirecting to the login page in 2 seconds...</p>
-		  <script>
-			 setTimeout(function() {
-				window.location.href = "/login";
-			 }, 2000);
-		  </script>
-	   </body>
-	   </html>
-	`))
+	w.WriteHeader(200)
+}
+
+func AddUser(db *sql.DB, email, username, password string) (int64, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return -1, err
+	}
+
+	task := `INSERT INTO users (email,username,password) VALUES (?,?,?)`
+	result, err := db.Exec(task, email, username, hashedPassword)
+	if err != nil {
+		return -1, fmt.Errorf("%v", err)
+	}
+
+	userID, _ := result.LastInsertId()
+
+	return userID, nil
 }

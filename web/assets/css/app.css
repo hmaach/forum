@@ -191,7 +191,7 @@ header:first-child {
 }
 
 footer {
-    width: 65%;
+    width: 100%;
     background-color: var(--color-bg-variant);
     color: var(--color-text);
     padding: 20px 10px;

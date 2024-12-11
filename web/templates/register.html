@@ -2,13 +2,14 @@
 <div class="register-page">
     <div class="register-card">
         <h1>Register</h1>
-        <form action="/signup" method="post" class="register-form">
-            <input type="text" name="email" class="register-input" placeholder="email ">
-            <input type="text" name="username" class="register-input" placeholder="username">
-            <input type="password" name="password" class="register-input" placeholder="********">
-            <input type="password" name="password-confirmation" class="register-input" placeholder="********">
-            <button type="submit" class="register-submit">Register<i class="fa-solid fa-user-plus"></i></button>
-        </form>
+        <div method="post" class="register-form">
+            <input id="email" type="text" name="email" class="register-input" placeholder="email ">
+            <input id="username" type="text" name="username" class="register-input" placeholder="username">
+            <input id="password" type="password" name="password" class="register-input" placeholder="********">
+            <input id="password-confirmation" type="password" name="password-confirmation" class="register-input" placeholder="********">
+            <div class="errorarea"></div>
+            <button onclick="register()" type="submit" class="register-submit">Register<i class="fa-solid fa-user-plus"></i></button>
+        </div>
         <span class="form-line"></span>
         <p class="form-second-option">Already registered? <a href="/login">Log in</a></p>
     </div>

@@ -3,3 +3,6 @@ added throttle for comment
 check email 
 check password 
 return error in the same page .
+
+
+handling coment TIMESTAMP
