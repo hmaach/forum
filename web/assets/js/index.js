@@ -207,6 +207,10 @@ function CreatPostError() {
         if (xml.readyState === 4) {
             const logerror = document.querySelector(".errorarea")
             if (xml.status === 200) {
+                const btn = document.getElementById("create-post-btn")
+                btn.disabled = true
+                btn.style.background = "grey"
+                btn.style.cursor = "not-allowed"
                 logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
                 logerror.style.color = "green"
                 setTimeout(() => {

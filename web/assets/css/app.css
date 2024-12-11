@@ -175,7 +175,7 @@ header:first-child {
     flex-direction: column;
     padding-top: 65px;
     margin-left: 320px;
-    min-height: 75vh;
+    min-height: 80vh;
 }
 
 /* footer style */
@@ -183,6 +183,7 @@ header:first-child {
 .footer-container {
     display: flex;
     border-top: 3px solid var(--color-border);
+    background-color: var(--color-bg-variant);
 
 }
 
