@@ -1,41 +1,40 @@
 package validators
 
 import (
-	"database/sql"
-	"forum/server/config"
 	"html"
 	"net/http"
+	"strings"
 )
 
-func GetLogin_Request(r *http.Request, db *sql.DB) (int, bool) {
-	_, _, valid := config.ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, valid
-	}
-	return http.StatusOK, valid
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-func Signin_Request(r *http.Request, db *sql.DB) (int, bool, string, string) {
-
+// Validates a login request.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - string: username.
+// - string: password.
+func LoginRequest(r *http.Request) (int, string, string, string) {
+	// Check if the method is POST
 	if r.Method != http.MethodPost {
-		return http.StatusMethodNotAllowed, false, "", ""
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", "", ""
 	}
-	_, _, valid := config.ValidSession(r, db)
 
+	// Parse form data
 	err := r.ParseForm()
 	if err != nil {
-		return http.StatusBadRequest, valid, "", ""
+		return http.StatusBadRequest, "Failed to parse form data", "", ""
 	}
 
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+	// Retrieve and sanitize inputs
+	username := strings.TrimSpace(html.EscapeString(r.FormValue("username")))
+	password := strings.TrimSpace(html.EscapeString(r.FormValue("password")))
 
-	username = html.EscapeString(username)
-	password = html.EscapeString(password)
-	if len(username) < 4 || len(password) < 6 {
-		return http.StatusBadRequest, valid, "", ""
+	// Validate inputs
+	if len(username) < 4 {
+		return http.StatusBadRequest, "Username must be at least 4 characters long", "", ""
 	}
-	return http.StatusOK, valid, username, password
+	if len(password) < 6 {
+		return http.StatusBadRequest, "Password must be at least 6 characters long", "", ""
+	}
+
+	return http.StatusOK, "success", username, password
 }

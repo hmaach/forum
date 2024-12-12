@@ -1,40 +1,69 @@
 package validators
 
 import (
-	"database/sql"
+	"html"
 	"net/http"
+	"strings"
 
-	"forum/server/config"
+	"forum/server/utils"
 )
 
-func GetRegister_Request(r *http.Request, db *sql.DB) (int, string, bool) {
-	_, username, valid := config.ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, username, valid
-	}
-
-	return http.StatusOK, username, valid
-}
-
-// /////////////////////////////////////////////////////////////
-func Signup_Request(r *http.Request, db *sql.DB) (int, string, bool, string, string, string) {
-	_, username, valid := config.ValidSession(r, db)
-
+// Validates a registration request.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - string: email.
+// - string: username.
+// - string: password.
+func RegisterRequest(r *http.Request) (int, string, string, string, string) {
+	// Check if the method is POST
 	if r.Method != http.MethodPost {
-		return http.StatusMethodNotAllowed, username, valid, "", "", ""
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", "", "", ""
 	}
+
+	// Parse form data
 	if err := r.ParseForm(); err != nil {
-		return http.StatusBadRequest, username, valid, "", "", ""
+		return http.StatusBadRequest, "Failed to parse form data", "", "", ""
 	}
 
-	email := r.FormValue("email")
-	newUserName := r.FormValue("username")
-	password := r.FormValue("password")
-	passwordConfirmation := r.FormValue("password-confirmation")
+	// Retrieve and sanitize inputs
+	email := strings.TrimSpace(html.EscapeString(r.FormValue("email")))
+	username := strings.TrimSpace(html.EscapeString(r.FormValue("username")))
+	password := strings.TrimSpace(r.FormValue("password"))
+	passwordConfirmation := strings.TrimSpace(r.FormValue("password-confirmation"))
 
-	if len(newUserName) < 4 || len(password) < 6 || email == "" || password != passwordConfirmation {
-		return http.StatusBadRequest, username, valid, "", "", ""
+	// Validate email
+	if email == "" {
+		return http.StatusBadRequest, "Email is required", "", "", ""
 	}
-	return http.StatusOK, username, valid, email, newUserName, password
+	if !strings.Contains(email, "@") || !strings.Contains(email, ".") || len(email) < 5 {
+		return http.StatusBadRequest, "Invalid email format", "", "", ""
+	}
+
+	// Validate username
+	if len(username) < 4 {
+		return http.StatusBadRequest, "Username must be at least 4 characters long", "", "", ""
+	}
+	if strings.Contains(username, " ") {
+		return http.StatusBadRequest, "Username cannot contain spaces", "", "", ""
+	}
+	if !utils.IsAlphanumeric(username) {
+		return http.StatusBadRequest, "Username must contain only letters and numbers", "", "", ""
+	}
+
+	// Validate password
+	if password != passwordConfirmation {
+		return http.StatusBadRequest, "Passwords do not match", "", "", ""
+	}
+	if len(password) < 6 {
+		return http.StatusBadRequest, "Password must be at least 6 characters long", "", "", ""
+	}
+	if !utils.ContainsUppercase(password) {
+		return http.StatusBadRequest, "Password must contain at least one uppercase letter", "", "", ""
+	}
+	if !utils.ContainsDigit(password) {
+		return http.StatusBadRequest, "Password must contain at least one digit", "", "", ""
+	}
+
+	return http.StatusOK, "success", email, username, password
 }

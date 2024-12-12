@@ -1,28 +1,42 @@
 package validators
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"forum/server/config"
 )
 
-func CreateComment_Request(r *http.Request, db *sql.DB) (int, string, bool, string, int, int) {
-	user_id, username, valid := config.ValidSession(r, db)
-
+// Validates a request to create a comment.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - string: Comment content.
+// - int: Post ID.
+func CreateCommentRequest(r *http.Request) (int, string, string, int) {
 	if r.Method != http.MethodPost {
-		return http.StatusMethodNotAllowed, username, valid, "", 0, 0
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", "", 0
 	}
+
+	// Parse form data
 	if err := r.ParseForm(); err != nil {
-		return http.StatusBadRequest, username, valid, "", 0, 0
+		return http.StatusBadRequest, "Failed to parse form data", "", 0
 	}
-	content := r.FormValue("comment")
-	idstr := r.FormValue("postid")
-	postId, err := strconv.Atoi(idstr)
-	if err != nil || (strings.TrimSpace(content) == "" && valid) {
-		return http.StatusBadRequest, username, valid, "", 0, 0
+
+	// Validate comment content
+	content := strings.TrimSpace(r.FormValue("comment"))
+	if content == "" {
+		return http.StatusBadRequest, "Comment content cannot be empty", "", 0
 	}
-	return http.StatusOK, username, valid, content, postId, user_id
+	if len(content) > 1800 {
+		return http.StatusBadRequest, "Comment content exceeds the maximum length of 1800 characters", "", 0
+	}
+
+	// Validate Post ID
+	postIDStr := r.FormValue("postid")
+	postID, err := strconv.Atoi(postIDStr)
+	if err != nil || postID <= 0 {
+		return http.StatusBadRequest, "Post ID must be a valid positive integer", "", 0
+	}
+
+	return http.StatusOK, "success", content, postID
 }

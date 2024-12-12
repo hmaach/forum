@@ -1,125 +1,171 @@
 package validators
 
 import (
-	"database/sql"
 	"html"
 	"net/http"
 	"strconv"
-
-	"forum/server/config"
+	"strings"
 )
 
-func IndexPosts_Request(r *http.Request, db *sql.DB) (int, string, bool, int) {
-	_, username, valid := config.ValidSession(r, db)
+// validates a request for posts index.
+// returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - int: page number.
+func IndexPostsRequest(r *http.Request) (int, string, int) {
 	if r.URL.Path != "/" {
-		return http.StatusNotFound, username, valid, 0
+		return http.StatusNotFound, "Invalid path", 0
 	}
 
 	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, username, valid, 0
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", 0
 	}
-
-	id := r.FormValue("PageID")
-	page, er := strconv.Atoi(id)
-	if er != nil && id != "" {
-		return http.StatusBadRequest, username, valid, 0
-	}
-	page = (page - 1) * 10
-	if page < 0 {
-		page = 0
-	}
-	return http.StatusOK, username, valid, page
-}
-
-// ////////////////////////////////////////////////////////////////
-func IndexPostsByCategory_Request(r *http.Request, db *sql.DB) (int, string, bool, int, int) {
-	_, username, valid := config.ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, username, valid, 0, 0
-	}
-
-	idStr := r.PathValue("id")
-	categorieId, err := strconv.Atoi(idStr)
-	if err != nil {
-		return http.StatusBadRequest, username, valid, 0, 0
-	}
-
-	page := r.FormValue("PageID")
-	pageId, er := strconv.Atoi(page)
-
-	if er != nil && page != "" {
-		return http.StatusBadRequest, username, valid, 0, 0
-	}
-
-	pageId = (pageId - 1) * 10
-	if pageId < 0 {
-		pageId = 0
-	}
-	return http.StatusOK, username, valid, categorieId, pageId
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-func ShowPost_Request(r *http.Request, db *sql.DB) (int, string, bool, int) {
-	_, username, valid := config.ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, username, valid, 0
-	}
-
-	idStr := r.PathValue("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return http.StatusBadRequest, username, valid, 0
-	}
-
-	return http.StatusOK, username, valid, id
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-func GetPostCreationForm_Request(r *http.Request, db *sql.DB) (int, string, bool) {
-	_, username, valid := config.ValidSession(r, db)
-
-	if r.Method != http.MethodGet {
-		return http.StatusMethodNotAllowed, username, valid
-	}
-
-	return http.StatusOK, username, valid
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-func CreatePost_Request(r *http.Request, db *sql.DB) (int, string, bool, int, string, string, []string) {
-	userid, username, valid := config.ValidSession(r, db)
 
 	err := r.ParseForm()
 	if err != nil {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
+		return http.StatusBadRequest, "Failed to parse form data", 0
+	}
+
+	pageStr := r.FormValue("PageID")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil && pageStr != "" {
+		return http.StatusBadRequest, "PageID must be a valid integer", 0
+	}
+
+	if page < 0 {
+		return http.StatusBadRequest, "PageID cannot be negative", 0
+	}
+
+	return http.StatusOK, "success", page
+}
+
+// validates a request for posts by category.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - int: category ID.
+// - int: page number.
+func IndexPostsByCategoryRequest(r *http.Request) (int, string, int, int) {
+	if r.URL.Path != "/" {
+		return http.StatusNotFound, "Invalid path", 0, 0
+	}
+
+	if r.Method != http.MethodGet {
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", 0, 0
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		return http.StatusBadRequest, "Failed to parse form data", 0, 0
+	}
+
+	categorieIdStr := r.PathValue("id")
+	categorieId, err := strconv.Atoi(categorieIdStr)
+	if err != nil {
+		return http.StatusBadRequest, "Category ID must be a valid integer", 0, 0
+	}
+
+	pageStr := r.FormValue("PageID")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil && pageStr != "" {
+		return http.StatusBadRequest, "PageID must be a valid integer", 0, 0
+	}
+
+	if page <= 0 {
+		return http.StatusBadRequest, "PageID must be greater than 0", 0, 0
+	}
+
+	return http.StatusOK, "success", categorieId, page
+}
+
+// validates a request to show a specific post.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - int: post ID.
+func ShowPostRequest(r *http.Request) (int, string, int) {
+	if r.Method != http.MethodGet {
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", 0
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		return http.StatusBadRequest, "Failed to parse form data", 0
+	}
+
+	postIdStr := r.PathValue("id")
+	postId, err := strconv.Atoi(postIdStr)
+	if err != nil {
+		return http.StatusBadRequest, "Post ID must be a valid integer", 0
+	}
+
+	if postId <= 0 {
+		return http.StatusBadRequest, "Post ID must be greater than 0", 0
+	}
+
+	return http.StatusOK, "success", postId
+}
+
+// validates a request to create a new post.
+// Returns:
+// - int: HTTP status code.
+// - string: Error or success message.
+// - string: title of the post.
+// - string: content of the post.
+// - []int: List of category IDs.
+func CreatePostRequest(r *http.Request) (int, string, string, string, []int) {
+	if r.Method != http.MethodPost {
+		return http.StatusMethodNotAllowed, "Invalid HTTP method", "", "", nil
+	}
+
+	contentType := r.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "application/x-www-form-urlencoded") {
+		return http.StatusUnsupportedMediaType, "Unsupported content type", "", "", nil
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		return http.StatusBadRequest, "Failed to parse form data", "", "", nil
 	}
 
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	categories := r.Form["categories"]
 
-	title = html.EscapeString(title)
-	content = html.EscapeString(content)
-
-	// Validate the title
-	if title == "" {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
-	} else if len(title) > 100 {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
+	if strings.TrimSpace(title) == "" {
+		return http.StatusBadRequest, "Title is required", "", "", nil
+	}
+	if len(title) > 100 {
+		return http.StatusBadRequest, "Title must not exceed 100 characters", "", "", nil
 	}
 
-	// Validate the content
-	if content == "" {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
-	} else if len(content) > 1000 {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
+	if len(categories) == 0 {
+		return http.StatusBadRequest, "At least one category is required", "", "", nil
 	}
 
-	if err := r.ParseForm(); err != nil {
-		return http.StatusBadRequest, username, valid, userid, "", "", nil
+	convertCategories := make([]int, 0, len(categories))
+	for _, cat := range categories {
+		if cat == "" {
+			return http.StatusBadRequest, "Category ID cannot be empty", "", "", nil
+		}
+
+		categoryID, err := strconv.Atoi(cat)
+		if err != nil {
+			return http.StatusBadRequest, "Category ID must be a valid integer", "", "", nil
+		}
+
+		convertCategories = append(convertCategories, categoryID)
 	}
 
-	return http.StatusOK, username, valid, userid, title, content, categories
+	if strings.TrimSpace(content) == "" {
+		return http.StatusBadRequest, "Content is required", "", "", nil
+	}
+	if len(content) > 3000 {
+		return http.StatusBadRequest, "Content must not exceed 3000 characters", "", "", nil
+	}
+
+	return http.StatusOK, "success",
+		html.EscapeString(title),
+		html.EscapeString(content),
+		convertCategories
 }
