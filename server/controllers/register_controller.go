@@ -2,19 +2,17 @@ package controllers
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
+	"forum/server/models"
 	"forum/server/utils"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
-	if _, _, valid = ValidSession(r, db); valid {
+	if _, _, valid = models.ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -33,7 +31,7 @@ func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
-	if _, _, valid = ValidSession(r, db); valid {
+	if _, _, valid = models.ValidSession(r, db); valid {
 		w.WriteHeader(302)
 		return
 	}
@@ -52,13 +50,12 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	password := r.FormValue("password")
 	passwordConfirmation := r.FormValue("password-confirmation")
 
-
 	if len(strings.TrimSpace(username)) < 4 || len(strings.TrimSpace(password)) < 6 || email == "" || password != passwordConfirmation {
 		w.WriteHeader(400)
 		return
 	}
 
-	_, err := AddUser(db, email, username, password)
+	_, err := models.StoreUser(db, email, username, password)
 	if err != nil {
 		if err.Error() == "UNIQUE constraint failed: users.username" {
 			w.WriteHeader(304)
@@ -70,21 +67,4 @@ func Signup(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(200)
-}
-
-func AddUser(db *sql.DB, email, username, password string) (int64, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return -1, err
-	}
-
-	task := `INSERT INTO users (email,username,password) VALUES (?,?,?)`
-	result, err := db.Exec(task, email, username, hashedPassword)
-	if err != nil {
-		return -1, fmt.Errorf("%v", err)
-	}
-
-	userID, _ := result.LastInsertId()
-
-	return userID, nil
 }

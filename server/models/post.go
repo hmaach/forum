@@ -119,8 +119,6 @@ func FetchPosts(db *sql.DB, currentPage int) ([]Post, int, error) {
 		return nil, 500, err
 	}
 
-	
-
 	return posts, 200, nil
 }
 
@@ -393,7 +391,6 @@ func FetchCreatedPostsByUser(db *sql.DB, user_id int, currentPage int) ([]Post, 
 	return posts, 200, nil
 }
 
-
 func FetchLikedPostsByUser(db *sql.DB, user_id int, currentPage int) ([]Post, int, error) {
 	var posts []Post
 
@@ -491,4 +488,76 @@ func FetchLikedPostsByUser(db *sql.DB, user_id int, currentPage int) ([]Post, in
 	}
 
 	return posts, 200, nil
+}
+
+func StorePost(db *sql.DB, user_id int, title, content string) (int64, error) {
+	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
+
+	result, err := db.Exec(task, user_id, title, content)
+	if err != nil {
+		return 0, fmt.Errorf("%v", err)
+	}
+
+	postID, _ := result.LastInsertId()
+
+	return postID, nil
+}
+
+func StorePostCategory(db *sql.DB, post_id int64, category_id int) (int64, error) {
+	task := `INSERT INTO post_category (post_id, category_id) VALUES (?,?)`
+
+	result, err := db.Exec(task, post_id, category_id)
+	if err != nil {
+		return 0, fmt.Errorf("%v", err)
+	}
+
+	postcatID, _ := result.LastInsertId()
+
+	return postcatID, nil
+}
+
+func CheckCategories(db *sql.DB, ids []int) error {
+	placeholders := strings.Repeat("?,", len(ids))
+	placeholders = placeholders[:len(placeholders)-1]
+
+	query := fmt.Sprintf(`
+        SELECT id
+        FROM categories
+        WHERE id IN (%s);
+    `, placeholders)
+
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	var count int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return err
+		}
+		count++
+	}
+	if count != len(ids) {
+		return fmt.Errorf("categories does not exists in db")
+	}
+
+	return nil
+}
+
+func StorePostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
+	task := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
+	result, err := db.Exec(task, user_id, post_id, reaction)
+	if err != nil {
+		return 0, fmt.Errorf("error inserting reaction data -> ")
+	}
+	preactionID, _ := result.LastInsertId()
+
+	return preactionID, nil
 }

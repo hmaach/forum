@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"database/sql"
-	"fmt"
 	"html"
 	"log"
 	"net/http"
@@ -16,7 +15,7 @@ import (
 func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
-	_, username, valid = ValidSession(r, db)
+	_, username, valid = models.ValidSession(r, db)
 
 	if r.URL.Path != "/" || r.Method != http.MethodGet {
 		utils.RenderError(db, w, r, http.StatusNotFound, valid, username)
@@ -53,7 +52,7 @@ func IndexPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
-	_, username, valid = ValidSession(r, db)
+	_, username, valid = models.ValidSession(r, db)
 
 	if r.Method != http.MethodGet {
 		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
@@ -95,7 +94,7 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func ShowPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
-	_, username, valid = ValidSession(r, db)
+	_, username, valid = models.ValidSession(r, db)
 
 	if r.Method != http.MethodGet {
 		utils.RenderError(db, w, r, http.StatusMethodNotAllowed, valid, username)
@@ -124,7 +123,7 @@ func GetPostCreationForm(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
 
-	if _, username, valid = ValidSession(r, db); !valid {
+	if _, username, valid = models.ValidSession(r, db); !valid {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
@@ -145,7 +144,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, _, valid = ValidSession(r, db); !valid {
+	if user_id, _, valid = models.ValidSession(r, db); !valid {
 		w.WriteHeader(401)
 		return
 	}
@@ -184,13 +183,13 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		catidsInt = append(catidsInt, id)
 	}
 
-	err := checkCategories(db, catidsInt)
+	err := models.CheckCategories(db, catidsInt)
 	if err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	pid, err := AddPost(db, user_id, title, content)
+	pid, err := models.StorePost(db, user_id, title, content)
 	if err != nil {
 		w.WriteHeader(400)
 		return
@@ -198,7 +197,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	for i := 0; i < len(catidsInt); i++ {
 
-		_, err = AddPostCat(db, pid, catidsInt[i])
+		_, err = models.StorePostCategory(db, pid, catidsInt[i])
 		if err != nil {
 			w.WriteHeader(400)
 			return
@@ -209,72 +208,11 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.WriteHeader(200)
 }
 
-func AddPost(db *sql.DB, user_id int, title, content string) (int64, error) {
-	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
-
-	result, err := db.Exec(task, user_id, title, content)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postID, _ := result.LastInsertId()
-
-	return postID, nil
-}
-
-func AddPostCat(db *sql.DB, post_id int64, category_id int) (int64, error) {
-	task := `INSERT INTO post_category (post_id,category_id) VALUES (?,?)`
-
-	result, err := db.Exec(task, post_id, category_id)
-	if err != nil {
-		return 0, fmt.Errorf("%v", err)
-	}
-
-	postcatID, _ := result.LastInsertId()
-
-	return postcatID, nil
-}
-
-func checkCategories(db *sql.DB, ids []int) error {
-	placeholders := strings.Repeat("?,", len(ids))
-	placeholders = placeholders[:len(placeholders)-1]
-
-	query := fmt.Sprintf(`
-        SELECT id
-        FROM categories
-        WHERE id IN (%s);
-    `, placeholders)
-
-	args := make([]interface{}, len(ids))
-	for i, id := range ids {
-		args[i] = id
-	}
-
-	rows, err := db.Query(query, args...)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	var count int
-	for rows.Next() {
-		var id int
-		if err := rows.Scan(&id); err != nil {
-			return err
-		}
-		count++
-	}
-	if count != len(ids) {
-		return fmt.Errorf("categories does not exists in db")
-	}
-
-	return nil
-}
-
 func MyCreatedPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
 	var user_id int
-	if user_id, username, valid = ValidSession(r, db); !valid {
+	if user_id, username, valid = models.ValidSession(r, db); !valid {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
@@ -315,7 +253,7 @@ func MyLikedPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	var username string
 	var user_id int
-	if user_id, username, valid = ValidSession(r, db); !valid {
+	if user_id, username, valid = models.ValidSession(r, db); !valid {
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}

@@ -3,9 +3,11 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
+
+	"forum/server/models"
+	"forum/server/utils"
 )
 
 func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -17,7 +19,7 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, _, valid = ValidSession(r, db); !valid {
+	if user_id, _, valid = models.ValidSession(r, db); !valid {
 		w.WriteHeader(401)
 		return
 	}
@@ -39,7 +41,7 @@ func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	db.QueryRow("SELECT reaction FROM post_reactions WHERE user_id=? AND post_id=?", user_id, post_id).Scan(&dbreaction)
 
 	if dbreaction == "" {
-		_, err = AddPostReaction(db, user_id, post_id, userReaction)
+		_, err = models.StorePostReaction(db, user_id, post_id, userReaction)
 	} else {
 		if userReaction == dbreaction {
 			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
@@ -74,7 +76,7 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var user_id int
 	var valid bool
 
-	if user_id, _, valid = ValidSession(r, db); !valid {
+	if user_id, _, valid = models.ValidSession(r, db); !valid {
 		w.WriteHeader(401)
 		return
 	}
@@ -96,9 +98,8 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	db.QueryRow("SELECT reaction FROM comment_reactions WHERE user_id=? AND comment_id=?", user_id, comment_id).Scan(&dbreaction)
 
 	if dbreaction == "" {
-		_, err = AddCommentReaction(db, user_id, comment_id, userReaction)
+		_, err = models.StoreCommentReaction(db, user_id, comment_id, userReaction)
 	} else {
-
 		if userReaction == dbreaction {
 			query := "DELETE FROM comment_reactions WHERE user_id = ? AND comment_id = ?"
 			_, err = db.Exec(query, user_id, comment_id)
@@ -115,34 +116,13 @@ func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	// Fetch the new count of reactions for this post
-	var likeCount, dislikeCount int
-	db.QueryRow("SELECT COUNT(*) FROM comment_reactions WHERE comment_id=? AND reaction=?", comment_id, "like").Scan(&likeCount)
-	db.QueryRow("SELECT COUNT(*) FROM comment_reactions WHERE comment_id=? AND reaction=?", comment_id, "dislike").Scan(&dislikeCount)
+	likeCount, dislikeCount, err := models.FetchCountReactionsOfPost(db, comment_id)
+	if err != nil {
+		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, "")
+		return
+	}
 
 	// Return the new count as JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]int{"commentlikesCount": likeCount, "commentdislikesCount": dislikeCount})
-}
-
-func AddPostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
-	task := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
-	result, err := db.Exec(task, user_id, post_id, reaction)
-	if err != nil {
-		return 0, fmt.Errorf("error inserting reaction data -> ")
-	}
-	preactionID, _ := result.LastInsertId()
-
-	return preactionID, nil
-}
-
-func AddCommentReaction(db *sql.DB, user_id, comment_id int, reaction string) (int64, error) {
-	task := `INSERT INTO comment_reactions (user_id,comment_id,reaction) VALUES (?,?,?)`
-	result, err := db.Exec(task, user_id, comment_id, reaction)
-	if err != nil {
-		fmt.Println(err)
-		return 0, fmt.Errorf("error inserting reaction data -> ")
-	}
-	creactionID, _ := result.LastInsertId()
-
-	return creactionID, nil
 }

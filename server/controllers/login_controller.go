@@ -1,14 +1,12 @@
 package controllers
 
 import (
-	"crypto/rand"
 	"database/sql"
-	"encoding/hex"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"forum/server/models"
 	"forum/server/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +15,7 @@ import (
 func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 
-	if _, _, valid = ValidSession(r, db); valid {
+	if _, _, valid = models.ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
@@ -34,18 +32,10 @@ func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
-func generateSessionID() (string, error) {
-	bytes := make([]byte, 16)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(bytes), nil
-}
-
 func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 
-	if _, _, valid = ValidSession(r, db); valid {
+	if _, _, valid = models.ValidSession(r, db); valid {
 		w.WriteHeader(302)
 		return
 	}
@@ -88,13 +78,13 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	////////////////////////////////////////
 
-	sessionID, err := generateSessionID()
+	sessionID, err := utils.GenerateSessionID()
 	if err != nil {
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
 		return
 	}
 
-	err = AddSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
+	err = models.StoreSession(db, user_id, sessionID, time.Now().Add(10*time.Hour))
 	if err != nil {
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
 		return
@@ -109,30 +99,4 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	})
 	http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
 	// w.Write([]byte("Logged in successfully"))
-}
-
-func ValidSession(r *http.Request, db *sql.DB) (int, string, bool) {
-	cookie, err := r.Cookie("session_id")
-	if err != nil || cookie == nil {
-		return -1, "", false
-	}
-	var expiration time.Time
-	var user_id int
-	var username string
-	err = db.QueryRow("SELECT s.user_id,s.expires_at,u.username FROM sessions s INNER JOIN users u ON s.user_id = u.id WHERE session_id = ?", cookie.Value).Scan(&user_id, &expiration, &username)
-	if err != nil || expiration.Before(time.Now()) {
-		return -1, "", false
-	}
-	return user_id, username, true
-}
-
-func AddSession(db *sql.DB, user_id int, session_id string, expires_at time.Time) error {
-	task := `INSERT OR REPLACE INTO sessions (user_id,session_id,expires_at) VALUES (?,?,?)`
-
-	_, err := db.Exec(task, user_id, session_id, expires_at)
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	return nil
 }
