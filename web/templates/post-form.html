@@ -4,11 +4,11 @@
     <div class="create-post">
         <h1>Create a New Post</h1>
         <div class="create-post-fields">
-            <label>Title</label>
+            <label>Title* <span class="max-char">(max: 100 char)</span></label>
             <input name="title" class="create-post-title" placeholder="Enter your post title here..." />
         </div>
         <div class="create-post-fields">
-            <label>Categories</label>
+            <label>Categories*</label>
             <div class="create-post-categories">
                 <div class="selected-categories"></div>
                 <select id="categories-select" onchange="e => selectCategory(e)">
@@ -20,11 +20,15 @@
             </div>
         </div>
         <div class="create-post-fields">
-            <label>Content</label>
+            <label>Content* <span class="max-char">(max: 1000 char)</span></label>
             <textarea class="content" name="content" placeholder="What's on your mind?"></textarea>
         </div>
-        <span class="errorarea" style="color: rgb(255, 0, 0);"></span>
-        <button id="create-post-btn" onclick="CreatPostError()">Publish Post</button>
+        <span class="errorarea"></span>
+        <button id="create-post-btn" onclick="CreatPost()">
+            Publish Post
+            <i class="fa-regular fa-calendar-plus" id="publish-post-icon"></i>
+            <i class="fa-solid fa-circle-notch fa-spin" id="publish-post-circle"></i>
+        </button>
     </div>
 </div>
 {{template "footer.html"}}

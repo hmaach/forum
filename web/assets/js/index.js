@@ -147,13 +147,31 @@ if (select) {
         // Parse the value as JSON to extract id and label
         const selectedValue = JSON.parse(e.target.value);
         const { id, label } = selectedValue;
-        // console.log('ID:', id, 'Label:', label);
 
         // create the elemenet for the category
         const span = document.createElement('span');
         span.textContent = label;
         span.classList.add('selected-category');
 
+        // Add a remove button to the span
+        const removeBtn = document.createElement('span');
+        removeBtn.textContent = '×';
+        removeBtn.classList.add('remove-category');
+        removeBtn.addEventListener('click', () => {
+            span.remove();
+            input.remove();
+            // Re-enable the corresponding option in the select
+            Array.from(e.target.options).find(option => {
+                try {
+                    const optionValue = JSON.parse(option.value);
+                    return optionValue.id === id;
+                } catch {
+                    return false;
+                }
+            }).disabled = false;
+        });
+
+        span.appendChild(removeBtn);
 
         // create hidden input to hold the id of selected category
         const input = document.createElement('input')
@@ -162,10 +180,9 @@ if (select) {
         input.name = 'categories'
 
         // add the elements (span and hidden input) 
-        // at the first  position of the categories container
+        // at the first position of the categories container
         const categoriesContainer = document.querySelector('.selected-categories');
         categoriesContainer.append(input, span);
-
 
         // disable the option selected in the select
         e.target.options[e.target.selectedIndex].disabled = true;
@@ -173,7 +190,6 @@ if (select) {
         // Reset the select 
         e.target.selectedIndex = 0;
     });
-
 }
 
 async function pagination(dir, data) {
@@ -191,10 +207,38 @@ async function pagination(dir, data) {
 
 
 
-function CreatPostError() {
+function CreatPost() {
     const title = document.querySelector(".create-post-title")
     const content = document.querySelector(".content")
     const categories = document.querySelector(".selected-categories")
+    const logerror = document.querySelector(".errorarea")
+    console.log(title.value.length);
+    
+    if (!title.value || !content.value || categories.childElementCount === 0) {
+        logerror.innerText = 'Please fill in all fields and select at least one category.'; 
+        setTimeout(() => {
+            logerror.innerText = '';
+        }, 3000);
+        return;
+    }
+
+    if (title.value.length > 100) {
+        logerror.innerText = 'Title is too long. Please keep it under 100 characters.';
+        setTimeout(() => {
+            logerror.innerText = '';
+        }, 3000);
+        return;
+    }
+
+    if (content.value.length > 3000) {
+        logerror.innerText = 'Content is too long. Please keep it under 3000 characters.';
+        setTimeout(() => {
+            logerror.innerText = '';
+        }, 3000);
+        return;
+    }
+
+
     let cateris = new Array()
     Array.from(categories.getElementsByTagName('input')).forEach((x) => {
         cateris.push(x.value)
@@ -205,14 +249,17 @@ function CreatPostError() {
 
     xml.onreadystatechange = function () {
         if (xml.readyState === 4) {
-            const logerror = document.querySelector(".errorarea")
             if (xml.status === 200) {
                 const btn = document.getElementById("create-post-btn")
+                document.getElementById("publish-post-icon").style.display = "none"
+                document.getElementById("publish-post-circle").style.display = "inline-block"
                 btn.disabled = true
                 btn.style.background = "grey"
                 btn.style.cursor = "not-allowed"
-                logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
-                logerror.style.color = "green"
+
+
+                // logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
+                // logerror.style.color = "green"
                 setTimeout(() => {
                     window.location.href = '/'
                 }, 2000)
