@@ -212,7 +212,6 @@ function CreatPost() {
     const content = document.querySelector(".content")
     const categories = document.querySelector(".selected-categories")
     const logerror = document.querySelector(".errorarea")
-    console.log(title.value.length);
     
     if (!title.value || !content.value || categories.childElementCount === 0) {
         logerror.innerText = 'Please fill in all fields and select at least one category.'; 
@@ -258,8 +257,8 @@ function CreatPost() {
                 btn.style.cursor = "not-allowed"
 
 
-                // logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
-                // logerror.style.color = "green"
+                logerror.innerText = 'Post created successfully, redirect to home page in 2s ...'
+                logerror.style.color = "green"
                 setTimeout(() => {
                     window.location.href = '/'
                 }, 2000)
