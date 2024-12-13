@@ -137,7 +137,7 @@ function addcomm(postId) {
             }
         };
     }
-    xhr.send(`postid=${postId}&comment=${content.value}`);
+    xhr.send(`postid=${postId}&comment=${encodeURIComponent(content.value)}`);
 }
 
 const select = document.getElementById('categories-select');
@@ -280,7 +280,7 @@ function CreatPost() {
     }
 
     // Get form data
-    xml.send(`title=${title.value}&content=${content.value}&categories=${cateris}`)
+    xml.send(`title=${encodeURIComponent(title.value)}&content=${encodeURIComponent(content.value)}&categories=${cateris}`)
 }
 
 
@@ -334,7 +334,7 @@ function register() {
     }
 
     // Get form data
-    xml.send(`email=${email.value}&username=${username.value}&password=${password.value}&password-confirmation=${passConfirm.value}`)
+    xml.send(`email=${encodeURIComponent(email.value)}&username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}&password-confirmation=${encodeURIComponent(passConfirm.value)}`)
 
 
 }
@@ -395,7 +395,7 @@ function login() {
     }
 
     // Get form data
-    xml.send(`username=${username.value}&password=${password.value}`)
+    xml.send(`username=${encodeURIComponent(username.value)}&password=${encodeURIComponent(password.value)}`)
 }
 
 const displayMobileNav = (e) => {
