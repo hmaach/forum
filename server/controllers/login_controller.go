@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"time"
 
+	"forum/server/config"
 	"forum/server/models"
 	"forum/server/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetLogin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetLoginPage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 
 	if _, _, valid = models.ValidSession(r, db); valid {
@@ -58,10 +59,8 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	// Retrieve user information from SQLite
-	var passwordHash string
-	var user_id int
-	err := db.QueryRow("SELECT id,password FROM users WHERE username = ?", username).Scan(&user_id, &passwordHash)
+	// get user information from database
+	user_id, hashedPassword, err := models.GetUserInfo(db, username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(404)
@@ -72,13 +71,12 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	// Verify the password
-	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
 		w.WriteHeader(401)
 		return
 	}
-	////////////////////////////////////////
 
-	sessionID, err := utils.GenerateSessionID()
+	sessionID, err := config.GenerateSessionID()
 	if err != nil {
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
 		return
@@ -97,6 +95,22 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		Expires: time.Now().Add(10 * time.Hour),
 		Path:    "/",
 	})
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusFound)
-	// w.Write([]byte("Logged in successfully"))
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func Logout(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if userID, _, valid := models.ValidSession(r, db); valid {
+		// Use the new model function
+		err := models.DeleteUserSession(db, userID)
+		if err != nil {
+			http.Error(w, "Error while logging out!", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusFound)
 }

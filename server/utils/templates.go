@@ -10,9 +10,22 @@ import (
 	"forum/server/models"
 )
 
+type GlobalData struct {
+	IsAuthenticated bool
+	Data            any
+	UserName        string
+	Categories      []models.Category
+}
+
+type Error struct {
+	Code    int
+	Message string
+	Details string
+}
+
 // RenderError handles error responses
 func RenderError(db *sql.DB, w http.ResponseWriter, r *http.Request, statusCode int, isauth bool, username string) {
-	typeError := models.Error{
+	typeError := Error{
 		Code:    statusCode,
 		Message: http.StatusText(statusCode),
 	}
@@ -46,7 +59,7 @@ func RenderTemplate(db *sql.DB, w http.ResponseWriter, r *http.Request, tmpl str
 		categories = nil
 	}
 
-	globalData := models.GlobalData{
+	globalData := GlobalData{
 		IsAuthenticated: isauth,
 		Data:            data,
 		UserName:        username,

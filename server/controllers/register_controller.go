@@ -10,7 +10,7 @@ import (
 	"forum/server/utils"
 )
 
-func GetRegister(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetRegisterPage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var valid bool
 	if _, _, valid = models.ValidSession(r, db); valid {
 		http.Redirect(w, r, "/", http.StatusFound)

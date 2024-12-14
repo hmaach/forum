@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"html"
 	"log"
 	"net/http"
@@ -288,4 +289,41 @@ func MyLikedPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.RenderError(db, w, r, http.StatusInternalServerError, valid, username)
 		return
 	}
+}
+
+func ReactToPost(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var user_id int
+	var valid bool
+
+	if user_id, _, valid = models.ValidSession(r, db); !valid {
+		w.WriteHeader(401)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	userReaction := r.FormValue("reaction")
+	id := r.FormValue("post_id")
+	post_id, err := strconv.Atoi(id)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	likeCount, dislikeCount, err := models.ReactToPost(db, user_id, post_id, userReaction)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	// Return the new count as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"likesCount": likeCount, "dislikesCount": dislikeCount})
 }

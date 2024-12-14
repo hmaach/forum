@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
+	"html"
 	"net/http"
 	"strconv"
 	"strings"
@@ -30,7 +31,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	content := strings.TrimSpace(r.FormValue("comment"))
+	content := html.EscapeString(strings.TrimSpace(r.FormValue("comment")))
 	postIDStr := r.FormValue("postid")
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil || content == "" {
@@ -69,4 +70,40 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		"dislikes":      0,
 		"commentscount": commentsCount,
 	})
+}
+
+func ReactToComment(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var user_id int
+	var valid bool
+
+	if user_id, _, valid = models.ValidSession(r, db); !valid {
+		w.WriteHeader(401)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	userReaction := r.FormValue("reaction")
+	id := r.FormValue("comment_id")
+	comment_id, err := strconv.Atoi(id)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	likeCount, dislikeCount, err := models.ReactToComment(db, user_id, comment_id, userReaction)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+	// Return the new count as JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"commentlikesCount": likeCount, "commentdislikesCount": dislikeCount})
 }

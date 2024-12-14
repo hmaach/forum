@@ -491,9 +491,9 @@ func FetchLikedPostsByUser(db *sql.DB, user_id int, currentPage int) ([]Post, in
 }
 
 func StorePost(db *sql.DB, user_id int, title, content string) (int64, error) {
-	task := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
+	query := `INSERT INTO posts (user_id,title,content) VALUES (?,?,?)`
 
-	result, err := db.Exec(task, user_id, title, content)
+	result, err := db.Exec(query, user_id, title, content)
 	if err != nil {
 		return 0, fmt.Errorf("%v", err)
 	}
@@ -504,9 +504,9 @@ func StorePost(db *sql.DB, user_id int, title, content string) (int64, error) {
 }
 
 func StorePostCategory(db *sql.DB, post_id int64, category_id int) (int64, error) {
-	task := `INSERT INTO post_category (post_id, category_id) VALUES (?,?)`
+	query := `INSERT INTO post_category (post_id, category_id) VALUES (?,?)`
 
-	result, err := db.Exec(task, post_id, category_id)
+	result, err := db.Exec(query, post_id, category_id)
 	if err != nil {
 		return 0, fmt.Errorf("%v", err)
 	}
@@ -516,48 +516,42 @@ func StorePostCategory(db *sql.DB, post_id int64, category_id int) (int64, error
 	return postcatID, nil
 }
 
-func CheckCategories(db *sql.DB, ids []int) error {
-	placeholders := strings.Repeat("?,", len(ids))
-	placeholders = placeholders[:len(placeholders)-1]
-
-	query := fmt.Sprintf(`
-        SELECT id
-        FROM categories
-        WHERE id IN (%s);
-    `, placeholders)
-
-	args := make([]interface{}, len(ids))
-	for i, id := range ids {
-		args[i] = id
-	}
-
-	rows, err := db.Query(query, args...)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-	var count int
-	for rows.Next() {
-		var id int
-		if err := rows.Scan(&id); err != nil {
-			return err
-		}
-		count++
-	}
-	if count != len(ids) {
-		return fmt.Errorf("categories does not exists in db")
-	}
-
-	return nil
-}
-
 func StorePostReaction(db *sql.DB, user_id, post_id int, reaction string) (int64, error) {
-	task := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
-	result, err := db.Exec(task, user_id, post_id, reaction)
+	query := `INSERT INTO post_reactions (user_id,post_id,reaction) VALUES (?,?,?)`
+	result, err := db.Exec(query, user_id, post_id, reaction)
 	if err != nil {
 		return 0, fmt.Errorf("error inserting reaction data -> ")
 	}
 	preactionID, _ := result.LastInsertId()
 
 	return preactionID, nil
+}
+
+func ReactToPost(db *sql.DB, user_id, post_id int, userReaction string) (int, int, error) {
+	var likeCount, dislikeCount int
+	var dbreaction string
+	var err error
+	db.QueryRow("SELECT reaction FROM post_reactions WHERE user_id=? AND post_id=?", user_id, post_id).Scan(&dbreaction)
+
+	if dbreaction == "" {
+		_, err = StorePostReaction(db, user_id, post_id, userReaction)
+	} else {
+		if userReaction == dbreaction {
+			query := "DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?"
+			_, err = db.Exec(query, user_id, post_id)
+		} else {
+			query := "UPDATE post_reactions SET reaction = ? WHERE user_id = ? AND post_id = ?"
+			_, err = db.Exec(query, userReaction, user_id, post_id)
+		}
+	}
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	// Fetch the new count of reactions for this post
+	db.QueryRow("SELECT COUNT(*) FROM post_reactions WHERE post_id=? AND reaction=?", post_id, "like").Scan(&likeCount)
+	db.QueryRow("SELECT COUNT(*) FROM post_reactions WHERE post_id=? AND reaction=?", post_id, "dislike").Scan(&dislikeCount)
+
+	return likeCount, dislikeCount, nil
 }
