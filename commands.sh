@@ -11,7 +11,7 @@ docker system prune -f
 docker rmi forum-img 
 
 # Build a new image
-docker build --no-cache -f Dockerfile -t forum-img .
+docker build --no-cache -f dockerfile -t forum-img .
 
 # Run a new container
 docker run -d -p 8080:8080 --name forum-con forum-img
