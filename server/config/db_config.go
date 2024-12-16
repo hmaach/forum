@@ -6,7 +6,7 @@ import (
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "../server/database/database.db")
+	db, err := sql.Open("sqlite3", BasePath+"server/database/database.db")
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}

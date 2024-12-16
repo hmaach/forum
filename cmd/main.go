@@ -14,32 +14,45 @@ import (
 )
 
 func main() {
+	// Check if running in Docker
+	isDocker := os.Getenv("BASE_PATH") != ""
+	if isDocker {
+		config.BasePath = os.Getenv("BASE_PATH")
+	}
+
 	// Connect to the database
 	db, err := config.Connect()
 	if err != nil {
 		log.Fatal("Database connection error:", err)
 	}
 
-	// Handle command-line flags
-	if len(os.Args) > 1 {
-		if err := utils.HandleFlags(os.Args[1:], db); err != nil {
-			fmt.Println(err)
-			utils.Usage()
-			os.Exit(1)
+	// Handle database setup based on environment
+	if isDocker {
+		// Create the database schema and demo data
+		err := config.CreateDemoData(db)
+		if err != nil {
+			log.Fatalf("Error creating the database schema and demo data: %v", err)
 		}
-		return
+		log.Println("Database setup complete.")
+	} else {
+		// Handle command-line flags for database setup
+		if len(os.Args) > 1 {
+			if err := utils.HandleFlags(os.Args[1:], db); err != nil {
+				fmt.Println(err)
+				utils.Usage()
+				os.Exit(1)
+			}
+			return
+		}
 	}
+	
 
-	if err != nil {
-		log.Println("Error fetching categories from the database:", err)
-	}
-
+	// Start the HTTP server
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: routes.Routes(db),
 	}
 
-	// Start the HTTP server
 	log.Println("Server starting on http://localhost:8080")
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal("Server error:", err)

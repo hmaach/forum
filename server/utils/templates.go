@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"forum/server/config"
 	"forum/server/models"
 )
 
@@ -38,10 +39,10 @@ func RenderError(db *sql.DB, w http.ResponseWriter, r *http.Request, statusCode 
 func ParseTemplates(tmpl string) (*template.Template, error) {
 	// Parse the template files
 	t, err := template.ParseFiles(
-		"../web/templates/partials/header.html",
-		"../web/templates/partials/footer.html",
-		"../web/templates/partials/navbar.html",
-		"../web/templates/"+tmpl+".html",
+		config.BasePath+"web/templates/partials/header.html",
+		config.BasePath+"web/templates/partials/footer.html",
+		config.BasePath+"web/templates/partials/navbar.html",
+		config.BasePath+"web/templates/"+tmpl+".html",
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing template files: %w", err)

@@ -11,7 +11,7 @@ import (
 // CreateTables executes all queries from schema.sql
 func CreateTables(db *sql.DB) error {
 	// read file that contains all queries  to create tables for database schema
-	content, err := os.ReadFile("../server/database/sql/schema.sql")
+	content, err := os.ReadFile(BasePath + "server/database/sql/schema.sql")
 	if err != nil {
 		return fmt.Errorf("failed to read schema.sql file: %v", err)
 	}
@@ -36,7 +36,7 @@ func CreateDemoData(db *sql.DB) error {
 	}
 
 	// read file that contains all queries  to create demo data
-	content, err := os.ReadFile("../server/database/sql/seed.sql")
+	content, err := os.ReadFile(BasePath + "server/database/sql/seed.sql")
 	if err != nil {
 		return fmt.Errorf("failed to read seed.sql file: %v", err)
 	}
@@ -56,7 +56,7 @@ func CreateDemoData(db *sql.DB) error {
 
 // Drop all tables in the database.
 func Drop() error {
-	err := os.Remove("../server/database/database.db")
+	err := os.Remove(BasePath + "server/database/database.db")
 	if err != nil {
 		log.Printf("failed to drop tables: %v\n", err)
 		return err
