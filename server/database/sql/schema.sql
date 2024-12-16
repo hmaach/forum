@@ -1,3 +1,4 @@
+PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS sessions (
     user_id BIGINT UNIQUE NOT NULL,
     session_id TEXT NOT NULL,
@@ -16,8 +17,7 @@ CREATE TABLE IF NOT EXISTS post_category (
     post_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
     FOREIGN KEY (post_id) REFERENCES posts(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-    UNIQUE (post_id, category_id)
+    FOREIGN KEY (category_id) REFERENCES categories(id) UNIQUE (post_id, category_id)
 );
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS comments (
     post_id BIGINT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS post_reactions (
