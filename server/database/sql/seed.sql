@@ -92,7 +92,7 @@ INSERT INTO comments (user_id, post_id, content) VALUES
 (12, 12, 'Comment 12 on Post 12'),
 (13, 13, 'Comment 13 on Post 13'),
 (14, 14, 'Comment 14 on Post 14'),
-(1000, 15, 'Comment 15 on Post 15');
+(1, 15, 'Comment 15 on Post 15');
 
 -- Insert Post Reactions (Likes and Dislikes)
 INSERT INTO post_reactions (user_id, post_id, reaction) VALUES
