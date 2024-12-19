@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"forum/server/config"
 	"forum/server/models"
 	"forum/server/utils"
 
@@ -77,7 +76,7 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	sessionID, err := config.GenerateSessionID()
+	sessionID, err := utils.GenerateSessionID()
 	if err != nil {
 		http.Error(w, "Failed to create session", http.StatusInternalServerError)
 		return

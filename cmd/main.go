@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"forum/server/config"
 	"forum/server/routes"
-	"forum/server/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -35,17 +33,12 @@ func main() {
 		}
 		log.Println("Database setup complete.")
 	} else {
-		// Handle command-line flags for database setup
-		if len(os.Args) > 1 {
-			if err := utils.HandleFlags(os.Args[1:], db); err != nil {
-				fmt.Println(err)
-				utils.Usage()
-				os.Exit(1)
-			}
-			return
+		// Create only the database schema
+		err := config.CreateTables(db)
+		if err != nil {
+			log.Fatalf("Error creating the database schema: %v", err)
 		}
 	}
-	
 
 	// Start the HTTP server
 	server := http.Server{

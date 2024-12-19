@@ -40,7 +40,6 @@ forum/
 │   ├── database/         # Database interaction logic
 │   ├── controllers/      # Request handling and business logic
 │   ├── models/           # Data structures and models
-│   ├── validators/       # Request validation
 │   ├── routes/           # Application routing
 │   └── utils/            # Shared utility functions
 ├── web/ 
