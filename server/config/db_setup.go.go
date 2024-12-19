@@ -10,7 +10,6 @@ import (
 
 // CreateTables executes all queries from schema.sql
 func CreateTables(db *sql.DB) error {
-	// read file that contains all queries  to create tables for database schema
 	content, err := os.ReadFile(BasePath + "server/database/sql/schema.sql")
 	if err != nil {
 		return fmt.Errorf("failed to read schema.sql file: %v", err)
@@ -18,13 +17,37 @@ func CreateTables(db *sql.DB) error {
 
 	queries := strings.TrimSpace(string(content))
 
-	// execute all queries to create database schema
 	_, err = db.Exec(queries)
 	if err != nil {
-		log.Printf("failed to create tables %q: %v\n", queries, err)
-		return err
+		return fmt.Errorf("failed to create tables %q: %v", queries, err)
 	}
-	log.Println("Database schema created successfully")
+
+	// insert categories into database if not already exist
+	row, err := db.Query(`SELECT count(label) FROM categories`)
+	if err != nil {
+		return fmt.Errorf("failed to get the count of categories: %v", err)
+	}
+	defer row.Close()
+
+	// insert categories into database if not already exist
+	var catCount int
+	err = db.QueryRow(`SELECT COUNT(*) FROM categories`).Scan(&catCount)
+	if err != nil {
+		return fmt.Errorf("failed to get the count of categories: %v", err)
+	}
+
+	if catCount == 0 { // if no categories exist, insert them
+		query := `INSERT INTO categories (label) VALUES
+			('Technology'), ('Health'),
+			('Travel'),	('Education'),
+			('Entertainment');`
+		_, err = db.Exec(query)
+		if err != nil {
+			return fmt.Errorf("failed to insert categories into database: %v", err)
+		}
+		log.Println("Categories inserted successfully")
+	}
+
 	return nil
 }
 
@@ -43,7 +66,6 @@ func CreateDemoData(db *sql.DB) error {
 
 	queries := strings.TrimSpace(string(content))
 
-	// execute all queries to create demo data in the database
 	_, err = db.Exec(queries)
 	if err != nil {
 		log.Printf("failed to isert demo data %q: %v\n", queries, err)
@@ -51,17 +73,5 @@ func CreateDemoData(db *sql.DB) error {
 	}
 
 	log.Println("Demo data created successfully")
-	return nil
-}
-
-// Drop all tables in the database.
-func Drop() error {
-	err := os.Remove(BasePath + "server/database/database.db")
-	if err != nil {
-		log.Printf("failed to drop tables: %v\n", err)
-		return err
-	}
-
-	log.Println("Database schema dropped successfully")
 	return nil
 }

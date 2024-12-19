@@ -21,13 +21,6 @@ INSERT INTO users (email, username, password) VALUES
 ('user19@example.com', 'User19', 'password19'),
 ('user20@example.com', 'User20', 'password20');
 
--- Insert Categories
-INSERT INTO categories (label) VALUES
-('Technology'),
-('Health'),
-('Travel'),
-('Education'),
-('Entertainment');
 -- Insert Posts
 INSERT INTO posts (user_id, title, content) VALUES
 (1, 'Post 1 Title', 'Content of post 1'),

@@ -66,6 +66,11 @@ func IndexPostsByCategory(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
+	if e := models.CheckCategories(db,[]int{id}); e!= nil {
+		utils.RenderError(db, w, r, 404, valid, username)
+		return
+	}
+	
 	pid := r.FormValue("PageID")
 	page, _ := strconv.Atoi(pid)
 	page = (page - 1) * 10
