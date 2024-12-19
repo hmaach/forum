@@ -12,6 +12,11 @@ import (
 )
 
 func main() {
+	// check args
+	if len(os.Args) != 1 {
+		log.Fatalf("Too many arguments")
+	}
+
 	// Check if running in Docker
 	isDocker := os.Getenv("BASE_PATH") != ""
 	if isDocker {
