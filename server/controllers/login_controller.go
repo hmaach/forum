@@ -29,7 +29,8 @@ func GetLoginPage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err := utils.RenderTemplate(db, w, r, "login", http.StatusOK, nil, false, "")
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/500", http.StatusSeeOther)
+		utils.RenderError(db, w, r, http.StatusInternalServerError, false, "")
+		return
 	}
 }
 
