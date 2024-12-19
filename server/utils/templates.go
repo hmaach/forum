@@ -31,7 +31,9 @@ func RenderError(db *sql.DB, w http.ResponseWriter, r *http.Request, statusCode 
 		Message: http.StatusText(statusCode),
 	}
 	if err := RenderTemplate(db, w, r, "error", statusCode, typeError, isauth, username); err != nil {
-		http.Error(w, "500 | Internal Server Error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(ErrorPageContents))
 		log.Println(err)
 	}
 }
