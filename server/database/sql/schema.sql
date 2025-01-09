@@ -1,4 +1,5 @@
 PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS sessions (
     user_id BIGINT UNIQUE NOT NULL,
     session_id TEXT NOT NULL,

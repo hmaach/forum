@@ -19,13 +19,16 @@ func StoreSession(db *sql.DB, user_id int, session_id string, expires_at time.Ti
 }
 
 func ValidSession(r *http.Request, db *sql.DB) (int, string, bool) {
+
 	cookie, err := r.Cookie("session_id")
 	if err != nil || cookie == nil {
 		return -1, "", false
 	}
+
 	var expiration time.Time
 	var user_id int
 	var username string
+	
 	query := `
 		SELECT 
 			s.user_id,

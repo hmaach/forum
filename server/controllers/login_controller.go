@@ -50,7 +50,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		w.WriteHeader(400)
 		return
 	}
-
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
@@ -58,7 +57,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		w.WriteHeader(400)
 		return
 	}
-
 	// get user information from database
 	user_id, hashedPassword, err := models.GetUserInfo(db, username)
 	if err != nil {
@@ -69,7 +67,6 @@ func Signin(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		w.WriteHeader(500)
 		return
 	}
-
 	// Verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
 		w.WriteHeader(401)
