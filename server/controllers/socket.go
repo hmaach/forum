@@ -1,5 +1,4 @@
 package controllers
 
 func socket() {
-
 }
