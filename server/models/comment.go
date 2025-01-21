@@ -155,7 +155,6 @@ func ReactToComment(db *sql.DB, user_id, comment_id int, userReaction string) (i
 		return 0, 0, err
 	}
 
-	// Fetch the new count of reactions for this post
 	err = db.QueryRow("SELECT COUNT(*) FROM comment_reactions WHERE comment_id=? AND reaction=?", comment_id, "like").Scan(&likeCount)
 	if err != nil {
 		return 0, 0, fmt.Errorf("error fetching likes count: %v", err)
